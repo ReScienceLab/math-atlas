@@ -47,7 +47,7 @@ function Wireframe() {
 
 export function NoperthedronViz({ className = "" }: { className?: string }) {
   return (
-    <div className={`w-full aspect-square overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
+    <div className={`w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <Canvas camera={{ position: [2.5, 2, 2.5], fov: 45 }}>
         <Wireframe />
         <OrbitControls autoRotate autoRotateSpeed={2} enableZoom={false} enableDamping dampingFactor={0.04} />

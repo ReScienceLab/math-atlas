@@ -61,7 +61,7 @@ function WaveGrid() {
 
 export function MizohataViz({ className = "" }: { className?: string }) {
   return (
-    <div className={`w-full aspect-square overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
+    <div className={`w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
         <WaveGrid />
       </Canvas>

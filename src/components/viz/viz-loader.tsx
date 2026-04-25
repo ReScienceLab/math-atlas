@@ -13,6 +13,6 @@ const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 export function VizLoader({ name, className }: { name: string; className?: string }) {
   const Viz = vizMap[name];
-  if (!Viz) return <div className="w-full aspect-square bg-[var(--gray-950)] border border-white/[0.08] flex items-center justify-center text-[var(--gray-600)] text-sm">Visualization coming soon</div>;
+  if (!Viz) return <div className="w-full h-full bg-[var(--gray-950)] border border-white/[0.08] flex items-center justify-center text-[var(--gray-600)] text-sm">Visualization coming soon</div>;
   return <Viz className={className} />;
 }

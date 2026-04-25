@@ -19,65 +19,57 @@ export function ProblemCard({ problem }: { problem: Problem }) {
 
   return (
     <Link href={`/problems/${problem.slug}`} className="group block">
-      <article className="h-full bg-[var(--bg)] p-0 transition-colors duration-200 hover:bg-[var(--gray-950)]">
-        {/* Viz preview — takes up top half */}
-        <div className="w-full aspect-[4/3] bg-[var(--gray-950)] overflow-hidden relative">
+      <article className="h-full bg-[var(--bg)] transition-colors duration-200 hover:bg-[var(--gray-950)]">
+        {/* Viz — compact 16:10 ratio */}
+        <div className="w-full aspect-[16/10] bg-[var(--gray-950)] overflow-hidden relative">
           {Viz ? (
-            <Viz className="!border-0 !rounded-none" />
+            <Viz className="!border-0 !rounded-none !aspect-auto" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-[var(--gray-700)] text-sm">
+            <div className="w-full h-full flex items-center justify-center text-[var(--gray-700)] text-[12px]">
               Visualization
             </div>
           )}
-          {/* Status badge overlay */}
-          <div className="absolute top-3 left-3">
-            <span className={`inline-block font-[var(--font-mono)] text-[10px] font-medium uppercase tracking-[0.06em] px-2 py-0.5 border backdrop-blur-sm ${statusColor[problem.status]}`}>
+          <div className="absolute top-2 left-2">
+            <span className={`inline-block font-[var(--font-mono)] text-[9px] font-medium uppercase tracking-[0.06em] px-1.5 py-px border backdrop-blur-sm ${statusColor[problem.status]}`}>
               {statusLabel[problem.status]}
             </span>
           </div>
-          {/* Field tag overlay */}
-          <div className="absolute top-3 right-3">
-            <span className="font-[var(--font-mono)] text-[10px] text-[var(--gray-400)] bg-black/60 backdrop-blur-sm px-2 py-0.5 border border-white/[0.06]">
+          <div className="absolute top-2 right-2">
+            <span className="font-[var(--font-mono)] text-[9px] text-[var(--gray-400)] bg-black/60 backdrop-blur-sm px-1.5 py-px border border-white/[0.06]">
               {fieldLabel[problem.field]}
             </span>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="px-5 py-4">
-          <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.02em] mb-2 group-hover:text-white transition-colors text-[var(--gray-200)]">
+        {/* Text — compact */}
+        <div className="px-3 py-2.5">
+          <h3 className="text-[14px] font-semibold leading-tight tracking-[-0.02em] mb-1 group-hover:text-white transition-colors text-[var(--gray-200)]">
             {problem.title}
           </h3>
-          <p className="text-[13px] leading-relaxed text-[var(--gray-500)] line-clamp-2 mb-4">
+          <p className="text-[11px] leading-snug text-[var(--gray-500)] line-clamp-2 mb-2.5">
             {problem.shortDescription}
           </p>
 
-          {/* Authors row with avatars */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
-              {/* Stacked avatars */}
-              <div className="flex -space-x-2">
+              <div className="flex -space-x-1.5">
                 {problem.authors.slice(0, 3).map((author, i) => (
-                  <div
-                    key={i}
-                    className="w-6 h-6 bg-[var(--gray-800)] border border-[var(--gray-700)] flex-shrink-0 overflow-hidden relative"
-                    title={author.name}
-                  >
+                  <div key={i} className="w-5 h-5 bg-[var(--gray-800)] border border-[var(--gray-700)] flex-shrink-0 overflow-hidden relative" title={author.name}>
                     {author.avatarUrl ? (
                       <Image src={author.avatarUrl} alt={author.name} fill className="object-cover" unoptimized />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[9px] font-medium text-[var(--gray-400)]">
+                      <div className="w-full h-full flex items-center justify-center text-[8px] font-medium text-[var(--gray-400)]">
                         {author.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
                       </div>
                     )}
                   </div>
                 ))}
               </div>
-              <span className="ml-2 text-[12px] text-[var(--gray-500)] truncate max-w-[180px]">
+              <span className="ml-1.5 text-[11px] text-[var(--gray-500)] truncate max-w-[140px]">
                 {problem.authors.map(a => a.name.split(" ").pop()).join(", ")}
               </span>
             </div>
-            <span className="font-[var(--font-mono)] text-[11px] text-[var(--gray-600)] flex-shrink-0">
+            <span className="font-[var(--font-mono)] text-[10px] text-[var(--gray-600)] flex-shrink-0">
               {problem.year}
             </span>
           </div>

@@ -48,7 +48,7 @@ function KakeyaLines() {
 
 export function KakeyaViz({ className = "" }: { className?: string }) {
   return (
-    <div className={`w-full aspect-square overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
+    <div className={`w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <Canvas camera={{ position: [2, 1.5, 2], fov: 50 }}>
         <KakeyaLines />
         <OrbitControls autoRotate autoRotateSpeed={1.2} enableZoom={false} enableDamping dampingFactor={0.04} />
