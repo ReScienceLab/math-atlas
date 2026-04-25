@@ -35,7 +35,7 @@ export default function Home() {
       </section>
 
       {/* Catalog grid — tight */}
-      <section className="max-w-[1400px] mx-auto px-4 py-6">
+      <section className="px-4 py-6">
         <div className="flex items-baseline justify-between mb-4">
           <h2 className="text-[20px] font-bold tracking-[-0.03em]">
             Recent Breakthroughs
@@ -45,7 +45,7 @@ export default function Home() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.06]">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-px bg-white/[0.06]">
           {problems.map((problem) => (
             <ProblemCard key={problem.slug} problem={problem} />
           ))}
