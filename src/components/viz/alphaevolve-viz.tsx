@@ -3,6 +3,7 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { WebGLGuard } from "./webgl-guard";
 
 function Bars() {
   const data = [
@@ -55,9 +56,11 @@ function Bars() {
 export function AlphaEvolveViz({ className = "" }: { className?: string }) {
   return (
     <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
-      <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
-        <Bars />
-      </Canvas>
+      <WebGLGuard>
+        <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
+          <Bars />
+        </Canvas>
+      </WebGLGuard>
       <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
         <span className="absolute left-[20%] bottom-[18%]">64 naive</span>
         <span className="absolute left-[43%] bottom-[18%]">49 Strassen</span>

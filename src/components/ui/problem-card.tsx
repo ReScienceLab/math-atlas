@@ -13,6 +13,7 @@ const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
   NoperthedronViz: dynamic(() => import("@/components/viz/noperthedron-viz").then(m => m.NoperthedronViz), { ssr: false }),
   AlphaEvolveViz: dynamic(() => import("@/components/viz/alphaevolve-viz").then(m => m.AlphaEvolveViz), { ssr: false }),
   RiemannViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.RiemannViz), { ssr: false }),
+  Kakeya2DViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.Kakeya2DViz), { ssr: false }),
   PvsNPViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.PvsNPViz), { ssr: false }),
   NavierStokesViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.NavierStokesViz), { ssr: false }),
   HodgeViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.HodgeViz), { ssr: false }),
@@ -24,6 +25,18 @@ const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
   AbcViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.AbcViz), { ssr: false }),
   ContinuumViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.ContinuumViz), { ssr: false }),
   PoincareViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.PoincareViz), { ssr: false }),
+  AbcVerificationViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.AbcVerificationViz), { ssr: false }),
+  FaltingsAbelViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.FaltingsAbelViz), { ssr: false }),
+  FourColorViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.FourColorViz), { ssr: false }),
+  SpherePackingViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.SpherePackingViz), { ssr: false }),
+  TSPViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.TSPViz), { ssr: false }),
+  AperiodicTilingViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.AperiodicTilingViz), { ssr: false }),
+  MandelbrotViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.MandelbrotViz), { ssr: false }),
+  SquarePegViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.SquarePegViz), { ssr: false }),
+  HadwigerNelsonViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.HadwigerNelsonViz), { ssr: false }),
+  PlateauViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.PlateauViz), { ssr: false }),
+  KissingNumberViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.KissingNumberViz), { ssr: false }),
+  SteinerTreeViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.SteinerTreeViz), { ssr: false }),
 };
 
 export function ProblemCard({ problem }: { problem: Problem }) {
@@ -58,6 +71,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
             {fieldLabel[problem.field]}
           </span>
         </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/45 to-transparent" />
       </div>
 
       <Link href={`/problems/${problem.slug}`} className="block px-3 py-3 transition-colors hover:bg-white/[0.025]">

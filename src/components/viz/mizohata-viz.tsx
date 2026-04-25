@@ -4,6 +4,7 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { WebGLGuard } from "./webgl-guard";
 
 function WaveGrid() {
   const pointsRef = useRef<THREE.Points>(null);
@@ -67,9 +68,11 @@ function WaveGrid() {
 export function MizohataViz({ className = "" }: { className?: string }) {
   return (
     <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
-      <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
-        <WaveGrid />
-      </Canvas>
+      <WebGLGuard>
+        <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
+          <WaveGrid />
+        </Canvas>
+      </WebGLGuard>
       <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
         <span className="absolute right-4 top-4">weighted measure on sphere</span>
         <span className="absolute bottom-4 left-4 text-[#f87171]">restriction estimate fails</span>

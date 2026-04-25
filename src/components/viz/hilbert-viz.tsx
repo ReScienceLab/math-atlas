@@ -4,6 +4,7 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { WebGLGuard } from "./webgl-guard";
 
 function seeded(index: number) {
   const value = Math.sin(index * 12.9898) * 43758.5453;
@@ -62,9 +63,11 @@ function Particles() {
 export function HilbertViz({ className = "" }: { className?: string }) {
   return (
     <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
-      <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
-        <Particles />
-      </Canvas>
+      <WebGLGuard>
+        <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
+          <Particles />
+        </Canvas>
+      </WebGLGuard>
       <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
         <span className="absolute left-4 top-4">Newtonian particles</span>
         <span className="absolute left-1/2 top-4 -translate-x-1/2">Boltzmann limit</span>

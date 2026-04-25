@@ -5,6 +5,7 @@ const withMDX = createMDX({ extension: /\.mdx?$/ });
 
 const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  devIndicators: false,
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "upload.wikimedia.org" },

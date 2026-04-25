@@ -1,4 +1,4 @@
-export type ProblemStatus = "open" | "proved" | "disproved" | "resolved" | "partial";
+export type ProblemStatus = "open" | "proved" | "disproved" | "resolved" | "partial" | "watch" | "award";
 
 export type MathField =
   | "analysis" | "algebra" | "geometry" | "number-theory"
@@ -63,6 +63,135 @@ export interface Problem {
 
 export const problems: Problem[] = [
   {
+    slug: "abc-secret-verification",
+    title: "abc Secret Verification Project",
+    status: "watch",
+    field: "number-theory",
+    year: 2026,
+    shortDescription:
+      "Two Lean formalization efforts are trying to clarify the disputed 2012 claim around the abc conjecture.",
+    longDescription:
+      "The abc conjecture itself remains a high-stakes open problem in number theory. In 2026, reporting around the LANA project and a separate Mochizuki-linked formalization effort made the controversy visible again: the goal is not a new proof announcement, but a computer-checkable way to locate whether the claimed proof can be made precise.",
+    vizComponent: "AbcVerificationViz",
+    collections: ["canonical", "frontier", "recent", "unification"],
+    coordinates: { difficulty: 10, beauty: 8, visual: 7, importance: 9, activity: 10, accessibility: 4 },
+    consensusStatus: "watch",
+    lastReviewed: "2026-04",
+    connections: ["abc conjecture", "Lean", "IUT", "Formalization"],
+    authors: [
+      { name: "Shinichi Mochizuki", institution: "Kyoto University" },
+      { name: "Fumiharu Kato", institution: "ZEN Mathematics Center" },
+      { name: "Adam Topaz", institution: "University of Alberta" },
+    ],
+    papers: [
+      {
+        title: "We could soon settle the biggest controversy in maths",
+        url: "https://www.zinio.com/publications/new-scientist/3215/issues/736752/articles",
+        year: 2026,
+      },
+      {
+        title: "ZMC press conference on the Lean and Anabelian geometry project",
+        url: "https://zen.ac.jp/en/zmc/topics/jwz-o8xr3v6f",
+        year: 2026,
+      },
+    ],
+    timeline: [
+      { year: 1985, title: "Oesterle and Masser formulate abc", type: "origin" },
+      { year: 2012, title: "Mochizuki posts the IUT-based claimed proof", type: "progress" },
+      { year: 2018, title: "Scholze and Stix identify a disputed point", type: "progress" },
+      { year: 2023, title: "LANA formalization work begins", type: "progress" },
+      { year: 2026, month: "Apr", title: "Secret verification effort and Lean projects draw renewed attention", type: "recognition" },
+    ],
+  },
+  {
+    slug: "faltings-abel-prize-2026",
+    title: "Faltings Abel Prize 2026",
+    status: "award",
+    field: "number-theory",
+    year: 2026,
+    shortDescription:
+      "Gerd Faltings received the 2026 Abel Prize for arithmetic geometry and long-standing Diophantine conjectures.",
+    longDescription:
+      "This is an award entry, not a new theorem in 2026. Its mathematical center is Faltings' transformation of arithmetic geometry: the Mordell conjecture became Faltings' theorem, and his later work resolved the Mordell-Lang conjecture. The Abel Prize makes that unifying arc visible to users browsing the recent frontier.",
+    vizComponent: "FaltingsAbelViz",
+    collections: ["canonical", "recent", "unification"],
+    coordinates: { difficulty: 10, beauty: 9, visual: 7, importance: 10, activity: 6, accessibility: 5 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Arithmetic geometry", "Mordell conjecture", "Mordell-Lang", "Rational points"],
+    authors: [
+      {
+        name: "Gerd Faltings",
+        institution: "Max Planck Institute for Mathematics",
+        wikipediaUrl: "https://en.wikipedia.org/wiki/Gerd_Faltings",
+      },
+    ],
+    papers: [
+      {
+        title: "Gerd Faltings awarded the 2026 Abel Prize",
+        url: "https://abelprize.no/?id=207",
+        year: 2026,
+      },
+      {
+        title: "Abel Prize 2026 press release",
+        url: "https://abelprize.no/sites/default/files/2026-03/pressrelease_english__Abelprize%202026.pdf",
+        year: 2026,
+      },
+    ],
+    timeline: [
+      { year: 1922, title: "Mordell formulates the rational-points conjecture", type: "origin" },
+      { year: 1983, title: "Faltings proves the Mordell conjecture", type: "breakthrough" },
+      { year: 1986, title: "Faltings receives the Fields Medal", type: "recognition" },
+      { year: 1994, title: "Faltings returns to Germany and leads arithmetic geometry in Bonn", type: "recognition" },
+      { year: 2026, month: "Mar", title: "Faltings is announced as Abel Prize laureate", type: "recognition" },
+    ],
+  },
+  {
+    slug: "kakeya-2d",
+    title: "Kakeya Conjecture (2D)",
+    status: "proved",
+    field: "analysis",
+    year: 1971,
+    shortDescription:
+      "A planar set can contain a unit segment in every direction and have area zero, but its Hausdorff dimension is still 2.",
+    longDescription:
+      "The planar Kakeya problem is the cleanest entry point to the whole Kakeya family. Besicovitch showed that a needle can point in every direction inside sets of arbitrarily small area, even measure zero. Davies proved the two-dimensional Kakeya dimension statement: every planar Besicovitch set still has full Hausdorff dimension 2.",
+    vizComponent: "Kakeya2DViz",
+    collections: ["canonical", "beautiful", "frontier"],
+    coordinates: { difficulty: 7, beauty: 10, visual: 10, importance: 9, activity: 7, accessibility: 8 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Besicovitch sets", "Hausdorff dimension", "Fourier analysis", "Kakeya 3D"],
+    authors: [
+      { name: "Soichi Kakeya", institution: "Tohoku University" },
+      { name: "Abram Besicovitch", institution: "University of Cambridge" },
+      { name: "Roy O. Davies", institution: "University of Leicester" },
+    ],
+    papers: [
+      {
+        title: "Some remarks on the Kakeya problem",
+        url: "https://www.cambridge.org/core/journals/mathematical-proceedings-of-the-cambridge-philosophical-society/article/some-remarks-on-the-kakeya-problem/F994CB74D52930B6A0209D8F52B66627",
+        year: 1971,
+      },
+      {
+        title: "On Kakeya's problem and a similar one",
+        url: "https://eudml.org/doc/167980",
+        year: 1928,
+      },
+      {
+        title: "New Proof Threads the Needle on a Sticky Geometry Problem",
+        url: "https://www.quantamagazine.org/new-proof-threads-the-needle-on-a-sticky-geometry-problem-20230711/",
+        year: 2023,
+      },
+    ],
+    timeline: [
+      { year: 1917, title: "Kakeya asks for the smallest area needed to rotate a needle", type: "origin" },
+      { year: 1928, title: "Besicovitch constructs needle sets with arbitrarily small area", type: "breakthrough" },
+      { year: 1971, title: "Davies proves the planar Kakeya dimension result", type: "breakthrough" },
+      { year: 2023, title: "Sticky 3D variants bring the planar intuition back into focus", type: "progress" },
+    ],
+  },
+  {
     slug: "kakeya-3d",
     title: "Kakeya Conjecture (3D)",
     status: "proved",
@@ -109,6 +238,344 @@ export const problems: Problem[] = [
       { year: 2002, title: "Katz-Tao prove dim \u2265 5/2 + \u03b5 in 3D", type: "progress" },
       { year: 2025, month: "Feb", title: "Wang & Zahl prove dim = 3 in 3D", type: "breakthrough" },
       { year: 2026, title: "Wang wins New Horizons Prize; top Fields Medal candidate (~72%)", type: "recognition" },
+    ],
+  },
+  {
+    slug: "four-color-theorem",
+    title: "Four Color Theorem",
+    status: "proved",
+    field: "combinatorics",
+    year: 1976,
+    shortDescription:
+      "Every planar map can be colored with at most four colors so neighboring regions differ.",
+    longDescription:
+      "The four color theorem is one of the clearest visual problems in mathematics: no matter how complicated a planar map becomes, four colors suffice. Appel and Haken's proof was the first major computer-assisted proof to settle a famous problem.",
+    vizComponent: "FourColorViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 7, beauty: 8, visual: 10, importance: 8, activity: 6, accessibility: 10 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Planar graphs", "Graph coloring", "Computer-assisted proof"],
+    authors: [
+      { name: "Kenneth Appel", institution: "University of Illinois" },
+      { name: "Wolfgang Haken", institution: "University of Illinois" },
+    ],
+    papers: [
+      {
+        title: "Every planar map is four colorable",
+        url: "https://doi.org/10.1090/conm/098",
+        year: 1989,
+      },
+    ],
+    timeline: [
+      { year: 1852, title: "Guthrie formulates the map-coloring problem", type: "origin" },
+      { year: 1976, title: "Appel and Haken announce a computer-assisted proof", type: "breakthrough" },
+      { year: 2005, title: "Gonthier formalizes the theorem in Coq", type: "recognition" },
+    ],
+  },
+  {
+    slug: "kepler-conjecture",
+    title: "Kepler Conjecture",
+    status: "proved",
+    field: "geometry",
+    year: 1998,
+    shortDescription:
+      "The densest packing of equal spheres is the familiar cannonball stacking arrangement.",
+    longDescription:
+      "Kepler guessed that the face-centered cubic packing is the densest possible way to stack equal spheres. Hales proved the conjecture with extensive computation, and the Flyspeck project later produced a formal proof.",
+    vizComponent: "SpherePackingViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 9, beauty: 9, visual: 10, importance: 8, activity: 6, accessibility: 8 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Sphere packing", "Discrete geometry", "Formal proof"],
+    authors: [
+      { name: "Johannes Kepler", institution: "Prague" },
+      { name: "Thomas Hales", institution: "University of Pittsburgh" },
+    ],
+    papers: [
+      {
+        title: "A proof of the Kepler conjecture",
+        arxivId: "math/9811071",
+        url: "https://arxiv.org/abs/math/9811071",
+        year: 1998,
+      },
+    ],
+    timeline: [
+      { year: 1611, title: "Kepler states the sphere-packing conjecture", type: "origin" },
+      { year: 1998, title: "Hales announces a proof", type: "breakthrough" },
+      { year: 2014, title: "Flyspeck completes the formal verification", type: "recognition" },
+    ],
+  },
+  {
+    slug: "traveling-salesman-problem",
+    title: "Traveling Salesman Problem",
+    status: "partial",
+    field: "computer-science",
+    year: 1930,
+    shortDescription:
+      "Find the shortest closed route visiting every given city exactly once.",
+    longDescription:
+      "The traveling salesman problem is a benchmark for optimization and computational complexity. Exact solutions are possible for many large instances, but the general problem is NP-hard and no polynomial-time exact algorithm is known.",
+    vizComponent: "TSPViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 8, beauty: 8, visual: 9, importance: 9, activity: 9, accessibility: 10 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Optimization", "NP-hardness", "P vs NP"],
+    authors: [
+      { name: "Merrill Flood", institution: "RAND Corporation" },
+      { name: "Richard Karp", institution: "UC Berkeley" },
+    ],
+    papers: [
+      {
+        title: "Reducibility among combinatorial problems",
+        url: "https://doi.org/10.1007/978-1-4684-2001-2_9",
+        year: 1972,
+      },
+    ],
+    timeline: [
+      { year: 1930, title: "The route-optimization problem enters mathematical circulation", type: "origin" },
+      { year: 1954, title: "Dantzig, Fulkerson, and Johnson solve a 49-city instance", type: "progress" },
+      { year: 1972, title: "Karp shows the decision version is NP-complete", type: "breakthrough" },
+    ],
+  },
+  {
+    slug: "aperiodic-monotile",
+    title: "Aperiodic Monotile Problem",
+    status: "resolved",
+    field: "geometry",
+    year: 2023,
+    shortDescription:
+      "A single tile can force nonperiodic tilings of the plane.",
+    longDescription:
+      "The aperiodic monotile problem asked whether one shape alone could tile the plane only nonperiodically. The 2023 'hat' and related monotiles gave a concrete answer to a long-running tiling question.",
+    vizComponent: "AperiodicTilingViz",
+    collections: ["beautiful", "frontier", "recent"],
+    coordinates: { difficulty: 7, beauty: 10, visual: 10, importance: 7, activity: 8, accessibility: 8 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Tilings", "Aperiodicity", "Quasicrystals"],
+    authors: [
+      { name: "David Smith", institution: "Independent" },
+      { name: "Joseph Myers", institution: "Mathematics" },
+      { name: "Craig Kaplan", institution: "University of Waterloo" },
+      { name: "Chaim Goodman-Strauss", institution: "National Museum of Mathematics" },
+    ],
+    papers: [
+      {
+        title: "An aperiodic monotile",
+        arxivId: "2303.10798",
+        url: "https://arxiv.org/abs/2303.10798",
+        year: 2023,
+      },
+    ],
+    timeline: [
+      { year: 1961, title: "Wang asks about tiling decision problems", type: "origin" },
+      { year: 1966, title: "Berger constructs aperiodic tile sets", type: "progress" },
+      { year: 2023, title: "A single aperiodic monotile is announced", type: "breakthrough" },
+    ],
+  },
+  {
+    slug: "mandelbrot-local-connectivity",
+    title: "Mandelbrot Local Connectivity",
+    status: "open",
+    field: "analysis",
+    year: 1982,
+    shortDescription:
+      "Asks whether the Mandelbrot set is locally connected at every point.",
+    longDescription:
+      "The MLC conjecture asks for a precise topological regularity property of the Mandelbrot set. The image is iconic, but the conjecture is not merely visual: local connectivity would organize how parameter space is navigated by external rays.",
+    vizComponent: "MandelbrotViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 10, beauty: 10, visual: 10, importance: 8, activity: 8, accessibility: 7 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Complex dynamics", "Fractals", "Local connectivity"],
+    authors: [
+      { name: "Benoit Mandelbrot", institution: "IBM" },
+      { name: "Adrien Douady", institution: "Universite Paris-Sud" },
+      { name: "John Hubbard", institution: "Cornell University" },
+    ],
+    papers: [
+      {
+        title: "Exploring the Mandelbrot set",
+        url: "https://doi.org/10.1007/BF03023727",
+        year: 1985,
+      },
+    ],
+    timeline: [
+      { year: 1980, title: "Mandelbrot popularizes the set's computer images", type: "origin" },
+      { year: 1982, title: "Local connectivity emerges as a central conjecture", type: "progress" },
+      { year: 1990, title: "Yoccoz proves major cases for non-renormalizable parameters", type: "progress" },
+    ],
+  },
+  {
+    slug: "square-peg-problem",
+    title: "Square Peg Problem",
+    status: "open",
+    field: "geometry",
+    year: 1911,
+    shortDescription:
+      "Every simple closed curve in the plane is conjectured to contain the four vertices of a square.",
+    longDescription:
+      "The square peg problem is visually immediate and surprisingly resistant. Many classes of curves are known to contain an inscribed square, but the full problem for every Jordan curve remains open.",
+    vizComponent: "SquarePegViz",
+    collections: ["beautiful", "frontier"],
+    coordinates: { difficulty: 8, beauty: 10, visual: 10, importance: 6, activity: 7, accessibility: 9 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Plane curves", "Topology", "Inscribed polygons"],
+    authors: [
+      { name: "Otto Toeplitz", institution: "University of Bonn" },
+    ],
+    papers: [
+      {
+        title: "On the square peg problem and some relatives",
+        arxivId: "1401.0281",
+        url: "https://arxiv.org/abs/1401.0281",
+        year: 2014,
+      },
+    ],
+    timeline: [
+      { year: 1911, title: "Toeplitz poses the inscribed square problem", type: "origin" },
+      { year: 1929, title: "Early smooth and convex cases are proved", type: "progress" },
+      { year: 2026, title: "The full Jordan-curve case remains open", type: "recognition" },
+    ],
+  },
+  {
+    slug: "hadwiger-nelson-problem",
+    title: "Hadwiger-Nelson Problem",
+    status: "partial",
+    field: "combinatorics",
+    year: 1950,
+    shortDescription:
+      "Determine how many colors are needed to color the plane so points distance 1 apart differ.",
+    longDescription:
+      "The chromatic number of the plane is known to be at least 5 and at most 7. The problem is easy to draw as a unit-distance graph but remains open after decades.",
+    vizComponent: "HadwigerNelsonViz",
+    collections: ["canonical", "beautiful", "frontier"],
+    coordinates: { difficulty: 8, beauty: 9, visual: 9, importance: 7, activity: 8, accessibility: 9 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Graph coloring", "Unit-distance graphs", "Discrete geometry"],
+    authors: [
+      { name: "Hugo Hadwiger", institution: "University of Bern" },
+      { name: "Edward Nelson", institution: "Princeton University" },
+      { name: "Aubrey de Grey", institution: "Mathematics" },
+    ],
+    papers: [
+      {
+        title: "The chromatic number of the plane is at least 5",
+        arxivId: "1804.02385",
+        url: "https://arxiv.org/abs/1804.02385",
+        year: 2018,
+      },
+    ],
+    timeline: [
+      { year: 1950, title: "Nelson and Hadwiger formulate the plane-coloring problem", type: "origin" },
+      { year: 2018, title: "de Grey proves the lower bound is at least 5", type: "breakthrough" },
+      { year: 2026, title: "The exact answer remains 5, 6, or 7", type: "recognition" },
+    ],
+  },
+  {
+    slug: "plateau-problem",
+    title: "Plateau's Problem",
+    status: "resolved",
+    field: "analysis",
+    year: 1931,
+    shortDescription:
+      "Find a surface of least area spanning a given boundary curve.",
+    longDescription:
+      "Plateau's problem formalizes the soap-film question: given a boundary wire, does there exist an area-minimizing surface spanning it? Douglas and Rado independently solved the classical existence problem.",
+    vizComponent: "PlateauViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 8, beauty: 10, visual: 10, importance: 8, activity: 7, accessibility: 8 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Minimal surfaces", "Calculus of variations", "Geometric measure theory"],
+    authors: [
+      { name: "Joseph Plateau", institution: "Ghent University" },
+      { name: "Jesse Douglas", institution: "MIT" },
+      { name: "Tibor Rado", institution: "Ohio State University" },
+    ],
+    papers: [
+      {
+        title: "Solution of the problem of Plateau",
+        url: "https://doi.org/10.1090/S0002-9904-1931-05203-0",
+        year: 1931,
+      },
+    ],
+    timeline: [
+      { year: 1849, title: "Plateau studies soap-film minimal surfaces", type: "origin" },
+      { year: 1931, title: "Douglas and Rado solve the classical existence problem", type: "breakthrough" },
+      { year: 1960, title: "Geometric measure theory extends the framework", type: "progress" },
+    ],
+  },
+  {
+    slug: "kissing-number-problem",
+    title: "Kissing Number Problem",
+    status: "partial",
+    field: "geometry",
+    year: 1694,
+    shortDescription:
+      "Ask how many equal spheres can touch one equal sphere without overlap.",
+    longDescription:
+      "The kissing number problem is solved in several dimensions, including the famous 3D answer of 12, but remains open in many dimensions. It is a compact visual gateway into high-dimensional geometry.",
+    vizComponent: "KissingNumberViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 8, beauty: 9, visual: 10, importance: 7, activity: 7, accessibility: 9 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Sphere packing", "Lattices", "Coding theory"],
+    authors: [
+      { name: "Isaac Newton", institution: "Royal Society" },
+      { name: "David Gregory", institution: "University of Oxford" },
+    ],
+    papers: [
+      {
+        title: "The kissing number in four dimensions",
+        arxivId: "math/0309430",
+        url: "https://arxiv.org/abs/math/0309430",
+        year: 2003,
+      },
+    ],
+    timeline: [
+      { year: 1694, title: "Newton and Gregory debate whether the 3D answer is 12 or 13", type: "origin" },
+      { year: 1953, title: "Schutte and van der Waerden prove the 3D kissing number is 12", type: "breakthrough" },
+      { year: 2003, title: "Musin proves the 4D kissing number is 24", type: "breakthrough" },
+    ],
+  },
+  {
+    slug: "steiner-tree-problem",
+    title: "Steiner Tree Problem",
+    status: "partial",
+    field: "computer-science",
+    year: 1836,
+    shortDescription:
+      "Connect given points with the shortest possible network, allowing extra junction points.",
+    longDescription:
+      "The geometric Steiner tree problem asks for the shortest network connecting prescribed terminals, with optional Steiner points that meet at 120-degree angles. Its computational versions are NP-hard, but the visual principle is crisp.",
+    vizComponent: "SteinerTreeViz",
+    collections: ["beautiful", "canonical"],
+    coordinates: { difficulty: 7, beauty: 9, visual: 9, importance: 7, activity: 7, accessibility: 9 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Optimization", "Networks", "Computational geometry"],
+    authors: [
+      { name: "Jakob Steiner", institution: "University of Berlin" },
+    ],
+    papers: [
+      {
+        title: "The Euclidean Steiner tree problem is NP-hard",
+        url: "https://doi.org/10.1016/0020-0190(77)90010-9",
+        year: 1977,
+      },
+    ],
+    timeline: [
+      { year: 1836, title: "Steiner studies shortest geometric networks", type: "origin" },
+      { year: 1934, title: "Courant and Robbins popularize the problem", type: "progress" },
+      { year: 1977, title: "Computational hardness results clarify the algorithmic barrier", type: "breakthrough" },
     ],
   },
   {
@@ -712,6 +1179,7 @@ export function getProblem(slug: string): Problem | undefined {
 
 export const statusLabel: Record<ProblemStatus, string> = {
   open: "Open", proved: "Proved", disproved: "Disproved", resolved: "Resolved", partial: "Partial",
+  watch: "Watch", award: "Award",
 };
 export const statusColor: Record<ProblemStatus, string> = {
   open: "border-white/[0.14] text-[var(--gray-400)] bg-white/[0.04]",
@@ -719,6 +1187,8 @@ export const statusColor: Record<ProblemStatus, string> = {
   disproved: "border-[#ef444433] text-[#f87171] bg-[#ef444410]",
   resolved: "border-[#22c55e33] text-[#86efac] bg-[#22c55e10]",
   partial: "border-[#eab30833] text-[#facc15] bg-[#eab30810]",
+  watch: "border-[#f9731633] text-[#fdba74] bg-[#f9731610]",
+  award: "border-white/[0.18] text-[var(--gray-100)] bg-white/[0.07]",
 };
 export const fieldLabel: Record<MathField, string> = {
   analysis: "Analysis", algebra: "Algebra", geometry: "Geometry",

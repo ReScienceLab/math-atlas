@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import { WebGLGuard } from "./webgl-guard";
 
 function Wireframe() {
   const objects = useMemo(() => {
@@ -61,10 +62,12 @@ function Wireframe() {
 export function NoperthedronViz({ className = "" }: { className?: string }) {
   return (
     <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
-      <Canvas camera={{ position: [2.5, 2, 2.5], fov: 45 }}>
-        <Wireframe />
-        <OrbitControls autoRotate autoRotateSpeed={2} enableZoom={false} enableDamping dampingFactor={0.04} />
-      </Canvas>
+      <WebGLGuard label="3D preview">
+        <Canvas camera={{ position: [2.5, 2, 2.5], fov: 45 }}>
+          <Wireframe />
+          <OrbitControls autoRotate autoRotateSpeed={2} enableZoom={false} enableDamping dampingFactor={0.04} />
+        </Canvas>
+      </WebGLGuard>
       <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
         <span className="absolute left-4 top-4">90-vertex convex polyhedron</span>
         <span className="absolute bottom-4 left-4 text-[#f87171]">no Rupert passage</span>

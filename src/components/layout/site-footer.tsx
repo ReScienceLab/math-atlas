@@ -33,13 +33,14 @@ export function SiteFooter({ problems }: { problems: Problem[] }) {
     statusCount(problems, "proved") +
     statusCount(problems, "resolved") +
     statusCount(problems, "disproved");
+  const watchAwardCount = `${statusCount(problems, "watch")} / ${statusCount(problems, "award")}`;
 
   return (
     <footer id="footer" className="border-t border-[var(--line)] bg-black">
       <div className="grid grid-cols-2 gap-px bg-[var(--line)] md:grid-cols-3 lg:grid-cols-6">
         <StatCell label="Catalogued" value={problems.length} />
         <StatCell label="Open" value={statusCount(problems, "open")} />
-        <StatCell label="Partial" value={statusCount(problems, "partial")} />
+        <StatCell label="Watch / Award" value={watchAwardCount} />
         <StatCell label="Settled" value={settledCount} />
         <StatCell label="Fields" value={fieldCount} />
         <StatCell label="Reviewed" value={latestReview(problems)} />

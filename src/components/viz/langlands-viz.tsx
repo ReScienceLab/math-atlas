@@ -3,6 +3,7 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { WebGLGuard } from "./webgl-guard";
 
 const nodes = [
   [-1.15, 0.35, 0], [1.15, 0.35, 0], [0, -0.72, 0],
@@ -68,9 +69,11 @@ function Nodes() {
 export function LanglandsViz({ className = "" }: { className?: string }) {
   return (
     <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
-      <Canvas orthographic camera={{ zoom: 100, position: [0, 0, 5] }}>
-        <Nodes />
-      </Canvas>
+      <WebGLGuard>
+        <Canvas orthographic camera={{ zoom: 100, position: [0, 0, 5] }}>
+          <Nodes />
+        </Canvas>
+      </WebGLGuard>
       <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
         <span className="absolute left-[17%] top-[28%]">Bun_G(X)</span>
         <span className="absolute right-[16%] top-[28%]">LocSys_G</span>

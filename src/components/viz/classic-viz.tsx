@@ -34,6 +34,8 @@ function drawGrid(ctx: CanvasRenderingContext2D, width: number, height: number, 
 }
 
 function drawLabel(ctx: CanvasRenderingContext2D, text: string, x: number, y: number) {
+  const canvasMin = Math.min(ctx.canvas.clientWidth || ctx.canvas.width, ctx.canvas.clientHeight || ctx.canvas.height);
+  if (canvasMin < 720) return;
   ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
   ctx.fillStyle = "rgba(245,245,245,0.48)";
   ctx.fillText(text, x, y);
@@ -47,6 +49,8 @@ function drawMono(
   size = 11,
   color = "rgba(245,245,245,0.68)",
 ) {
+  const canvasMin = Math.min(ctx.canvas.clientWidth || ctx.canvas.width, ctx.canvas.clientHeight || ctx.canvas.height);
+  if (canvasMin < 520 || size <= 11) return;
   ctx.font = `${size}px ui-monospace, SFMono-Regular, Menlo, monospace`;
   ctx.fillStyle = color;
   ctx.fillText(text, x, y);
@@ -673,6 +677,523 @@ function drawPoincare(ctx: CanvasRenderingContext2D, width: number, height: numb
   drawLabel(ctx, "Ricci flow smoothing -> S^3", 16, height - 18);
 }
 
+function drawKakeya2D(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.036);
+
+  const cx = width * 0.5;
+  const cy = height * 0.52;
+  const scale = Math.min(width, height);
+  const compression = 0.24 + (pointer.active ? pointer.x : 0.42) * 0.18;
+  const activeAngle = pointer.active ? pointer.y * Math.PI : (time * 0.22) % Math.PI;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.fillStyle = "rgba(96,165,250,0.055)";
+  ctx.strokeStyle = "rgba(96,165,250,0.18)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = 0; i <= 96; i++) {
+    const angle = (i / 96) * Math.PI;
+    const x = Math.cos(angle) * scale * 0.34;
+    const y = Math.sin(angle) * scale * compression - scale * 0.11;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.lineTo(scale * 0.31, scale * 0.27);
+  ctx.quadraticCurveTo(0, scale * 0.34, -scale * 0.31, scale * 0.27);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  for (let i = 0; i < 74; i++) {
+    const angle = (i / 73) * Math.PI;
+    const bend = Math.sin(angle * 3 + time * 0.8) * scale * 0.018;
+    const px = Math.cos(angle) * scale * 0.12 + bend;
+    const py = Math.sin(angle) * scale * compression * 0.36 - scale * 0.02;
+    const len = scale * 0.42;
+    const dx = Math.cos(angle) * len * 0.5;
+    const dy = Math.sin(angle) * len * 0.5;
+    const hot = Math.abs(Math.atan2(Math.sin(angle - activeAngle), Math.cos(angle - activeAngle))) < 0.035;
+
+    ctx.beginPath();
+    ctx.moveTo(px - dx, py - dy);
+    ctx.lineTo(px + dx, py + dy);
+    ctx.strokeStyle = hot ? "rgba(245,245,245,0.95)" : `rgba(245,245,245,${0.1 + seeded(i) * 0.24})`;
+    ctx.lineWidth = hot ? 1.9 : 1;
+    ctx.stroke();
+  }
+
+  const needleX = Math.cos(activeAngle) * scale * 0.12;
+  const needleY = Math.sin(activeAngle) * scale * compression * 0.36 - scale * 0.02;
+  const needleLen = scale * 0.42;
+  const ndx = Math.cos(activeAngle) * needleLen * 0.5;
+  const ndy = Math.sin(activeAngle) * needleLen * 0.5;
+  ctx.beginPath();
+  ctx.moveTo(needleX - ndx, needleY - ndy);
+  ctx.lineTo(needleX + ndx, needleY + ndy);
+  ctx.strokeStyle = "rgba(96,165,250,0.95)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(needleX, needleY, 3.4, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(245,245,245,0.74)";
+  ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle = "rgba(245,245,245,0.16)";
+  ctx.beginPath();
+  ctx.moveTo(width * 0.13, height * 0.78);
+  ctx.lineTo(width * 0.87, height * 0.78);
+  ctx.stroke();
+
+  drawMono(ctx, "area -> 0", width * 0.14, height * 0.84, 12, "rgba(245,245,245,0.46)");
+  drawMono(ctx, "dim = 2", width * 0.72, height * 0.84, 12, "rgba(96,165,250,0.72)");
+}
+
+function drawFourColor(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.026);
+  const colors = ["rgba(96,165,250,0.34)", "rgba(34,197,94,0.28)", "rgba(249,115,22,0.3)", "rgba(245,245,245,0.25)"];
+  const cells = [
+    [[0.05, 0.12], [0.28, 0.08], [0.34, 0.28], [0.19, 0.42], [0.06, 0.33]],
+    [[0.28, 0.08], [0.52, 0.1], [0.5, 0.32], [0.34, 0.28]],
+    [[0.52, 0.1], [0.82, 0.08], [0.92, 0.26], [0.73, 0.38], [0.5, 0.32]],
+    [[0.06, 0.33], [0.19, 0.42], [0.23, 0.63], [0.05, 0.75]],
+    [[0.19, 0.42], [0.34, 0.28], [0.5, 0.32], [0.47, 0.56], [0.23, 0.63]],
+    [[0.5, 0.32], [0.73, 0.38], [0.68, 0.62], [0.47, 0.56]],
+    [[0.73, 0.38], [0.92, 0.26], [0.9, 0.62], [0.68, 0.62]],
+    [[0.05, 0.75], [0.23, 0.63], [0.38, 0.84], [0.18, 0.92]],
+    [[0.23, 0.63], [0.47, 0.56], [0.57, 0.82], [0.38, 0.84]],
+    [[0.47, 0.56], [0.68, 0.62], [0.78, 0.9], [0.57, 0.82]],
+    [[0.68, 0.62], [0.9, 0.62], [0.93, 0.9], [0.78, 0.9]],
+  ];
+  const hot = pointer.active ? Math.floor(pointer.x * cells.length) % cells.length : Math.floor((time * 1.1) % cells.length);
+  cells.forEach((cell, i) => {
+    ctx.beginPath();
+    cell.forEach(([x, y], j) => {
+      const px = x * width;
+      const py = y * height;
+      if (j === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.closePath();
+    ctx.fillStyle = colors[i % 4];
+    ctx.fill();
+    ctx.strokeStyle = i === hot ? "rgba(245,245,245,0.72)" : "rgba(245,245,245,0.18)";
+    ctx.lineWidth = i === hot ? 1.8 : 1;
+    ctx.stroke();
+  });
+}
+
+function drawSpherePacking(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.024);
+  const radius = Math.min(width, height) * 0.075;
+  const dx = radius * 1.76;
+  const dy = radius * 1.52;
+  const ox = width * 0.5;
+  const oy = height * 0.52;
+  for (let row = -4; row <= 4; row++) {
+    for (let col = -5; col <= 5; col++) {
+      const x = ox + col * dx + (row % 2) * dx * 0.5;
+      const y = oy + row * dy;
+      if (x < -radius || x > width + radius || y < -radius || y > height + radius) continue;
+      const dist = Math.hypot((x - ox) / dx, (y - oy) / dy);
+      ctx.beginPath();
+      ctx.arc(x, y, radius * (0.92 + Math.sin(time * 1.3 + dist) * 0.02), 0, Math.PI * 2);
+      ctx.fillStyle = dist < 1.2 ? "rgba(96,165,250,0.24)" : "rgba(245,245,245,0.12)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(245,245,245,0.2)";
+      ctx.stroke();
+    }
+  }
+  const px = pointer.active ? pointer.x * width : ox + Math.cos(time) * dx;
+  const py = pointer.active ? pointer.y * height : oy + Math.sin(time) * dy;
+  ctx.beginPath();
+  ctx.arc(px, py, radius * 0.92, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(96,165,250,0.8)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function drawTSP(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.024);
+  const nodes = Array.from({ length: 16 }, (_, i) => ({
+    x: width * (0.12 + seeded(i * 7 + 1) * 0.76),
+    y: height * (0.14 + seeded(i * 7 + 2) * 0.72),
+  }));
+  const cx = pointer.active ? pointer.x * width : width * (0.5 + Math.sin(time * 0.35) * 0.08);
+  const cy = pointer.active ? pointer.y * height : height * 0.52;
+  const route = [...nodes].sort((a, b) => Math.atan2(a.y - cy, a.x - cx) - Math.atan2(b.y - cy, b.x - cx));
+  ctx.strokeStyle = "rgba(96,165,250,0.5)";
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  route.forEach((node, i) => {
+    if (i === 0) ctx.moveTo(node.x, node.y);
+    else ctx.lineTo(node.x, node.y);
+  });
+  ctx.closePath();
+  ctx.stroke();
+  nodes.forEach((node, i) => {
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, i === 0 ? 4.2 : 3.2, 0, Math.PI * 2);
+    ctx.fillStyle = i === 0 ? "rgba(96,165,250,0.95)" : "rgba(245,245,245,0.66)";
+    ctx.fill();
+  });
+}
+
+function drawAperiodicTiling(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  const scale = Math.min(width, height) * 0.11;
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  for (let ring = 0; ring < 5; ring++) {
+    const count = 5 + ring * 5;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + ring * 0.37 + time * 0.03;
+      const r = scale * (0.35 + ring * 0.82);
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      const tilt = angle + (ring % 2 ? Math.PI / 5 : 0);
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(tilt);
+      ctx.beginPath();
+      ctx.moveTo(0, -scale * 0.42);
+      ctx.lineTo(scale * 0.26, 0);
+      ctx.lineTo(0, scale * 0.7);
+      ctx.lineTo(-scale * 0.42, 0);
+      ctx.closePath();
+      const hot = pointer.active && Math.hypot(pointer.x * width - x, pointer.y * height - y) < scale;
+      ctx.fillStyle = hot ? "rgba(96,165,250,0.34)" : ring % 2 ? "rgba(245,245,245,0.11)" : "rgba(96,165,250,0.13)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(245,245,245,0.17)";
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+}
+
+function drawMandelbrot(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  const cell = Math.max(3, Math.floor(Math.min(width, height) / 110));
+  const zoom = pointer.active ? 2.2 - pointer.y * 1.3 : 1.25 + Math.sin(time * 0.15) * 0.12;
+  const ox = pointer.active ? -0.75 + (pointer.x - 0.5) * 0.8 : -0.72;
+  const oy = pointer.active ? (pointer.y - 0.5) * 0.45 : 0;
+  for (let y = 0; y < height; y += cell) {
+    for (let x = 0; x < width; x += cell) {
+      const cr = ox + (x / width - 0.5) * 3.2 * zoom;
+      const ci = oy + (y / height - 0.5) * 2.6 * zoom;
+      let zr = 0;
+      let zi = 0;
+      let n = 0;
+      while (zr * zr + zi * zi <= 4 && n < 36) {
+        const next = zr * zr - zi * zi + cr;
+        zi = 2 * zr * zi + ci;
+        zr = next;
+        n++;
+      }
+      const a = n === 36 ? 0.78 : n / 52;
+      ctx.fillStyle = n === 36 ? "rgba(5,5,5,1)" : `rgba(96,165,250,${a})`;
+      ctx.fillRect(x, y, cell + 0.5, cell + 0.5);
+    }
+  }
+}
+
+function drawSquarePeg(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.026);
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  const base = Math.min(width, height) * 0.28;
+  ctx.beginPath();
+  for (let i = 0; i <= 240; i++) {
+    const a = (i / 240) * Math.PI * 2;
+    const r = base * (1 + 0.15 * Math.sin(3 * a + time * 0.7) + 0.08 * Math.cos(5 * a));
+    const x = cx + Math.cos(a) * r;
+    const y = cy + Math.sin(a) * r * 0.78;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = "rgba(245,245,245,0.34)";
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+  const angle = pointer.active ? pointer.x * Math.PI * 2 : time * 0.24;
+  const side = base * 0.86;
+  const square = Array.from({ length: 4 }, (_, i) => {
+    const a = angle + Math.PI / 4 + i * Math.PI / 2;
+    return { x: cx + Math.cos(a) * side, y: cy + Math.sin(a) * side * 0.78 };
+  });
+  ctx.strokeStyle = "rgba(96,165,250,0.75)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  square.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.closePath();
+  ctx.stroke();
+  square.forEach((p) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3.4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(245,245,245,0.75)";
+    ctx.fill();
+  });
+}
+
+function drawHadwigerNelson(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.026);
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  const r = Math.min(width, height) * 0.24;
+  const nodes = [
+    [0, 0], [1, 0], [0.5, 0.86], [-0.5, 0.86], [-1, 0], [-0.5, -0.86], [0.5, -0.86],
+    [1.5, 0.86], [1.5, -0.86], [-1.5, 0.86], [-1.5, -0.86],
+  ].map(([x, y]) => ({ x: cx + x * r * 0.72, y: cy + y * r * 0.72 }));
+  const edges = [[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [1, 2], [1, 6], [2, 3], [4, 3], [4, 5], [5, 6], [2, 7], [1, 7], [6, 8], [1, 8], [3, 9], [4, 9], [5, 10], [4, 10]];
+  ctx.strokeStyle = "rgba(245,245,245,0.18)";
+  edges.forEach(([a, b]) => {
+    ctx.beginPath();
+    ctx.moveTo(nodes[a].x, nodes[a].y);
+    ctx.lineTo(nodes[b].x, nodes[b].y);
+    ctx.stroke();
+  });
+  const palette = ["#60a5fa", "#86efac", "#fdba74", "#d4d4d4", "#f87171"];
+  nodes.forEach((node, i) => {
+    const hot = pointer.active && Math.hypot(pointer.x * width - node.x, pointer.y * height - node.y) < 26;
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, hot ? 7 : 5, 0, Math.PI * 2);
+    ctx.fillStyle = palette[(i + Math.floor(time * 0.5)) % palette.length];
+    ctx.globalAlpha = hot ? 0.95 : 0.72;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+}
+
+function drawPlateau(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.026);
+  const cx = width * 0.5;
+  const top = height * 0.22;
+  const bottom = height * 0.78;
+  const rx = Math.min(width, height) * 0.24;
+  const pull = pointer.active ? (pointer.x - 0.5) * 28 : Math.sin(time * 0.7) * 12;
+  ctx.strokeStyle = "rgba(245,245,245,0.24)";
+  ctx.lineWidth = 1.3;
+  [top, bottom].forEach((y) => {
+    ctx.beginPath();
+    ctx.ellipse(cx, y, rx, rx * 0.24, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+  for (let i = 0; i < 22; i++) {
+    const t = i / 21;
+    const x1 = cx - rx + Math.sin(t * Math.PI) * pull;
+    const x2 = cx + rx + Math.sin(t * Math.PI) * pull;
+    const y = top + t * (bottom - top);
+    ctx.strokeStyle = `rgba(96,165,250,${0.08 + Math.sin(t * Math.PI) * 0.24})`;
+    ctx.beginPath();
+    ctx.moveTo(x1, y);
+    ctx.bezierCurveTo(cx - rx * 0.35 + pull, y, cx + rx * 0.35 + pull, y, x2, y);
+    ctx.stroke();
+  }
+}
+
+function drawKissingNumber(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.024);
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  const radius = Math.min(width, height) * 0.12;
+  const orbit = radius * 2.04;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(96,165,250,0.22)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(96,165,250,0.62)";
+  ctx.stroke();
+  for (let i = 0; i < 12; i++) {
+    const a = i * Math.PI * 2 / 12 + time * 0.08;
+    const z = Math.sin(i * 1.7 + time * 0.6);
+    const x = cx + Math.cos(a) * orbit * (0.92 + z * 0.08);
+    const y = cy + Math.sin(a) * orbit * 0.62;
+    const hot = pointer.active && Math.hypot(pointer.x * width - x, pointer.y * height - y) < radius;
+    ctx.beginPath();
+    ctx.arc(x, y, radius * (0.72 + z * 0.08), 0, Math.PI * 2);
+    ctx.fillStyle = hot ? "rgba(245,245,245,0.34)" : "rgba(245,245,245,0.13)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(245,245,245,0.22)";
+    ctx.stroke();
+  }
+}
+
+function drawSteinerTree(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.026);
+  const pts = [
+    { x: width * 0.18, y: height * 0.24 },
+    { x: width * 0.78, y: height * 0.2 },
+    { x: width * 0.84, y: height * 0.72 },
+    { x: width * 0.28, y: height * 0.82 },
+    { x: width * 0.46, y: height * 0.46 },
+  ];
+  const s1 = { x: pointer.active ? pointer.x * width : width * (0.45 + Math.sin(time * 0.7) * 0.03), y: height * 0.42 };
+  const s2 = { x: width * 0.56, y: pointer.active ? pointer.y * height : height * (0.62 + Math.cos(time * 0.8) * 0.03) };
+  ctx.strokeStyle = "rgba(245,245,245,0.12)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.stroke();
+  ctx.strokeStyle = "rgba(96,165,250,0.62)";
+  ctx.lineWidth = 2;
+  [[pts[0], s1], [pts[1], s1], [s1, s2], [s2, pts[2]], [s2, pts[3]], [s1, pts[4]]].forEach(([a, b]) => {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  });
+  [...pts, s1, s2].forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, i >= pts.length ? 3.4 : 4.2, 0, Math.PI * 2);
+    ctx.fillStyle = i >= pts.length ? "rgba(96,165,250,0.95)" : "rgba(245,245,245,0.7)";
+    ctx.fill();
+  });
+}
+
+function drawBox(
+  ctx: CanvasRenderingContext2D,
+  label: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  accent = "rgba(96,165,250,0.42)",
+  active = false,
+) {
+  ctx.fillStyle = active ? "rgba(96,165,250,0.11)" : "rgba(255,255,255,0.035)";
+  ctx.strokeStyle = active ? "rgba(96,165,250,0.76)" : "rgba(245,245,245,0.14)";
+  ctx.lineWidth = active ? 1.5 : 1;
+  ctx.fillRect(x, y, width, height);
+  ctx.strokeRect(x, y, width, height);
+  ctx.fillStyle = accent;
+  ctx.fillRect(x, y, 3, height);
+  drawMono(ctx, label, x + 10, y + height * 0.56, 10, active ? "rgba(245,245,245,0.86)" : "rgba(245,245,245,0.58)");
+}
+
+function drawAbcVerification(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 22, 0.038);
+
+  const left = width * 0.1;
+  const top = height * 0.12;
+  drawMono(ctx, "abc conjecture", left, top, 13, "rgba(245,245,245,0.78)");
+  drawMono(ctx, "a + b = c  |  c ? rad(abc)^(1+eps)", left, top + 24, 10, "rgba(245,245,245,0.5)");
+
+  const baseY = height * 0.72;
+  const bars = [
+    { label: "a", value: 18, x: width * 0.12, color: "rgba(245,245,245,0.32)" },
+    { label: "b", value: 72, x: width * 0.21, color: "rgba(245,245,245,0.42)" },
+    { label: "c", value: 90, x: width * 0.3, color: "rgba(96,165,250,0.72)" },
+    { label: "rad", value: 34, x: width * 0.41, color: "rgba(249,115,22,0.58)" },
+  ];
+  ctx.strokeStyle = "rgba(245,245,245,0.12)";
+  ctx.beginPath();
+  ctx.moveTo(width * 0.1, baseY);
+  ctx.lineTo(width * 0.52, baseY);
+  ctx.stroke();
+  bars.forEach((bar) => {
+    const h = (bar.value / 100) * height * 0.34;
+    ctx.fillStyle = bar.color;
+    ctx.fillRect(bar.x, baseY - h, width * 0.045, h);
+    drawMono(ctx, bar.label, bar.x, baseY + 17, 9, "rgba(245,245,245,0.5)");
+  });
+
+  const proofX = width * 0.58;
+  const proofY = height * 0.15;
+  const nodeW = width * 0.3;
+  const nodeH = 34;
+  const cursorX = pointer.active ? pointer.x * width : proofX + nodeW * 0.7;
+  const cursorY = pointer.active ? pointer.y * height : proofY + nodeH * 3.3;
+  const nodes = [
+    { label: "2012 claimed IUT proof", y: proofY, color: "rgba(245,245,245,0.38)" },
+    { label: "disputed lemma / translation gap", y: proofY + 62, color: "rgba(249,115,22,0.58)" },
+    { label: "Lean formalization projects", y: proofY + 124, color: "rgba(96,165,250,0.56)" },
+    { label: "kernel-checkable statement", y: proofY + 186, color: "rgba(34,197,94,0.52)" },
+  ];
+  nodes.forEach((node, i) => {
+    const active = Math.abs(cursorY - (node.y + nodeH / 2)) < 38 && cursorX > proofX - 20;
+    drawBox(ctx, node.label, proofX, node.y, nodeW, nodeH, node.color, active);
+    if (i < nodes.length - 1) {
+      ctx.strokeStyle = i === 1 ? "rgba(249,115,22,0.36)" : "rgba(245,245,245,0.18)";
+      ctx.setLineDash(i === 1 ? [4, 6] : []);
+      ctx.beginPath();
+      ctx.moveTo(proofX + nodeW * 0.5, node.y + nodeH);
+      ctx.lineTo(proofX + nodeW * 0.5, nodes[i + 1].y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  });
+
+  const scan = proofX + ((time * 34) % Math.max(1, nodeW));
+  ctx.strokeStyle = "rgba(96,165,250,0.28)";
+  ctx.beginPath();
+  ctx.moveTo(scan, proofY - 12);
+  ctx.lineTo(scan, proofY + 230);
+  ctx.stroke();
+  drawLabel(ctx, "verification, not consensus yet", 16, height - 18);
+}
+
+function drawFaltingsAbel(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.035);
+
+  const cx = width * 0.46;
+  const cy = height * 0.5;
+  ctx.strokeStyle = "rgba(245,245,245,0.24)";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i = 0; i <= 240; i++) {
+    const t = (i / 240) * Math.PI * 2;
+    const r = Math.min(width, height) * (0.2 + 0.055 * Math.sin(t * 3));
+    const x = cx + Math.cos(t) * r * 1.25;
+    const y = cy + Math.sin(t * 2) * r * 0.54;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  for (let i = 0; i < 12; i++) {
+    const t = i * 0.73 + 0.2;
+    const r = Math.min(width, height) * (0.2 + 0.055 * Math.sin(t * 3));
+    const x = cx + Math.cos(t) * r * 1.25;
+    const y = cy + Math.sin(t * 2) * r * 0.54;
+    const active = pointer.active && Math.hypot(pointer.x * width - x, pointer.y * height - y) < 28;
+    ctx.beginPath();
+    ctx.arc(x, y, active ? 5 : 3.2, 0, Math.PI * 2);
+    ctx.fillStyle = active || i % 3 === 0 ? "rgba(96,165,250,0.82)" : "rgba(245,245,245,0.58)";
+    ctx.fill();
+  }
+
+  const medalX = width * 0.77;
+  const medalY = height * 0.28;
+  ctx.beginPath();
+  ctx.arc(medalX, medalY, Math.min(width, height) * 0.12, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(245,245,245,0.46)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(medalX, medalY, Math.min(width, height) * (0.07 + Math.sin(time * 1.3) * 0.004), 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(96,165,250,0.38)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  drawMono(ctx, "ABEL", medalX - 16, medalY + 4, 12, "rgba(245,245,245,0.72)");
+
+  drawBox(ctx, "Mordell: finite C(Q)", width * 0.08, height * 0.12, width * 0.33, 34, "rgba(96,165,250,0.46)");
+  drawBox(ctx, "Mordell-Lang: subvariety intersection", width * 0.52, height * 0.72, width * 0.4, 34, "rgba(245,245,245,0.36)");
+  drawMono(ctx, "genus > 1 arithmetic curve", width * 0.18, height * 0.82, 10, "rgba(245,245,245,0.42)");
+  drawLabel(ctx, "Faltings: rational points made finite and structural", 16, height - 18);
+}
+
 export function RiemannViz({ className = "" }: { className?: string }) {
   return <CanvasViz draw={drawRiemann} className={className} />;
 }
@@ -719,4 +1240,56 @@ export function ContinuumViz({ className = "" }: { className?: string }) {
 
 export function PoincareViz({ className = "" }: { className?: string }) {
   return <CanvasViz draw={drawPoincare} className={className} />;
+}
+
+export function Kakeya2DViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawKakeya2D} className={className} />;
+}
+
+export function FourColorViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawFourColor} className={className} />;
+}
+
+export function SpherePackingViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawSpherePacking} className={className} />;
+}
+
+export function TSPViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawTSP} className={className} />;
+}
+
+export function AperiodicTilingViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawAperiodicTiling} className={className} />;
+}
+
+export function MandelbrotViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawMandelbrot} className={className} />;
+}
+
+export function SquarePegViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawSquarePeg} className={className} />;
+}
+
+export function HadwigerNelsonViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawHadwigerNelson} className={className} />;
+}
+
+export function PlateauViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawPlateau} className={className} />;
+}
+
+export function KissingNumberViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawKissingNumber} className={className} />;
+}
+
+export function SteinerTreeViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawSteinerTree} className={className} />;
+}
+
+export function AbcVerificationViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawAbcVerification} className={className} />;
+}
+
+export function FaltingsAbelViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawFaltingsAbel} className={className} />;
 }

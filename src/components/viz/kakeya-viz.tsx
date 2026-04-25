@@ -4,6 +4,7 @@ import { useRef, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import { WebGLGuard } from "./webgl-guard";
 
 function seeded(index: number) {
   const value = Math.sin(index * 12.9898) * 43758.5453;
@@ -54,10 +55,12 @@ function KakeyaLines() {
 export function KakeyaViz({ className = "" }: { className?: string }) {
   return (
     <div className={`w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
-      <Canvas camera={{ position: [2, 1.5, 2], fov: 50 }}>
-        <KakeyaLines />
-        <OrbitControls autoRotate autoRotateSpeed={1.2} enableZoom={false} enableDamping dampingFactor={0.04} />
-      </Canvas>
+      <WebGLGuard label="3D preview">
+        <Canvas camera={{ position: [2, 1.5, 2], fov: 50 }}>
+          <KakeyaLines />
+          <OrbitControls autoRotate autoRotateSpeed={1.2} enableZoom={false} enableDamping dampingFactor={0.04} />
+        </Canvas>
+      </WebGLGuard>
     </div>
   );
 }
