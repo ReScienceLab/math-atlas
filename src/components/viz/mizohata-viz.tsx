@@ -1,0 +1,70 @@
+"use client";
+
+import { useRef, useMemo } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+
+function WaveGrid() {
+  const pointsRef = useRef<THREE.Points>(null);
+  const res = 70;
+  const N = res * res;
+
+  const geom = useMemo(() => {
+    const positions = new Float32Array(N * 3);
+    const colors = new Float32Array(N * 3);
+    for (let i = 0; i < res; i++)
+      for (let j = 0; j < res; j++) {
+        const idx = (i * res + j) * 3;
+        positions[idx] = (i / res - 0.5) * 6;
+        positions[idx + 1] = (j / res - 0.5) * 6;
+      }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    g.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    return g;
+  }, []);
+
+  const xLines = useMemo(() => {
+    const objs: THREE.Line[] = [];
+    const mat = new THREE.LineBasicMaterial({ color: 0xee0000, transparent: true, opacity: 0.6 });
+    const g1 = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.2, -1.2, 0.1), new THREE.Vector3(1.2, 1.2, 0.1)]);
+    const g2 = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.2, 1.2, 0.1), new THREE.Vector3(1.2, -1.2, 0.1)]);
+    objs.push(new THREE.Line(g1, mat.clone()), new THREE.Line(g2, mat.clone()));
+    return objs;
+  }, []);
+
+  useFrame(() => {
+    if (!pointsRef.current) return;
+    const time = performance.now() * 0.001;
+    const col = geom.attributes.color.array as Float32Array;
+    for (let i = 0; i < res; i++)
+      for (let j = 0; j < res; j++) {
+        const idx = (i * res + j) * 3;
+        const x = (i / res - 0.5) * 6, y = (j / res - 0.5) * 6;
+        const r = Math.sqrt(x * x + y * y);
+        const wave = Math.sin(r * 3 - time * 2) * Math.exp(-r * 0.3);
+        const v = wave * 0.5 + 0.5;
+        col[idx] = 0.15 + v * 0.25; col[idx + 1] = 0.15 + v * 0.25; col[idx + 2] = 0.2 + v * 0.4;
+      }
+    geom.attributes.color.needsUpdate = true;
+  });
+
+  return (
+    <group>
+      <points ref={pointsRef} geometry={geom}>
+        <pointsMaterial size={0.04} vertexColors transparent opacity={0.85} />
+      </points>
+      {xLines.map((l, i) => <primitive key={i} object={l} />)}
+    </group>
+  );
+}
+
+export function MizohataViz({ className = "" }: { className?: string }) {
+  return (
+    <div className={`w-full aspect-square overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
+      <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
+        <WaveGrid />
+      </Canvas>
+    </div>
+  );
+}
