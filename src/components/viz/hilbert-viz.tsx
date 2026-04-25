@@ -1,8 +1,14 @@
 "use client";
+/* eslint-disable react-hooks/immutability */
 
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+
+function seeded(index: number) {
+  const value = Math.sin(index * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
 
 function Particles() {
   const pointsRef = useRef<THREE.Points>(null);
@@ -13,16 +19,16 @@ function Particles() {
     const colors = new Float32Array(N * 3);
     const velocities: { vx: number; vy: number }[] = [];
     for (let i = 0; i < N; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 5;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 5;
-      colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = 0.5 + Math.random() * 0.5;
-      velocities.push({ vx: (Math.random() - 0.5) * 0.04, vy: (Math.random() - 0.5) * 0.04 });
+      positions[i * 3] = (seeded(i * 5 + 1) - 0.5) * 5;
+      positions[i * 3 + 1] = (seeded(i * 5 + 2) - 0.5) * 5;
+      colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = 0.5 + seeded(i * 5 + 3) * 0.5;
+      velocities.push({ vx: (seeded(i * 5 + 4) - 0.5) * 0.04, vy: (seeded(i * 5 + 5) - 0.5) * 0.04 });
     }
     const geom = new THREE.BufferGeometry();
     geom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     geom.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     return { geom, velocities };
-  }, []);
+  }, [N]);
 
   const transition = useRef(0);
 
@@ -55,10 +61,17 @@ function Particles() {
 
 export function HilbertViz({ className = "" }: { className?: string }) {
   return (
-    <div className={`w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
+    <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
         <Particles />
       </Canvas>
+      <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
+        <span className="absolute left-4 top-4">Newtonian particles</span>
+        <span className="absolute left-1/2 top-4 -translate-x-1/2">Boltzmann limit</span>
+        <span className="absolute bottom-4 right-4 text-[var(--blue)]">Euler / Navier-Stokes</span>
+        <span className="absolute left-[24%] top-1/2 h-px w-[52%] bg-white/[0.14]" />
+        <span className="absolute right-[22%] top-[calc(50%-3px)] h-0 w-0 border-y-[4px] border-l-[7px] border-y-transparent border-l-white/25" />
+      </div>
     </div>
   );
 }

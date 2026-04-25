@@ -17,15 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${geist.variable} ${geistMono.variable}`}>
       <body className="antialiased">
-        {/* Subtle grid background */}
         <div
           className="fixed inset-0 -z-10 pointer-events-none"
           style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
-            backgroundSize: "64px 64px",
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)`,
+            backgroundSize: "56px 56px",
           }}
         />
         {children}

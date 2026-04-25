@@ -1,9 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #000000;
-  --fg: #ffffff;
-  --gray-100: #f7f7f7;
+  --bg: #050505;
+  --fg: #f5f5f5;
+  --panel: #101010;
+  --panel-deep: #080808;
+  --panel-soft: #161616;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-cool: rgba(255, 255, 255, 0.06);
+  --gold: #a3a3a3;
+  --gold-strong: #ffffff;
+  --mist: rgba(212, 212, 212, 0.68);
+  --gray-100: #f5f5f5;
   --gray-200: #e5e5e5;
   --gray-300: #d4d4d4;
   --gray-400: #a3a3a3;
@@ -13,7 +21,8 @@
   --gray-800: #262626;
   --gray-900: #171717;
   --gray-950: #0a0a0a;
-  --blue: #0070f3;
+  --blue: #3b82f6;
+  --font-display: Georgia, "Times New Roman", serif;
 }
 
 html {
@@ -29,6 +38,118 @@ body {
 }
 
 ::selection {
-  background: rgba(0, 112, 243, 0.3);
-  color: white;
+  background: rgba(59, 130, 246, 0.35);
+  color: var(--fg);
+}
+
+.atlas-display {
+  color: var(--gold-strong);
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+.atlas-kicker {
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.atlas-panel {
+  background:
+    linear-gradient(135deg, rgba(13, 54, 116, 0.9), rgba(4, 25, 59, 0.96)),
+    var(--panel-deep);
+  border: 1px solid var(--line);
+}
+
+.atlas-grid-panel {
+  background-image:
+    linear-gradient(var(--line-cool) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-cool) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.atlas-button-primary {
+  align-items: center;
+  background: linear-gradient(180deg, var(--gold-strong), var(--gold));
+  border: 1px solid rgba(255, 246, 207, 0.46);
+  color: #061d45;
+  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  height: 42px;
+  justify-content: center;
+  padding: 0 18px;
+  text-transform: uppercase;
+}
+
+.atlas-button-secondary {
+  align-items: center;
+  background: rgba(6, 29, 69, 0.54);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  height: 42px;
+  justify-content: center;
+  padding: 0 18px;
+  text-transform: uppercase;
+}
+
+.atlas-portal {
+  min-height: 520px;
+  overflow: hidden;
+  position: relative;
+}
+
+.atlas-portal::before {
+  background:
+    radial-gradient(circle at 50% 98%, rgba(255, 218, 94, 0.8), transparent 22%),
+    linear-gradient(180deg, rgba(221, 228, 239, 0.36), rgba(11, 32, 70, 0.24) 46%, rgba(6, 29, 69, 0.88));
+  bottom: 0;
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.atlas-portal-window {
+  background:
+    radial-gradient(circle at 50% 100%, rgba(255, 218, 94, 0.3), transparent 24%),
+    linear-gradient(180deg, #063a86 0%, #031b44 78%);
+  border-radius: 999px 999px 0 0;
+  height: 78%;
+  left: 50%;
+  position: absolute;
+  top: 4%;
+  transform: translateX(-50%);
+  width: 46%;
+}
+
+.atlas-portal-window::after {
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 218, 94, 0.52), transparent),
+    radial-gradient(circle, rgba(255, 246, 207, 0.9) 0 1px, transparent 2px);
+  background-size: 100% 100%, 22px 22px;
+  bottom: 18%;
+  content: "";
+  height: 30%;
+  left: 18%;
+  opacity: 0.5;
+  position: absolute;
+  right: 18%;
+}
+
+.atlas-rail-viz {
+  background:
+    radial-gradient(circle at 50% 78%, rgba(255, 218, 94, 0.86), transparent 32%),
+    linear-gradient(180deg, rgba(4, 24, 58, 0) 0%, rgba(4, 24, 58, 0.92) 70%),
+    linear-gradient(var(--line-cool) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-cool) 1px, transparent 1px);
+  background-size: auto, auto, 18px 18px, 18px 18px;
 }

@@ -16,33 +16,29 @@ export function Timeline({ events }: { events: TimelineEvent[] }) {
         const isLast = i === events.length - 1;
 
         return (
-          <div key={i} className="relative flex gap-4 pb-6 last:pb-0">
-            {/* Vertical line + dot */}
-            <div className="flex flex-col items-center flex-shrink-0 w-5">
+          <div key={i} className="relative grid grid-cols-[18px_76px_minmax(0,1fr)] gap-3 pb-6 last:pb-0">
+            <div className="flex flex-col items-center pt-1.5">
               <div
-                className={`w-2 h-2 rounded-full flex-shrink-0 ${style.dot} ${
+                className={`h-2 w-2 flex-shrink-0 rounded-full ${style.dot} ${
                   isBreakthrough ? "ring-2 ring-[var(--blue)]/30 ring-offset-1 ring-offset-black" : ""
                 }`}
-                style={{ marginTop: 6 }}
               />
               {!isLast && (
                 <div className={`w-px flex-1 mt-1 ${style.line}`} />
               )}
             </div>
 
-            {/* Content */}
+            <span
+              className={`pt-0.5 font-[var(--font-mono)] text-[12px] ${
+                isBreakthrough ? "text-[var(--blue)]" : "text-[var(--gray-500)]"
+              }`}
+            >
+              {event.year}{event.month ? ` ${event.month}` : ""}
+            </span>
+
             <div className="min-w-0 pb-1">
-              <div className="flex items-baseline gap-2">
-                <span
-                  className={`font-[var(--font-mono)] text-[12px] flex-shrink-0 ${
-                    isBreakthrough ? "text-[var(--blue)]" : "text-[var(--gray-500)]"
-                  }`}
-                >
-                  {event.year}{event.month ? ` ${event.month}` : ""}
-                </span>
-              </div>
               <p
-                className={`text-[14px] leading-snug mt-0.5 ${
+                className={`text-[14px] leading-snug ${
                   isBreakthrough
                     ? "text-[var(--fg)] font-medium"
                     : "text-[var(--gray-400)]"

@@ -23,7 +23,7 @@ function Bars() {
     ]);
     objs.push(new THREE.Line(g, new THREE.LineBasicMaterial({ color: 0x262626 })));
     return objs;
-  }, []);
+  }, [totalW]);
 
   const barRefs = useRef<(THREE.Mesh | null)[]>([]);
 
@@ -54,10 +54,16 @@ function Bars() {
 
 export function AlphaEvolveViz({ className = "" }: { className?: string }) {
   return (
-    <div className={`w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
+    <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <Canvas orthographic camera={{ zoom: 80, position: [0, 0, 5] }}>
         <Bars />
       </Canvas>
+      <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
+        <span className="absolute left-[20%] bottom-[18%]">64 naive</span>
+        <span className="absolute left-[43%] bottom-[18%]">49 Strassen</span>
+        <span className="absolute right-[18%] bottom-[18%] text-[var(--blue)]">48 AlphaEvolve</span>
+        <span className="absolute left-4 top-4">4x4 matrix multiplication</span>
+      </div>
     </div>
   );
 }

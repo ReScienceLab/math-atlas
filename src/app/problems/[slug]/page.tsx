@@ -1,10 +1,15 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { problems, getProblem, fieldLabel, statusLabel, statusColor } from "@/lib/problems";
+import { problems, getProblem, fieldLabel } from "@/lib/problems";
 import { Badge } from "@/components/ui/badge";
 import { AuthorCard } from "@/components/ui/author-card";
+import { EscBackLink } from "@/components/ui/esc-back-link";
+import { ProblemKeyNav } from "@/components/ui/problem-key-nav";
 import { Timeline } from "@/components/ui/timeline";
 import { VizLoader } from "@/components/viz/viz-loader";
+
+const pageShell = "mx-auto w-full max-w-[1440px] px-5 sm:px-6 lg:px-8";
+const detailColumns =
+  "grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(360px,0.92fr)] lg:gap-10";
 
 export function generateStaticParams() {
   return problems.map((p) => ({ slug: p.slug }));
@@ -18,59 +23,65 @@ export default async function ProblemPage({
   const { slug } = await params;
   const problem = getProblem(slug);
   if (!problem) notFound();
+  const problemIndex = problems.findIndex((p) => p.slug === slug);
+  const previousProblem = problems[(problemIndex - 1 + problems.length) % problems.length];
+  const nextProblem = problems[(problemIndex + 1) % problems.length];
 
   return (
-    <main className="min-h-screen">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 backdrop-blur-md bg-black/80 border-b border-white/[0.08] px-6 py-3">
-        <div className="max-w-[1200px] mx-auto flex items-center gap-3">
-          <Link href="/" className="font-[var(--font-mono)] text-[13px] text-[var(--gray-500)] hover:text-white transition-colors">
-                        &larr; Math Atlas
-          </Link>
+    <main className="min-h-screen bg-[var(--bg)]">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.08] bg-black/85 backdrop-blur-md">
+        <div className={`${pageShell} flex h-12 min-w-0 items-center gap-3`}>
+          <EscBackLink />
+          <span className="font-[var(--font-mono)] text-[13px] text-[var(--gray-500)]">Math Atlas</span>
           <span className="text-[var(--gray-800)]">/</span>
-          <span className="font-[var(--font-mono)] text-[13px] text-[var(--gray-400)]">{problem.slug}</span>
+          <span className="min-w-0 truncate font-[var(--font-mono)] text-[13px] text-[var(--gray-400)]">{problem.slug}</span>
+          <ProblemKeyNav
+            previousSlug={previousProblem.slug}
+            previousTitle={previousProblem.title}
+            nextSlug={nextProblem.slug}
+            nextTitle={nextProblem.title}
+          />
         </div>
       </nav>
 
-      {/* Hero header */}
-      <section className="max-w-[1200px] mx-auto px-6 pt-20 pb-8 border-b border-white/[0.08]">
-        <div className="flex items-center gap-3 mb-4">
-          <Badge status={problem.status} />
-          <span className="font-[var(--font-mono)] text-[12px] text-[var(--gray-500)]">
-            {fieldLabel[problem.field]}
-          </span>
-          <span className="text-[var(--gray-800)]">&middot;</span>
-          <span className="font-[var(--font-mono)] text-[12px] text-[var(--gray-500)]">{problem.year}</span>
-        </div>
-        <h1 className="text-[clamp(36px,5vw,56px)] font-bold tracking-[-0.04em] leading-[1.1] mb-4">
-          {problem.title}
-        </h1>
-        <p className="text-[18px] leading-[1.7] text-[var(--gray-400)] max-w-[700px]">
-          {problem.longDescription || problem.shortDescription}
-        </p>
-      </section>
+      <section className={`${pageShell} py-5 lg:py-6`}>
+        <header className={`${detailColumns} border-b border-white/[0.08] pb-5 lg:items-end`}>
+          <div className="min-w-0 space-y-4">
+            <div className="flex h-7 flex-wrap items-center gap-3">
+              <Badge status={problem.status} />
+              <span className="font-[var(--font-mono)] text-[12px] text-[var(--gray-500)]">
+                {fieldLabel[problem.field]}
+              </span>
+              <span className="text-[var(--gray-800)]">&middot;</span>
+              <span className="font-[var(--font-mono)] text-[12px] text-[var(--gray-500)]">{problem.year}</span>
+            </div>
+            <h1 className="max-w-[940px] text-[38px] font-bold leading-[0.96] text-[var(--fg)] sm:text-[46px] lg:text-[54px] xl:text-[60px]">
+              {problem.title}
+            </h1>
+          </div>
+          <p className="max-w-[560px] text-[14px] leading-6 text-[var(--gray-400)] lg:pb-0.5">
+            {problem.longDescription || problem.shortDescription}
+          </p>
+        </header>
 
-      {/* Main content: 2-column */}
-      <section className="max-w-[1200px] mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-16">
+        <div className={`${detailColumns} items-start pt-5 lg:pt-6`}>
+          <div className="min-w-0 space-y-6">
+            <div className="h-[clamp(320px,48vh,560px)] w-full overflow-hidden border border-white/[0.08] bg-[var(--gray-950)]">
+              <VizLoader name={problem.vizComponent} className="!border-0" />
+            </div>
 
-          {/* Left: Viz (3 cols) */}
-          <div className="lg:col-span-3 space-y-8">
-            <VizLoader name={problem.vizComponent} />
-
-            {/* Papers */}
-            <div>
-              <h3 className="font-[var(--font-mono)] text-[11px] text-[var(--gray-500)] uppercase tracking-[0.08em] mb-4">
+            <section>
+              <h3 className="mb-3 flex h-5 items-center font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">
                 Papers
               </h3>
-              <div className="space-y-3">
+              <div className="divide-y divide-white/[0.06] border-y border-white/[0.08]">
                 {problem.papers.map((paper, i) => (
                   <a
                     key={i}
                     href={paper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block p-4 rounded-md border border-white/[0.08] bg-[var(--gray-950)] hover:border-white/[0.15] hover:bg-[var(--gray-900)] transition-colors group"
+                    className="block bg-[var(--gray-950)] p-4 transition-colors hover:bg-[var(--gray-900)] group"
                   >
                     <p className="text-[14px] text-[var(--gray-300)] group-hover:text-white transition-colors leading-snug">
                       {paper.title}
@@ -84,46 +95,34 @@ export default async function ProblemPage({
                   </a>
                 ))}
               </div>
-            </div>
+            </section>
           </div>
 
-          {/* Right: Authors + Timeline (2 cols) */}
-          <div className="lg:col-span-2 space-y-10">
-            {/* Authors */}
-            <div>
-              <h3 className="font-[var(--font-mono)] text-[11px] text-[var(--gray-500)] uppercase tracking-[0.08em] mb-3">
+          <aside className="space-y-7">
+            <section>
+              <h3 className="mb-3 flex h-5 items-center font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">
                 Researchers
               </h3>
-              <div className="divide-y divide-white/[0.06]">
+              <div className="divide-y divide-white/[0.06] border-y border-white/[0.08]">
                 {problem.authors.map((author, i) => (
                   <AuthorCard key={i} author={author} />
                 ))}
               </div>
-            </div>
+            </section>
 
-            {/* Timeline */}
-            <div>
-              <h3 className="font-[var(--font-mono)] text-[11px] text-[var(--gray-500)] uppercase tracking-[0.08em] mb-4">
+            <section>
+              <h3 className="mb-3 flex h-5 items-center font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">
                 Timeline
               </h3>
-              <Timeline events={problem.timeline} />
-            </div>
-
-            {/* Interact hint */}
-            <div className="p-4 rounded-md border border-white/[0.06] bg-[var(--gray-950)]">
-              <h4 className="font-[var(--font-mono)] text-[11px] text-[var(--gray-500)] uppercase tracking-[0.08em] mb-2">
-                Interact
-              </h4>
-              <p className="text-[13px] text-[var(--gray-500)] leading-relaxed">
-                Drag to rotate the 3D visualization. The animation runs in real-time at 60fps using WebGL.
-              </p>
-            </div>
-          </div>
+              <div className="border-y border-white/[0.08] py-5">
+                <Timeline events={problem.timeline} />
+              </div>
+            </section>
+          </aside>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.08] px-6 py-12 text-center">
+      <footer className="border-t border-white/[0.08] px-6 py-8 text-center">
         <p className="font-[var(--font-mono)] text-[13px] text-[var(--gray-600)]">Math Atlas by ReScience Lab</p>
       </footer>
     </main>

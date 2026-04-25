@@ -39,6 +39,19 @@ function Wireframe() {
           const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...nv[i]), new THREE.Vector3(...nv[j])]);
           objs.push(new THREE.Line(g, new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 })));
         }
+
+    const hole = new THREE.Mesh(
+      new THREE.RingGeometry(0.48, 0.52, 4),
+      new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.38, side: THREE.DoubleSide })
+    );
+    hole.rotation.set(Math.PI / 2, 0, Math.PI / 4);
+    hole.position.set(0, 0, 0.92);
+    objs.push(hole);
+
+    const xMat = new THREE.LineBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.62 });
+    const x1 = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-0.42, -0.42, 1.02), new THREE.Vector3(0.42, 0.42, 1.02)]);
+    const x2 = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-0.42, 0.42, 1.02), new THREE.Vector3(0.42, -0.42, 1.02)]);
+    objs.push(new THREE.Line(x1, xMat), new THREE.Line(x2, xMat.clone()));
     return objs;
   }, []);
 
@@ -47,11 +60,15 @@ function Wireframe() {
 
 export function NoperthedronViz({ className = "" }: { className?: string }) {
   return (
-    <div className={`w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
+    <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <Canvas camera={{ position: [2.5, 2, 2.5], fov: 45 }}>
         <Wireframe />
         <OrbitControls autoRotate autoRotateSpeed={2} enableZoom={false} enableDamping dampingFactor={0.04} />
       </Canvas>
+      <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
+        <span className="absolute left-4 top-4">90-vertex convex polyhedron</span>
+        <span className="absolute bottom-4 left-4 text-[#f87171]">no Rupert passage</span>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,14 @@
 "use client";
 
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+
+function seeded(index: number) {
+  const value = Math.sin(index * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
 
 function KakeyaLines() {
   const groupRef = useRef<THREE.Group>(null);
@@ -18,13 +23,13 @@ function KakeyaLines() {
       const dx = Math.sin(theta) * Math.cos(phi);
       const dy = Math.sin(theta) * Math.sin(phi);
       const dz = Math.cos(theta);
-      const off = 0.08 * (Math.random() - 0.5);
+      const off = 0.08 * (seeded(i * 2 + 1) - 0.5);
       result.push({
         positions: new Float32Array([
           -dx * 0.5 + dx * off, -dy * 0.5 + dy * off, -dz * 0.5 + dz * off,
           dx * 0.5 + dx * off, dy * 0.5 + dy * off, dz * 0.5 + dz * off,
         ]),
-        brightness: 0.3 + Math.random() * 0.7,
+        brightness: 0.3 + seeded(i * 2 + 2) * 0.7,
       });
     }
     return result;
