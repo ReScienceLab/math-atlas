@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { AuthorCard } from "@/components/ui/author-card";
 import { EscBackLink } from "@/components/ui/esc-back-link";
 import { ProblemKeyNav } from "@/components/ui/problem-key-nav";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { Timeline } from "@/components/ui/timeline";
 import { VizLoader } from "@/components/viz/viz-loader";
 
@@ -122,9 +123,7 @@ export default async function ProblemPage({
         </div>
       </section>
 
-      <footer className="border-t border-white/[0.08] px-6 py-8 text-center">
-        <p className="font-[var(--font-mono)] text-[13px] text-[var(--gray-600)]">Math Atlas by ReScience Lab</p>
-      </footer>
+      <SiteFooter problems={problems} />
     </main>
   );
 }
