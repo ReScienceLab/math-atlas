@@ -391,46 +391,53 @@ function drawHodge(ctx: CanvasRenderingContext2D, width: number, height: number,
     return [cx + x1, cy + y1, z2];
   };
   const nU = 36, nV = 18;
+  const meshAlpha = isCardPreviewCanvas(ctx) ? 0.1 : 0.085;
   for (let i = 0; i < nU; i++) {
     const u = (i / nU) * Math.PI * 2;
     ctx.beginPath();
     for (let j = 0; j <= nV * 2; j++) {
       const v = (j / (nV * 2)) * Math.PI * 2;
-      const [px, py, pz] = project(u, v);
-      const alpha = 0.03 + Math.max(0, pz / (R + r)) * 0.1;
-      ctx.strokeStyle = `rgba(245,245,245,${alpha})`;
+      const [px, py] = project(u, v);
       if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
-    ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.strokeStyle = `rgba(245,245,245,${meshAlpha})`;
+    ctx.lineWidth = 0.65; ctx.stroke();
   }
   for (let j = 0; j < nV; j++) {
     const v = (j / nV) * Math.PI * 2;
     ctx.beginPath();
     for (let i = 0; i <= nU * 2; i++) {
       const u = (i / (nU * 2)) * Math.PI * 2;
-      const [px, py, pz] = project(u, v);
-      const alpha = 0.03 + Math.max(0, pz / (R + r)) * 0.1;
-      ctx.strokeStyle = `rgba(245,245,245,${alpha})`;
+      const [px, py] = project(u, v);
       if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
-    ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.strokeStyle = `rgba(245,245,245,${meshAlpha})`;
+    ctx.lineWidth = 0.65; ctx.stroke();
   }
+  ctx.save();
+  ctx.shadowColor = "rgba(96,165,250,0.28)";
+  ctx.shadowBlur = 10;
   ctx.beginPath();
   for (let i = 0; i <= 80; i++) {
     const u = (i / 80) * Math.PI * 2;
-    const [px, py, pz] = project(u, 0);
-    ctx.strokeStyle = `rgba(96,165,250,${0.15 + Math.max(0, pz / (R + r)) * 0.6})`;
+    const [px, py] = project(u, 0);
     if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
   }
-  ctx.lineWidth = 2; ctx.stroke();
+  ctx.strokeStyle = "rgba(96,165,250,0.52)";
+  ctx.lineWidth = 2.4; ctx.stroke();
+  ctx.restore();
+  ctx.save();
+  ctx.shadowColor = "rgba(34,197,94,0.24)";
+  ctx.shadowBlur = 10;
   ctx.beginPath();
   for (let i = 0; i <= 80; i++) {
     const v = (i / 80) * Math.PI * 2;
-    const [px, py, pz] = project(0, v);
-    ctx.strokeStyle = `rgba(34,197,94,${0.15 + Math.max(0, pz / (R + r)) * 0.6})`;
+    const [px, py] = project(0, v);
     if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
   }
-  ctx.lineWidth = 2; ctx.stroke();
+  ctx.strokeStyle = "rgba(34,197,94,0.46)";
+  ctx.lineWidth = 2.4; ctx.stroke();
+  ctx.restore();
   drawLabel(ctx, "H^{p,q}(X) \u2014 two independent 1-cycles on torus", 12, height - 14);
 }
 
@@ -886,44 +893,58 @@ function drawPoincare(ctx: CanvasRenderingContext2D, width: number, height: numb
     const z2 = py * sinX + z1 * cosX;
     return [cx + x1, cy + y1, z2];
   };
+  const meshAlpha = isCardPreviewCanvas(ctx) ? 0.14 : 0.125;
   for (let i = 1; i < 12; i++) {
     const theta = (i / 12) * Math.PI;
     ctx.beginPath();
     for (let j = 0; j <= 48; j++) {
       const phi = (j / 48) * Math.PI * 2;
-      const [px, py, pz] = project(theta, phi);
-      const alpha = 0.03 + Math.max(0, pz / R) * 0.12;
-      ctx.strokeStyle = `rgba(245,245,245,${alpha})`;
+      const [px, py] = project(theta, phi);
       if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
-    ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.strokeStyle = `rgba(245,245,245,${meshAlpha})`;
+    ctx.lineWidth = 0.75; ctx.stroke();
   }
   for (let j = 0; j < 18; j++) {
     const phi = (j / 18) * Math.PI * 2;
     ctx.beginPath();
     for (let i = 0; i <= 36; i++) {
       const theta = (i / 36) * Math.PI;
-      const [px, py, pz] = project(theta, phi);
-      const alpha = 0.03 + Math.max(0, pz / R) * 0.12;
-      ctx.strokeStyle = `rgba(245,245,245,${alpha})`;
+      const [px, py] = project(theta, phi);
       if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
-    ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.strokeStyle = `rgba(245,245,245,${meshAlpha})`;
+    ctx.lineWidth = 0.75; ctx.stroke();
   }
+  ctx.save();
+  ctx.shadowColor = "rgba(96,165,250,0.28)";
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  for (let j = 0; j <= 72; j++) {
+    const phi = (j / 72) * Math.PI * 2;
+    const [px, py] = project(Math.PI / 2, phi);
+    if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.strokeStyle = "rgba(96,165,250,0.38)";
+  ctx.lineWidth = 1.8;
+  ctx.stroke();
+  ctx.restore();
   for (let i = 0; i < 40; i++) {
     const theta = seeded(i) * Math.PI * 0.8 + 0.1 * Math.PI;
     const phi = seeded(i + 100) * Math.PI * 2;
     const [px, py, pz] = project(theta, phi);
-    if (pz < -R * 0.2) continue;
-    const alpha = 0.2 + Math.max(0, pz / R) * 0.4;
+    if (pz < -R * 0.28) continue;
+    const alpha = 0.42 + Math.max(0, pz / R) * 0.48;
     const inward = -deform * 3 * Math.sin(3 * theta) * Math.cos(2 * phi);
-    const arrowLen = Math.abs(inward) * 8 + 3;
+    const arrowLen = Math.abs(inward) * 10 + 4;
     const nx = (px - cx) / R, ny = (py - cy) / R;
     const dir = inward > 0 ? -1 : 1;
     const ex = px + dir * nx * arrowLen, ey = py + dir * ny * arrowLen;
     ctx.strokeStyle = `rgba(96,165,250,${alpha})`;
-    ctx.lineWidth = 0.8;
+    ctx.lineWidth = 1.2;
     ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke();
+    ctx.fillStyle = `rgba(96,165,250,${Math.min(0.75, alpha + 0.12)})`;
+    ctx.beginPath(); ctx.arc(ex, ey, 1.4, 0, Math.PI * 2); ctx.fill();
   }
   drawLabel(ctx, "Ricci flow: \u2202g/\u2202t = -2R\u1d62\u2c7c \u2192 S\xb3", 12, height - 14);
 }
@@ -1147,18 +1168,38 @@ function drawSpherePacking(ctx: CanvasRenderingContext2D, width: number, height:
   const r = Math.min(width, height) * 0.045;
   const dx = r * 2;
   const dy = r * Math.sqrt(3);
+  const rows = 8;
+  const cols = 10;
+  const rowStepY = dy * 0.58;
+  const sphereRadius = r * 0.92;
   const layers = pointer.active ? Math.floor(pointer.y * 3) + 1 : Math.min(2, Math.floor(2 + Math.sin(time * 0.15)));
   const layerColors = ["rgba(96,165,250,", "rgba(34,197,94,", "rgba(249,115,22,"];
   const offsetY = pointer.active ? (pointer.x - 0.5) * r * 2 : Math.sin(time * 0.2) * r * 0.5;
+
+  const layoutLayerCount = 2;
+  const layoutLayerOffsets = Array.from({ length: layoutLayerCount + 1 }, (_, layer) => (
+    layer * dy * 0.6 + offsetY * layer
+  ));
+  const minLayerY = Math.min(0, ...layoutLayerOffsets);
+  const maxLayerY = Math.max(0, ...layoutLayerOffsets);
+  const minCenterX = 0;
+  const maxCenterX = (cols - 1) * dx + r + r;
+  const minCenterY = minLayerY;
+  const maxCenterY = (rows - 1) * rowStepY + maxLayerY;
+  const visualWidth = maxCenterX - minCenterX + sphereRadius * 2;
+  const visualHeight = maxCenterY - minCenterY + sphereRadius * 2;
+  const originX = (width - visualWidth) * 0.5 + sphereRadius - minCenterX;
+  const originY = (height - visualHeight) * 0.5 + sphereRadius - minCenterY;
+
   for (let layer = 0; layer <= Math.min(layers, 2); layer++) {
     const lox = (layer === 1 ? r : layer === 2 ? r * 0.5 : 0);
     const loy = layer * dy * 0.6 + offsetY * layer;
     const color = layerColors[layer];
-    for (let row = 0; row < 8; row++) {
+    for (let row = 0; row < rows; row++) {
       const rowOff = (row % 2) * r;
-      for (let col = 0; col < 10; col++) {
-        const x = col * dx + rowOff + lox + r;
-        const y = row * dy * 0.58 + loy + r * 2;
+      for (let col = 0; col < cols; col++) {
+        const x = originX + col * dx + rowOff + lox;
+        const y = originY + row * rowStepY + loy;
         if (x < -r || x > width + r || y < -r || y > height + r) continue;
         const alpha = 0.1 + (1 - layer * 0.25) * 0.3;
         const grad = ctx.createRadialGradient(x - r * 0.25, y - r * 0.25, r * 0.1, x, y, r);
@@ -1166,10 +1207,10 @@ function drawSpherePacking(ctx: CanvasRenderingContext2D, width: number, height:
         grad.addColorStop(0.7, color + alpha + ")");
         grad.addColorStop(1, color + "0.02)");
         ctx.fillStyle = grad;
-        ctx.beginPath(); ctx.arc(x, y, r * 0.92, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x, y, sphereRadius, 0, Math.PI * 2); ctx.fill();
         ctx.strokeStyle = color + (alpha * 0.5) + ")";
         ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.arc(x, y, r * 0.92, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y, sphereRadius, 0, Math.PI * 2); ctx.stroke();
       }
     }
   }
