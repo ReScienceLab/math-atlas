@@ -51,13 +51,6 @@ const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 export function ProblemCard({ problem }: { problem: Problem }) {
   const Viz = vizMap[problem.vizComponent];
-  const metrics = problem.coordinates
-    ? [
-        { label: "D", value: problem.coordinates.difficulty, title: "Difficulty" },
-        { label: "B", value: problem.coordinates.beauty, title: "Beauty" },
-        { label: "V", value: problem.coordinates.visual, title: "Visual" },
-      ]
-    : [];
   const draggableViz = problem.vizComponent === "KakeyaViz" || problem.vizComponent === "NoperthedronViz";
 
   return (
@@ -92,25 +85,6 @@ export function ProblemCard({ problem }: { problem: Problem }) {
           <p className="mb-2 line-clamp-1 text-[10px] leading-snug text-[var(--mist)]">
             {problem.shortDescription}
           </p>
-          {metrics.length > 0 && (
-            <div className="grid grid-cols-3 gap-1 mb-2">
-              {metrics.map((metric) => (
-                <div key={metric.label} className="min-w-0" title={metric.title}>
-                  <div className="flex items-center gap-1">
-                    <span className="w-2.5 shrink-0 font-[var(--font-mono)] text-[8px] text-[var(--gray-400)]">
-                      {metric.label}
-                    </span>
-                    <span className="relative h-1 flex-1 overflow-hidden bg-white/[0.08]">
-                      <span
-                        className="absolute inset-y-0 left-0 bg-[var(--gray-300)]"
-                        style={{ width: `${metric.value * 10}%` }}
-                      />
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
           <div className="flex items-center justify-between">
             <div className="flex min-w-0 items-center">
               <div className="flex -space-x-1">
@@ -132,11 +106,8 @@ export function ProblemCard({ problem }: { problem: Problem }) {
             </div>
             <span className="font-[var(--font-mono)] text-[9px] text-[var(--gray-300)]">{problem.year}</span>
           </div>
-          <div className="mt-1.5 flex items-center justify-between gap-2 font-[var(--font-mono)] text-[8px] uppercase text-[var(--gray-500)]">
+          <div className="mt-1.5 font-[var(--font-mono)] text-[8px] uppercase text-[var(--gray-500)]">
             <span>{problem.lastReviewed ? `Reviewed ${problem.lastReviewed}` : "Interactive"}</span>
-            <span className="text-[var(--gray-300)] group-hover:text-white">
-              Open -&gt;
-            </span>
           </div>
         </div>
       </Link>
