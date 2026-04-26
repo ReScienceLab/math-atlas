@@ -1,7 +1,4 @@
-import { defineProblem } from "@/lib/problem-template";
-
-const scholarSearch = (query: string) =>
-  `https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`;
+import { defineProblem, scholarSearch } from "@/lib/problem-template";
 
 export const faltingsAbelPrize2026 = defineProblem({
     slug: "faltings-abel-prize-2026",
