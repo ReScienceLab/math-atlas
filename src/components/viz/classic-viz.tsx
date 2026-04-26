@@ -1576,28 +1576,181 @@ function drawMovingSofa(ctx: CanvasRenderingContext2D, width: number, height: nu
 function drawMoserWorm(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width * 0.5;
-  const cy = height * 0.5;
+
   const s = Math.min(width, height);
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, s * 0.28, s * 0.18, -0.2, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(96,165,250,0.07)";
-  ctx.fill();
-  ctx.strokeStyle = "rgba(96,165,250,0.45)";
-  ctx.stroke();
-  for (let k = 0; k < 8; k++) {
-    const phase = time * 0.35 + k * 0.9 + (pointer.active ? pointer.x * 2 : 0);
+  const unit = s * 0.19;
+  const coverFill = (i: number, hp: number) => hp === i ? "rgba(250,204,21,0.16)" : "rgba(250,204,21,0.08)";
+  const coverStroke = "rgba(250,204,21,0.5)";
+  const wormStroke = "rgba(153,85,0,0.85)";
+
+  const panels = [
+    { cx: width * 0.26, cy: height * 0.32 },
+    { cx: width * 0.7,  cy: height * 0.28 },
+    { cx: width * 0.26, cy: height * 0.72 },
+    { cx: width * 0.7,  cy: height * 0.7 },
+  ];
+  const mx = pointer.active ? pointer.x * width : -1;
+  const my = pointer.active ? pointer.y * height : -1;
+  let hp = -1;
+  panels.forEach((p, i) => {
+    if (Math.abs(mx - p.cx) < width * 0.22 && Math.abs(my - p.cy) < height * 0.2) hp = i;
+  });
+
+  // Panel 1: Full disc (area = pi/4). SVG: circle r=50, worm: M -40,30 L 40,-30
+  {
+    const { cx, cy } = panels[0];
+    const r = unit;
     ctx.beginPath();
-    for (let i = 0; i <= 80; i++) {
-      const t = i / 80;
-      const x = cx - s * 0.22 + t * s * 0.44;
-      const y = cy + Math.sin(t * Math.PI * 2 + phase) * s * (0.04 + k * 0.004) + (k - 3.5) * s * 0.018;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = k === 2 ? "rgba(245,245,245,0.72)" : "rgba(245,245,245,0.18)";
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = coverFill(0, hp);
+    ctx.fill();
+    ctx.strokeStyle = coverStroke;
+    ctx.lineWidth = 1.2;
     ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.8, cy + r * 0.6);
+    ctx.lineTo(cx + r * 0.8, cy - r * 0.6);
+    ctx.strokeStyle = wormStroke;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    drawMono(ctx, "1", cx - r - 14, cy - r - 8, 12, "rgba(245,245,245,0.6)");
+    drawMono(ctx, "A = pi/4", cx - r * 0.5, cy + r + 14, 8, "rgba(250,204,21,0.55)");
   }
+
+  // Panel 2: Upper half-disc (area = pi/8). SVG: M -50,0 A 50,50 0 0 1 50,0
+  // Worm: M -2,0 V -46.5 a 2,2 0 0 1 4,0 V 0 (tall thin U going up)
+  {
+    const { cx, cy } = panels[1];
+    const r = unit;
+    ctx.beginPath();
+    ctx.moveTo(cx - r, cy);
+    ctx.arc(cx, cy, r, Math.PI, 0, false);
+    ctx.closePath();
+    ctx.fillStyle = coverFill(1, hp);
+    ctx.fill();
+    ctx.strokeStyle = coverStroke;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    const gap = r * 0.04;
+    const wormH = r * 0.93;
+    ctx.beginPath();
+    ctx.moveTo(cx - gap, cy);
+    ctx.lineTo(cx - gap, cy - wormH);
+    ctx.arc(cx, cy - wormH, gap, Math.PI, 0, false);
+    ctx.lineTo(cx + gap, cy);
+    ctx.strokeStyle = wormStroke;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    drawMono(ctx, "2", cx - r - 14, cy - r - 8, 12, "rgba(245,245,245,0.6)");
+    drawMono(ctx, "A = pi/8", cx - r * 0.5, cy + 14, 8, "rgba(250,204,21,0.55)");
+  }
+
+  // Panel 3: Rectangle width constraint. SVG: rect -50,-15.9155 to 50,15.9155
+  // height = 100/pi = 31.831, i.e. width >= 1/pi of worm length
+  // Worm: circle r=15.9155 stroke-dasharray=99,99 => semicircle
+  {
+    const { cx, cy } = panels[2];
+    const rectW = unit * 2;
+    const rectH = unit * 2 / Math.PI;
+    ctx.beginPath();
+    ctx.rect(cx - rectW / 2, cy - rectH / 2, rectW, rectH);
+    ctx.fillStyle = coverFill(2, hp);
+    ctx.fill();
+    ctx.strokeStyle = coverStroke;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    const circR = rectH / 2;
+    ctx.beginPath();
+    ctx.arc(cx + circR * 0.3, cy, circR, Math.PI + 0.1, -0.1, false);
+    ctx.strokeStyle = wormStroke;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    drawMono(ctx, "3", cx - rectW / 2 - 14, cy - rectH / 2 - 8, 12, "rgba(245,245,245,0.6)");
+    drawMono(ctx, "w >= 1/pi", cx - rectW * 0.3, cy + rectH / 2 + 14, 8, "rgba(250,204,21,0.55)");
+  }
+
+  // Panel 4: Wetzel sector (area = pi/12). SVG coordinates (sc = unit/50):
+  // Cover: M 0,28.8675 L 50,0 L 25,-14.434 A 57.735 0 0 0 -25,-14.434 L -50,0
+  // Const (dashed rhombus): 0,-28.8675 50,0 0,28.8675 -50,0 + diagonals
+  // Worm: M -45,0 C -20,-33 20,33 45,0 (S-curve)
+  {
+    const { cx, cy } = panels[3];
+    const sc = unit / 50;
+    const arcR = 57.735 * sc;
+    const arcCY = cy + (-14.43376 - Math.sqrt(57.735 * 57.735 - 625)) * sc;
+    const sa = Math.atan2((cy - 14.43376 * sc) - arcCY, 25 * sc);
+    const ea = Math.atan2((cy - 14.43376 * sc) - arcCY, -25 * sc);
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + 28.8675 * sc);
+    ctx.lineTo(cx + 50 * sc, cy);
+    ctx.lineTo(cx + 25 * sc, cy - 14.43376 * sc);
+    ctx.arc(cx, arcCY, arcR, sa, ea, false);
+    ctx.lineTo(cx - 50 * sc, cy);
+    ctx.closePath();
+    ctx.fillStyle = hp === 3 ? "rgba(250,204,21,0.18)" : "rgba(250,204,21,0.09)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(250,204,21,0.55)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    ctx.setLineDash([2, 3]);
+    ctx.strokeStyle = "rgba(204,153,0,0.4)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 28.8675 * sc);
+    ctx.lineTo(cx + 50 * sc, cy);
+    ctx.lineTo(cx, cy + 28.8675 * sc);
+    ctx.lineTo(cx - 50 * sc, cy);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 28.8675 * sc);
+    ctx.lineTo(cx, cy + 28.8675 * sc);
+    ctx.moveTo(cx + 25 * sc, cy - 14.43376 * sc);
+    ctx.lineTo(cx, cy + 28.8675 * sc);
+    ctx.lineTo(cx - 25 * sc, cy - 14.43376 * sc);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.moveTo(cx - 45 * sc, cy);
+    ctx.bezierCurveTo(cx - 20 * sc, cy - 33 * sc, cx + 20 * sc, cy + 33 * sc, cx + 45 * sc, cy);
+    ctx.strokeStyle = wormStroke;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    drawMono(ctx, "4", cx - 50 * sc - 14, cy - 20 * sc, 12, "rgba(245,245,245,0.6)");
+    drawMono(ctx, "A = pi/12", cx - 30 * sc, cy + 28.8675 * sc + 14, 8, "rgba(250,204,21,0.55)");
+  }
+
+  // Area bounds number line
+  const tlY = height * 0.95;
+  const tlL = width * 0.06;
+  const tlR = width * 0.94;
+  ctx.strokeStyle = "rgba(245,245,245,0.12)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(tlL, tlY);
+  ctx.lineTo(tlR, tlY);
+  ctx.stroke();
+  const aMin = 0.2, aMax = 0.42;
+  [
+    { a: 0.2322, l: "lower 0.232", c: "rgba(34,197,94,0.7)" },
+    { a: 0.2604, l: "best 0.260", c: "rgba(96,165,250,0.8)" },
+    { a: 0.2618, l: "pi/12", c: "rgba(250,204,21,0.8)" },
+    { a: 0.2750, l: "0.275", c: "rgba(249,115,22,0.6)" },
+    { a: 0.3927, l: "pi/8", c: "rgba(245,245,245,0.4)" },
+  ].forEach((b) => {
+    const x = tlL + ((b.a - aMin) / (aMax - aMin)) * (tlR - tlL);
+    ctx.beginPath();
+    ctx.arc(x, tlY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = b.c;
+    ctx.fill();
+    drawMono(ctx, b.l, x - 14, tlY - 10, 7, b.c);
+  });
+
+  drawLabel(ctx, "Moser 1966: smallest convex cover for all unit arcs", 16, height * 0.06);
 }
 
 function drawIllumination(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
