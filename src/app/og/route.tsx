@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { fieldLabel, getProblem, problems, statusLabel } from "@/lib/problems";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const size = { width: 2400, height: 1260 };
