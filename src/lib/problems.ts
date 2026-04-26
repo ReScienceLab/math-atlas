@@ -4,6 +4,7 @@ import type {
   ProblemFormula,
   ProblemStatus,
 } from "@/lib/problem-types";
+import { configuredProblems } from "@/content/problems";
 
 export type {
   Author,
@@ -4766,7 +4767,15 @@ const coreFormulas: Record<string, ProblemFormula[]> = {
   ],
 };
 
-export const problems: Problem[] = rawProblems.map((problem) => ({
+const configuredProblemSlugs = new Set(
+  configuredProblems.map((problem) => problem.slug),
+);
+
+const legacyProblems = rawProblems.filter(
+  (problem) => !configuredProblemSlugs.has(problem.slug),
+);
+
+export const problems: Problem[] = [...configuredProblems, ...legacyProblems].map((problem) => ({
   ...problem,
   formulas: coreFormulas[problem.slug] ?? problem.formulas,
 }));
