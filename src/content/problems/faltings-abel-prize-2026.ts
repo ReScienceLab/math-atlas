@@ -64,7 +64,24 @@ export const faltingsAbelPrize2026 = defineProblem({
         year: 1983,
       },
     ],
-    timeline: [
+    videos: [
+    {
+      title: "The Abel Prize announcement 2026 - Gerd Faltings",
+      videoId: "2dtaywzNsqk",
+      channel: "The Abel Prize",
+    },
+    {
+      title: "Mordell Conjecture with Gerd Faltings",
+      videoId: "FVULa2yjUe0",
+      channel: "Tom Rocks Maths",
+    },
+    {
+      title: "Gerd Faltings interviewed by Timandra Harkness",
+      videoId: "Cv55PCoQg2Y",
+      channel: "The Abel Prize",
+    },
+  ],
+  timeline: [
       {
         year: 1922,
         title: "Mordell formulates the rational-points conjecture",

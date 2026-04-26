@@ -50,7 +50,19 @@ export const kakeya2d = defineProblem({
         year: 2023,
       },
     ],
-    timeline: [
+    videos: [
+    {
+      title: "Kakeya's Needle Problem - Numberphile",
+      videoId: "j-dce6QmVAQ",
+      channel: "Numberphile",
+    },
+    {
+      title: "The Kakeya needle problem (the squeegee approach)",
+      videoId: "IM-n9c-ARHU",
+      channel: "Mathologer",
+    },
+  ],
+  timeline: [
       {
         year: 1917,
         title: "Kakeya asks for the smallest area needed to rotate a needle",

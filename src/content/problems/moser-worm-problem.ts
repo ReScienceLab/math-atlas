@@ -60,6 +60,13 @@ export const moserWormProblem = defineProblem({
         year: 2016,
       },
     ],
+  videos: [
+    {
+      title: "Every Unsolved Geometry Problem that Sounds Easy",
+      videoId: "2fFxzQE5bvg",
+      channel: "EasyTheory",
+    },
+  ],
   timeline: [
       {
         year: 1966,

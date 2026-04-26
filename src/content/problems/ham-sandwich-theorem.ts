@@ -63,6 +63,23 @@ export const hamSandwichTheorem = defineProblem({
         year: 2003,
       },
     ],
+  videos: [
+    {
+      title: "Ham Sandwich Problem - Numberphile",
+      videoId: "YCXmUi56rao",
+      channel: "Numberphile",
+    },
+    {
+      title: "Topology is weird: The Ham Sandwich Theorem",
+      videoId: "Mh0rtVfLfs0",
+      channel: "Dr. Trefor Bazett",
+    },
+    {
+      title: "The Ham Sandwich Theorem Will Change How You See the Universe",
+      videoId: "uhNqEs7vDGg",
+      channel: "Up and Atom",
+    },
+  ],
   timeline: [
       {
         year: 1938,

@@ -66,6 +66,23 @@ export const alphaevolveStrassen = defineProblem({
         year: 2022,
       },
     ],
+  videos: [
+    {
+      title: "Wild breakthrough on Math after 56 years...",
+      videoId: "vC9nAosXrJw",
+      channel: "Fireship",
+    },
+    {
+      title: "How AI Discovered a Faster Matrix Multiplication Algorithm",
+      videoId: "fDAPJ7rvcUw",
+      channel: "Quanta Magazine",
+    },
+    {
+      title: "Google's AlphaEvolve - Paper Walkthrough",
+      videoId: "d1_9p498jbg",
+      channel: "Yannic Kilcher",
+    },
+  ],
   timeline: [
       {
         year: 1969,

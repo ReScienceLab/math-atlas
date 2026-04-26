@@ -65,6 +65,18 @@ export const squarePegProblem = defineProblem({
         year: 2020,
       },
     ],
+  videos: [
+    {
+      title: "This open problem taught me what topology is",
+      videoId: "IQqtsm-bBRU",
+      channel: "3Blue1Brown",
+    },
+    {
+      title: "Who cares about topology? (Inscribed rectangle problem)",
+      videoId: "AmgkSdhK4K8",
+      channel: "3Blue1Brown",
+    },
+  ],
   timeline: [
       {
         year: 1911,

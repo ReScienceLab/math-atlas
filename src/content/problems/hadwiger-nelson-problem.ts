@@ -61,6 +61,18 @@ export const hadwigerNelsonProblem = defineProblem({
         year: 2019,
       },
     ],
+  videos: [
+    {
+      title: "A Colorful Unsolved Problem - Numberphile",
+      videoId: "niaeV_NHh-o",
+      channel: "Numberphile",
+    },
+    {
+      title: "A Colorful Problem (extra footage) - Numberphile",
+      videoId: "7nBtRKvUox4",
+      channel: "Numberphile",
+    },
+  ],
   timeline: [
       {
         year: 1950,

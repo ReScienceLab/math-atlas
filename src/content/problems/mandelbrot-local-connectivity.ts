@@ -51,6 +51,23 @@ export const mandelbrotLocalConnectivity = defineProblem({
         year: 1999,
       },
     ],
+  videos: [
+    {
+      title: "Beyond the Mandelbrot set, an intro to holomorphic dynamics",
+      videoId: "LqbZpur38nw",
+      channel: "3Blue1Brown",
+    },
+    {
+      title: "What's so special about the Mandelbrot Set? - Numberphile",
+      videoId: "FFftmWSzgmk",
+      channel: "Numberphile",
+    },
+    {
+      title: "The Mandelbrot Set - Numberphile",
+      videoId: "NGMRB4O922I",
+      channel: "Numberphile",
+    },
+  ],
   timeline: [
       {
         year: 1980,

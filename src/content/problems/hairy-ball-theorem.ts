@@ -68,6 +68,13 @@ export const hairyBallTheorem = defineProblem({
         year: 2004,
       },
     ],
+  videos: [
+    {
+      title: "The Hairy Ball Theorem",
+      videoId: "BHdbsHFs2P0",
+      channel: "3Blue1Brown",
+    },
+  ],
   timeline: [
       {
         year: 1885,

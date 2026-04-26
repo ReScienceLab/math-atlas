@@ -61,6 +61,23 @@ export const twinPrimeConjecture = defineProblem({
         year: 2014,
       },
     ],
+  videos: [
+    {
+      title: "Twin Prime Conjecture - Numberphile",
+      videoId: "QKHKD8bRAro",
+      channel: "Numberphile",
+    },
+    {
+      title: "Gaps between Primes - Numberphile",
+      videoId: "vkMXdShDdtY",
+      channel: "Numberphile",
+    },
+    {
+      title: "Twin Proofs for Twin Primes - Numberphile",
+      videoId: "n4gmYjyI3vo",
+      channel: "Numberphile",
+    },
+  ],
   timeline: [
       {
         year: 1849,

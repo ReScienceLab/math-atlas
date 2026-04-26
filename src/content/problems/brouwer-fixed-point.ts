@@ -68,6 +68,18 @@ export const brouwerFixedPoint = defineProblem({
         year: 1941,
       },
     ],
+  videos: [
+    {
+      title: "Proving Brouwer's Fixed Point Theorem | Infinite Series",
+      videoId: "djaSbHKK5yc",
+      channel: "PBS Infinite Series",
+    },
+    {
+      title: "Brouwer's fixed point theorem",
+      videoId: "PwIDFSC1KzI",
+      channel: "Mathemaniac",
+    },
+  ],
   timeline: [
       {
         year: 1904,

@@ -35,6 +35,12 @@ export interface Paper {
   year: number;
 }
 
+export interface Video {
+  title: string;
+  videoId: string;
+  channel: string;
+}
+
 export interface TimelineEvent {
   year: number;
   month?: string;
@@ -80,6 +86,7 @@ export interface Problem {
   papers: Paper[];
   timeline: TimelineEvent[];
   formulas?: ProblemFormula[];
+  videos?: Video[];
   collections?: ProblemCollection[];
   coordinates?: ProblemCoordinates;
   consensusStatus?: ConsensusStatus;

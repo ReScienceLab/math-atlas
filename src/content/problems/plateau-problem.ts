@@ -61,6 +61,23 @@ export const plateauProblem = defineProblem({
         year: 1960,
       },
     ],
+  videos: [
+    {
+      title: "How physics solves a math problem",
+      videoId: "Cvs8iRqG6lg",
+      channel: "Morphocular",
+    },
+    {
+      title: "The Math of Bubbles // Minimal Surfaces & the Calculus of Variations",
+      videoId: "8SABptOYUVk",
+      channel: "Sour Patch Maths",
+    },
+    {
+      title: "Plateau's Laws of Soap Bubbles - Explained",
+      videoId: "NscxxwDqq5s",
+      channel: "Steve Mould",
+    },
+  ],
   timeline: [
       {
         year: 1760,

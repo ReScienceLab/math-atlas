@@ -63,6 +63,23 @@ export const geometricLanglands = defineProblem({
         year: 2007,
       },
     ],
+  videos: [
+    {
+      title: "The Langlands Program - Numberphile",
+      videoId: "4dyytPboqvE",
+      channel: "Numberphile",
+    },
+    {
+      title: "Geometric Langlands: The Largest Breakthrough in Math in Decades",
+      videoId: "0AC-Ol1z5vI",
+      channel: "Theories of Everything with Curt Jaimungal",
+    },
+    {
+      title: "One Step Closer to a Grand Unified Theory of Math",
+      videoId: "xuLCPv6smwo",
+      channel: "Quanta Magazine",
+    },
+  ],
   timeline: [
       {
         year: 1967,
