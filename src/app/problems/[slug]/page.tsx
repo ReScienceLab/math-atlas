@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import katex from "katex";
-import { problems, getProblem, fieldLabel, type ProblemFormula } from "@/lib/problems";
+import { problems, getProblem, fieldLabel, type ProblemFormula, type Video } from "@/lib/problems";
 import { Badge } from "@/components/ui/badge";
 import { AuthorCard } from "@/components/ui/author-card";
 import { EscBackLink } from "@/components/ui/esc-back-link";
@@ -149,6 +149,41 @@ export default async function ProblemPage({
                 ))}
               </div>
             </section>
+
+            {problem.videos && problem.videos.length > 0 && (
+              <section>
+                <h3 className="mb-3 flex h-5 items-center font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">
+                  Videos
+                </h3>
+                <div className="divide-y divide-white/[0.06] border-y border-white/[0.08]">
+                  {problem.videos.map((video, i) => (
+                    <a
+                      key={i}
+                      href={`https://www.youtube.com/watch?v=${video.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 bg-[var(--gray-950)] p-4 transition-colors hover:bg-[var(--gray-900)] group"
+                    >
+                      <img
+                        src={`https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`}
+                        alt=""
+                        width={168}
+                        height={94}
+                        className="shrink-0 rounded-sm border border-white/[0.06] object-cover"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[14px] text-[var(--gray-300)] group-hover:text-white transition-colors leading-snug line-clamp-2">
+                          {video.title}
+                        </p>
+                        <span className="mt-1.5 block font-[var(--font-mono)] text-[12px] text-[var(--gray-500)]">
+                          {video.channel}
+                        </span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           <aside className="space-y-7">

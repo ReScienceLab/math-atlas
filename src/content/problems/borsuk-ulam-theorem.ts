@@ -66,6 +66,18 @@ export const borsukUlamTheorem = defineProblem({
         year: 2003,
       },
     ],
+  videos: [
+    {
+      title: "The Borsuk-Ulam theorem and stolen necklaces",
+      videoId: "yuVqxCSsE7c",
+      channel: "3Blue1Brown",
+    },
+    {
+      title: "My Favorite Theorem: The Borsuk-Ulam Theorem",
+      videoId: "z75B8iP1Y3g",
+      channel: "Dr. Trefor Bazett",
+    },
+  ],
   timeline: [
       {
         year: 1930,

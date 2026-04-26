@@ -62,6 +62,18 @@ export const hilbertSixth = defineProblem({
         year: 2024,
       },
     ],
+  videos: [
+    {
+      title: "Hilbert's Sixth Problem. Can Physics be Axiomatised?",
+      videoId: "DxioIUxBRvA",
+      channel: "Foundations of Physics",
+    },
+    {
+      title: "A Breakthrough in Mathematics: Hilbert's Sixth Problem",
+      videoId: "avpQ1fLsY0w",
+      channel: "Math & Science Explained",
+    },
+  ],
   timeline: [
       {
         year: 1900,

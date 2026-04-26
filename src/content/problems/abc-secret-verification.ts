@@ -48,7 +48,19 @@ export const abcSecretVerification = defineProblem({
         year: 2024,
       },
     ],
-    timeline: [
+    videos: [
+    {
+      title: "abc Conjecture - Numberphile",
+      videoId: "RkBl7WKzzRw",
+      channel: "Numberphile",
+    },
+    {
+      title: "The latest two chapters of ABC Conjecture drama",
+      videoId: "Rn13v-tgJWE",
+      channel: "Maths Town",
+    },
+  ],
+  timeline: [
       {
         year: 1985,
         title: "Oesterle and Masser formulate abc",

@@ -61,6 +61,23 @@ export const riemannHypothesis = defineProblem({
         year: 2004,
       },
     ],
+  videos: [
+    {
+      title: "Visualizing the Riemann zeta function and analytic continuation",
+      videoId: "sD0NjbwqlYw",
+      channel: "3Blue1Brown",
+    },
+    {
+      title: "Riemann Hypothesis - Numberphile",
+      videoId: "d6c6uIyieoo",
+      channel: "Numberphile",
+    },
+    {
+      title: "The Riemann Hypothesis, Explained",
+      videoId: "zlm1aajH6gY",
+      channel: "Quanta Magazine",
+    },
+  ],
   timeline: [
       {
         year: 1859,

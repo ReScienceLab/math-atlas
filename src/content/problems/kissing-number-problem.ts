@@ -57,6 +57,13 @@ export const kissingNumberProblem = defineProblem({
         year: 2008,
       },
     ],
+  videos: [
+    {
+      title: "Kissing Numbers - Numberphile",
+      videoId: "LZ7X_YOfJqY",
+      channel: "Numberphile",
+    },
+  ],
   timeline: [
       {
         year: 1694,

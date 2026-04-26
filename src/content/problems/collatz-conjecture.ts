@@ -59,6 +59,23 @@ export const collatzConjecture = defineProblem({
         year: 2010,
       },
     ],
+  videos: [
+    {
+      title: "The Simplest Math Problem No One Can Solve",
+      videoId: "094y1Z2wpJg",
+      channel: "Veritasium",
+    },
+    {
+      title: "UNCRACKABLE? The Collatz Conjecture - Numberphile",
+      videoId: "5mFpVDpKX70",
+      channel: "Numberphile",
+    },
+    {
+      title: "Collatz Conjecture in Color - Numberphile",
+      videoId: "LqKpkdRRLZw",
+      channel: "Numberphile",
+    },
+  ],
   timeline: [
       {
         year: 1937,

@@ -58,6 +58,23 @@ export const abcConjecture = defineProblem({
         year: 2018,
       },
     ],
+  videos: [
+    {
+      title: "abc Conjecture - Numberphile",
+      videoId: "RkBl7WKzzRw",
+      channel: "Numberphile",
+    },
+    {
+      title: "The abc conjecture",
+      videoId: "PJg1Yo9j6PE",
+      channel: "discovermaths",
+    },
+    {
+      title: "The latest two chapters of ABC Conjecture drama",
+      videoId: "Rn13v-tgJWE",
+      channel: "Numberphile",
+    },
+  ],
   timeline: [
       {
         year: 1985,

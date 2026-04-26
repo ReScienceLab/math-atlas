@@ -12,6 +12,7 @@ export type {
   ProblemFormula,
   ProblemStatus,
   TimelineEvent,
+  Video,
 } from "@/lib/problem-types";
 
 export const problems: Problem[] = configuredProblems;

@@ -67,6 +67,18 @@ export const gaussCircleProblem = defineProblem({
         year: 2023,
       },
     ],
+  videos: [
+    {
+      title: "Pi hiding in prime regularities",
+      videoId: "NaL_Cb42WyY",
+      channel: "3Blue1Brown",
+    },
+    {
+      title: "Gauss Circle Problem",
+      videoId: "RL606EweWGA",
+      channel: "Prime Newtons",
+    },
+  ],
   timeline: [
       {
         year: 1837,

@@ -65,6 +65,23 @@ export const kakeya3d = defineProblem({
         year: 2025,
       },
     ],
+  videos: [
+    {
+      title: "A Once-in-a-Century Proof: The Kakeya Conjecture",
+      videoId: "5J3tYU_-IZI",
+      channel: "Quanta Magazine",
+    },
+    {
+      title: "Kakeya's Needle Problem - Numberphile",
+      videoId: "j-dce6QmVAQ",
+      channel: "Numberphile",
+    },
+    {
+      title: "The Kakeya needle problem (the squeegee approach)",
+      videoId: "IM-n9c-ARHU",
+      channel: "Mathologer",
+    },
+  ],
   timeline: [
       { year: 1917, title: "Kakeya poses the needle problem", type: "origin" },
       {
@@ -97,16 +114,16 @@ export const kakeya3d = defineProblem({
     ],
   formulas: [
     {
-      label: "Kakeya conjecture (3D)",
-      latex: String.raw`K\subset\mathbb{R}^3,\; K\text{ Besicovitch set}\quad\Longrightarrow\quad \dim_H K=3`,
+      label: "Kakeya theorem (3D)",
+      latex: String.raw`K\subset\mathbb{R}^3,\; K\text{ Besicovitch set}\quad\Longrightarrow\quad \dim_{\mathrm H}K=\overline{\dim}_{\mathrm M}K=3`,
       description:
-        "In three dimensions the Kakeya conjecture remains open — it implies key estimates in harmonic analysis and PDE.",
+        "Wang and Zahl proved in 2025 that every Kakeya set in three dimensions has full Hausdorff and Minkowski dimension.",
     },
     {
-      label: "Wang–Zahl breakthrough (2025)",
-      latex: String.raw`\dim_H K \ge 3 - \frac{1}{4} + \eta\quad\text{for some }\eta > 0`,
+      label: "Neighborhood-volume form",
+      latex: String.raw`K_\delta=\{x:\operatorname{dist}(x,K)<\delta\},\quad \overline{\dim}_{\mathrm M}K=3-\liminf_{\delta\downarrow0}\frac{\log |K_\delta|}{\log\delta}`,
       description:
-        "Wang and Zahl proved the first bound exceeding 5/2 + 1/4, breaking a longstanding barrier using refined polynomial methods.",
+        "The full-dimensional Minkowski statement can be read through the decay rate of δ-neighborhood volume.",
     },
     {
       label: "Wolff's hairbrush bound",

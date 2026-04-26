@@ -54,6 +54,13 @@ export const noperthedron = defineProblem({
         year: 2016,
       },
     ],
+  videos: [
+    {
+      title: "Noperthedron: The Shape That Defies Geometry!",
+      videoId: "1vbTWlIfEZI",
+      channel: "Math & Science Explained",
+    },
+  ],
   timeline: [
       {
         year: 1693,

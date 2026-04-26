@@ -54,6 +54,18 @@ export const isoperimetricProblem = defineProblem({
         year: 2001,
       },
     ],
+  videos: [
+    {
+      title: "The Isoperimetric Inequality",
+      videoId: "H97CCirBftQ",
+      channel: "Michael Penn",
+    },
+    {
+      title: "Proving the Isoperimetric Inequality via Fourier Analysis",
+      videoId: "Sk208IK1mH4",
+      channel: "Dr. Trefor Bazett",
+    },
+  ],
   timeline: [
       {
         year: -200,

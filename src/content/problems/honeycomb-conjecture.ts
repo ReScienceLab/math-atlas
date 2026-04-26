@@ -53,6 +53,18 @@ export const honeycombConjecture = defineProblem({
         year: 2000,
       },
     ],
+  videos: [
+    {
+      title: "Hexagons are the Bestagons",
+      videoId: "thOifuHs6eY",
+      channel: "CGP Grey",
+    },
+    {
+      title: "Why do Bees build Hexagons? Honeycomb Conjecture explained",
+      videoId: "7edkFs8Vu1E",
+      channel: "Oxford Mathematics",
+    },
+  ],
   timeline: [
       {
         year: -36,

@@ -57,6 +57,23 @@ export const pVsNp = defineProblem({
         year: 1997,
       },
     ],
+  videos: [
+    {
+      title: "P vs. NP and the Computational Complexity Zoo",
+      videoId: "YX40hbAHx3s",
+      channel: "hackerdashery",
+    },
+    {
+      title: "P vs NP on TV - Computerphile",
+      videoId: "dJUEkjxylBw",
+      channel: "Computerphile",
+    },
+    {
+      title: "The P vs. NP problem: An Existential Question for Mathematics",
+      videoId: "yeFaGFehc44",
+      channel: "Clay Mathematics Institute",
+    },
+  ],
   timeline: [
       {
         year: 1956,

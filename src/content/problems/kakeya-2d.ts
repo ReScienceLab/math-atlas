@@ -50,7 +50,19 @@ export const kakeya2d = defineProblem({
         year: 2023,
       },
     ],
-    timeline: [
+    videos: [
+    {
+      title: "Kakeya's Needle Problem - Numberphile",
+      videoId: "j-dce6QmVAQ",
+      channel: "Numberphile",
+    },
+    {
+      title: "The Kakeya needle problem (the squeegee approach)",
+      videoId: "IM-n9c-ARHU",
+      channel: "Mathologer",
+    },
+  ],
+  timeline: [
       {
         year: 1917,
         title: "Kakeya asks for the smallest area needed to rotate a needle",
@@ -86,10 +98,10 @@ export const kakeya2d = defineProblem({
         "Besicovitch (1919) showed Kakeya sets can have arbitrarily small Lebesgue measure, despite containing all directions.",
     },
     {
-      label: "Maximal function bound",
-      latex: String.raw`\|f^*_\delta\|_{L^n(\mathbb{R}^n)}\le C_\varepsilon\,\delta^{-\varepsilon}\|f\|_{L^n}`,
+      label: "Kakeya maximal conjecture",
+      latex: String.raw`f_\delta^*(e)=\sup_a \frac{1}{|T_e^\delta(a)|}\int_{T_e^\delta(a)} |f(x)|\,dx,\quad \|f_\delta^*\|_{L^n(S^{n-1})}\le C_\varepsilon\delta^{-\varepsilon}\|f\|_{L^n(\mathbb{R}^n)}`,
       description:
-        "The Kakeya maximal conjecture: the directional maximal function has only logarithmic blow-up; implies full dimension.",
+        "A standard normalized form of the directional maximal estimate; it controls directions on the sphere and implies the Kakeya dimension conjecture.",
     },
   ],
 });

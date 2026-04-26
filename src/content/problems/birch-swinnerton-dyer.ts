@@ -57,6 +57,18 @@ export const birchSwinnertonDyer = defineProblem({
         year: 1989,
       },
     ],
+  videos: [
+    {
+      title: "The Most Difficult Math Problem You've Never Heard Of",
+      videoId: "R9FKN9MIHlE",
+      channel: "Kinertia",
+    },
+    {
+      title: "What is the Birch and Swinnerton-Dyer Conjecture?",
+      videoId: "2gbQWIzb6Dg",
+      channel: "Clay Mathematics Institute",
+    },
+  ],
   timeline: [
       {
         year: 1922,
