@@ -70,7 +70,12 @@ export function LanglandsViz({ className = "" }: { className?: string }) {
   return (
     <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <WebGLGuard>
-        <Canvas orthographic camera={{ zoom: 100, position: [0, 0, 5] }}>
+        <Canvas
+          orthographic
+          camera={{ zoom: 100, position: [0, 0, 5] }}
+          gl={{ alpha: true }}
+          onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
+        >
           <Nodes />
         </Canvas>
       </WebGLGuard>

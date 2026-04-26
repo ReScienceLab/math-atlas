@@ -15,7 +15,7 @@ function canCreateWebGLContext() {
 
 function WebGLFallback({ label }: { label: string }) {
   return (
-    <div className="relative h-full w-full bg-[var(--gray-950)] atlas-grid-panel">
+    <div className="relative h-full w-full bg-[#0a0a0a]">
       <span className="sr-only">{label}</span>
       <span className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.12]" />
       <span className="absolute left-1/2 top-1/2 h-px w-28 -translate-x-1/2 bg-white/[0.1]" />

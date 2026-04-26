@@ -63,7 +63,11 @@ export function NoperthedronViz({ className = "" }: { className?: string }) {
   return (
     <div className={`relative w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <WebGLGuard label="3D preview">
-        <Canvas camera={{ position: [2.5, 2, 2.5], fov: 45 }}>
+        <Canvas
+          camera={{ position: [2.5, 2, 2.5], fov: 45 }}
+          gl={{ alpha: true }}
+          onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
+        >
           <Wireframe />
           <OrbitControls autoRotate autoRotateSpeed={2} enableZoom={false} enableDamping dampingFactor={0.04} />
         </Canvas>
