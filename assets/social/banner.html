@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Math Atlas Social Banner</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050608;
+        --fg: #f4f4f5;
+        --muted: #9b9ca3;
+        --line: rgba(255, 255, 255, 0.14);
+        --blue: #3b82f6;
+        --green: #4cc79f;
+        --orange: #c47a3f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          "Inter",
+          "Geist",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      .frame {
+        background:
+          radial-gradient(circle at 74% 43%, rgba(59, 130, 246, 0.15), transparent 23%),
+          radial-gradient(circle at 66% 80%, rgba(76, 199, 159, 0.08), transparent 28%),
+          linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+          linear-gradient(180deg, #07080b 0%, #030405 100%);
+        background-size: auto, auto, 32px 32px, 32px 32px, auto;
+        height: 100vh;
+        isolation: isolate;
+        position: relative;
+        width: 100vw;
+      }
+
+      .frame::before {
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.035), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.035)),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 18%, transparent 72%, rgba(0, 0, 0, 0.44));
+        content: "";
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
+        z-index: 4;
+      }
+
+      .topbar {
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: 390px minmax(0, 1fr) 130px 110px 190px 84px;
+        height: 66px;
+        position: relative;
+        z-index: 5;
+      }
+
+      .brand,
+      .nav,
+      .stat,
+      .github {
+        align-items: center;
+        border-right: 1px solid var(--line);
+        display: flex;
+      }
+
+      .brand {
+        padding-left: 26px;
+      }
+
+      .brand span {
+        font-size: 23px;
+        font-weight: 760;
+        letter-spacing: 0;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .nav {
+        gap: 52px;
+        padding-left: 48px;
+      }
+
+      .nav span,
+      .stat .label,
+      .legend,
+      .viz-label {
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 650;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .stat {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 22px;
+      }
+
+      .stat .label {
+        color: #8d8e96;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .stat .value {
+        color: var(--fg);
+        font-size: 19px;
+        font-weight: 560;
+        line-height: 1.25;
+        margin-top: 5px;
+      }
+
+      .github {
+        border-right: 0;
+        justify-content: center;
+      }
+
+      .github svg {
+        opacity: 0.6;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 51.5% 48.5%;
+        height: calc(100vh - 66px);
+        position: relative;
+        z-index: 2;
+      }
+
+      .copy {
+        padding-left: 53px;
+        padding-top: 58px;
+      }
+
+      h1 {
+        font-size: clamp(74px, 6.35vw, 98px);
+        font-weight: 800;
+        letter-spacing: 0;
+        line-height: 0.92;
+        margin: 0;
+        text-shadow: 0 0 18px rgba(255, 255, 255, 0.16);
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .dek {
+        color: #b7b7bc;
+        font-size: clamp(22px, 1.9vw, 30px);
+        font-weight: 520;
+        line-height: 1.34;
+        margin: 22px 0 0;
+        max-width: 575px;
+      }
+
+      .legend-row {
+        align-items: center;
+        display: flex;
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .legend {
+        align-items: center;
+        display: inline-flex;
+        gap: 9px;
+        white-space: nowrap;
+      }
+
+      .swatch {
+        background: currentColor;
+        box-shadow: 0 0 12px color-mix(in srgb, currentColor 42%, transparent);
+        height: 9px;
+        width: 9px;
+      }
+
+      .separator {
+        background: var(--line);
+        height: 22px;
+        width: 1px;
+      }
+
+      .url {
+        bottom: 16px;
+        color: #63a2ff;
+        font-size: clamp(19px, 1.55vw, 26px);
+        font-weight: 520;
+        left: 53px;
+        position: absolute;
+      }
+
+      .visual {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        padding: 0 14px 0 0;
+        position: relative;
+      }
+
+      .viz-shell {
+        height: min(90vh, 450px);
+        max-width: 100%;
+        position: relative;
+        transform: translate(-54px, -4px);
+        width: min(53vw, 800px);
+      }
+
+      .viz-label {
+        color: rgba(244, 244, 245, 0.52);
+        font-size: 11px;
+        left: 48px;
+        position: absolute;
+        top: 24px;
+        z-index: 3;
+      }
+
+      #kakeya-canvas {
+        display: block;
+        filter: drop-shadow(0 0 18px rgba(59, 130, 246, 0.14));
+        height: 100%;
+        width: 100%;
+      }
+
+      @media (max-aspect-ratio: 2 / 1) {
+        .topbar {
+          grid-template-columns: 330px 390px 104px 92px 126px 58px;
+          height: 62px;
+        }
+
+        .brand span {
+          font-size: 21px;
+        }
+
+        .nav {
+          gap: 38px;
+          padding-left: 36px;
+        }
+
+        .copy {
+          padding-left: 48px;
+          padding-top: 96px;
+        }
+
+        h1 {
+          font-size: clamp(74px, 7.6vw, 96px);
+        }
+
+        .dek {
+          font-size: clamp(22px, 2.2vw, 27px);
+          max-width: 520px;
+        }
+
+        .legend-row {
+          margin-top: 44px;
+        }
+
+        .url {
+          margin-top: 58px;
+        }
+
+        .visual {
+          padding-right: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="frame">
+      <header class="topbar" aria-label="Math Atlas dashboard">
+        <div class="brand"><span>Math Atlas</span></div>
+        <nav class="nav" aria-label="Primary">
+          <span>Index</span>
+          <span>Problems</span>
+          <span>Summary</span>
+        </nav>
+        <div class="stat">
+          <span class="label">Problems</span>
+          <span class="value">41</span>
+        </div>
+        <div class="stat">
+          <span class="label">Open</span>
+          <span class="value">14</span>
+        </div>
+        <div class="stat">
+          <span class="label">Recent / Fields</span>
+          <span class="value">9 / 10</span>
+        </div>
+        <div class="github" aria-label="GitHub">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#f4f4f5" aria-hidden="true">
+            <path d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2c-3.13.68-3.79-1.35-3.79-1.35-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.68.08-.68 1.13.08 1.72 1.16 1.72 1.16 1 .1 2.62.71 3.25-.96.1-.73.39-1.22.7-1.5-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.43.1-2.98 0 0 .95-.3 3.1 1.15a10.7 10.7 0 0 1 5.64 0c2.15-1.45 3.09-1.15 3.09-1.15.61 1.55.23 2.7.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.32-2.64 5.27-5.15 5.55.41.36.77 1.05.77 2.12v3.16c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z" />
+          </svg>
+        </div>
+      </header>
+
+      <section class="content" aria-label="Math Atlas banner">
+        <div class="copy">
+          <h1>Math Atlas</h1>
+          <p class="dek">A curated atlas of mathematical problems, conjectures, and theorems.</p>
+
+          <div class="legend-row" aria-label="Fields">
+            <span class="legend" style="color: var(--blue)"><span class="swatch"></span><span style="color: var(--muted)">Number Theory</span></span>
+            <span class="separator"></span>
+            <span class="legend" style="color: var(--green)"><span class="swatch"></span><span style="color: var(--muted)">Geometry</span></span>
+            <span class="separator"></span>
+            <span class="legend" style="color: var(--orange)"><span class="swatch"></span><span style="color: var(--muted)">Combinatorics</span></span>
+            <span class="separator"></span>
+            <span class="legend" style="color: #d6d7da"><span class="swatch"></span><span style="color: var(--muted)">Analysis</span></span>
+            <span class="separator"></span>
+            <span class="legend"><span>And More</span></span>
+          </div>
+
+          <div class="url">https://math.rescience.com/</div>
+        </div>
+
+        <div class="visual" aria-label="Kakeya Conjecture 2D visualization">
+          <div class="viz-shell">
+            <canvas id="kakeya-canvas" aria-label="Three.js generated 2D Kakeya needle set"></canvas>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import * as THREE from "../../node_modules/three/build/three.module.min.js";
+
+      const shell = document.querySelector(".viz-shell");
+      const canvas = document.querySelector("#kakeya-canvas");
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        preserveDrawingBuffer: true,
+        powerPreference: "high-performance",
+      });
+
+      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(0, 1, 0, 1, -100, 100);
+      camera.position.z = 10;
+
+      const staticTime = 3.7;
+
+      function lineMaterial(color, opacity) {
+        return new THREE.LineBasicMaterial({
+          color,
+          opacity,
+          transparent: true,
+          blending: THREE.NormalBlending,
+          depthWrite: false,
+        });
+      }
+
+      function meshMaterial(color, opacity) {
+        return new THREE.MeshBasicMaterial({
+          color,
+          opacity,
+          transparent: true,
+          blending: THREE.NormalBlending,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        });
+      }
+
+      function seeded(index) {
+        const value = Math.sin(index * 12.9898) * 43758.5453;
+        return value - Math.floor(value);
+      }
+
+      function addCircle(parent, radius, color, opacity, x, y, z = 0) {
+        const mesh = new THREE.Mesh(
+          new THREE.CircleGeometry(radius, 96),
+          meshMaterial(color, opacity),
+        );
+        mesh.position.set(x, y, z);
+        parent.add(mesh);
+        return mesh;
+      }
+
+      function addLine(parent, points, color, opacity, z = 0) {
+        const geometry = new THREE.BufferGeometry().setFromPoints(
+          points.map(([x, y]) => new THREE.Vector3(x, y, z)),
+        );
+        const line = new THREE.Line(geometry, lineMaterial(color, opacity));
+        parent.add(line);
+        return line;
+      }
+
+      function addLineSegments(parent, positions, color, opacity, z = 0) {
+        const vertices = [];
+        for (const [x1, y1, x2, y2] of positions) {
+          vertices.push(x1, y1, z, x2, y2, z);
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+        const lines = new THREE.LineSegments(geometry, lineMaterial(color, opacity));
+        parent.add(lines);
+        return lines;
+      }
+
+      function addShape(parent, points, color, opacity, z = 0) {
+        const shape = new THREE.Shape(points.map(([x, y]) => new THREE.Vector2(x, y)));
+        const mesh = new THREE.Mesh(new THREE.ShapeGeometry(shape), meshMaterial(color, opacity));
+        mesh.position.z = z;
+        parent.add(mesh);
+        return mesh;
+      }
+
+      function sampleRange(count, fn) {
+        return Array.from({ length: count }, (_, index) => {
+          const t = index / Math.max(1, count - 1);
+          return fn(t, index);
+        });
+      }
+
+      function addNeedle(parent, x1, y1, x2, y2, width, color, opacity, z) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const length = Math.hypot(dx, dy);
+        const mesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(length, width),
+          meshMaterial(color, opacity),
+        );
+        mesh.position.set((x1 + x2) / 2, (y1 + y2) / 2, z);
+        mesh.rotation.z = Math.atan2(dy, dx);
+        parent.add(mesh);
+        return mesh;
+      }
+
+      function buildKakeyaScene(width, height) {
+        scene.clear();
+        const root = new THREE.Group();
+        scene.add(root);
+
+        const cx = width * 0.5;
+        const cy = height * 0.49;
+        const scale = Math.min(width * 0.96, height * 1.54);
+        const compression = 0.24 + 0.42 * 0.18;
+        const activeAngle = (staticTime * 0.22) % Math.PI;
+
+        const envelope = [];
+        for (let i = 0; i <= 96; i += 1) {
+          const angle = (i / 96) * Math.PI;
+          envelope.push([
+            cx + Math.cos(angle) * scale * 0.34,
+            cy + Math.sin(angle) * scale * compression - scale * 0.11,
+          ]);
+        }
+        envelope.push([cx + scale * 0.31, cy + scale * 0.27]);
+        for (let i = 1; i <= 36; i += 1) {
+          const t = i / 36;
+          const x0 = scale * 0.31;
+          const y0 = scale * 0.27;
+          const x1 = 0;
+          const y1 = scale * 0.34;
+          const x2 = -scale * 0.31;
+          const y2 = scale * 0.27;
+          const mt = 1 - t;
+          envelope.push([
+            cx + mt * mt * x0 + 2 * mt * t * x1 + t * t * x2,
+            cy + mt * mt * y0 + 2 * mt * t * y1 + t * t * y2,
+          ]);
+        }
+        addShape(root, envelope, 0x60a5fa, 0.07, -4);
+        addLine(root, [...envelope, envelope[0]], 0x60a5fa, 0.28, -3);
+
+        for (let i = 0; i < 74; i += 1) {
+          const angle = (i / 73) * Math.PI;
+          const bend = Math.sin(angle * 3 + staticTime * 0.8) * scale * 0.018;
+          const px = cx + Math.cos(angle) * scale * 0.12 + bend;
+          const py = cy + Math.sin(angle) * scale * compression * 0.36 - scale * 0.02;
+          const len = scale * 0.42;
+          const dx = Math.cos(angle) * len * 0.5;
+          const dy = Math.sin(angle) * len * 0.5;
+          const angleDelta = Math.atan2(Math.sin(angle - activeAngle), Math.cos(angle - activeAngle));
+          const hot = Math.abs(angleDelta) < 0.035;
+          addLine(root, [[px - dx, py - dy], [px + dx, py + dy]], 0xf5f5f5, hot ? 0.95 : 0.12 + seeded(i) * 0.32, hot ? 3 : 2);
+        }
+
+        const needleX = cx + Math.cos(activeAngle) * scale * 0.12;
+        const needleY = cy + Math.sin(activeAngle) * scale * compression * 0.36 - scale * 0.02;
+        const needleLen = scale * 0.42;
+        const ndx = Math.cos(activeAngle) * needleLen * 0.5;
+        const ndy = Math.sin(activeAngle) * needleLen * 0.5;
+        addNeedle(root, needleX - ndx, needleY - ndy, needleX + ndx, needleY + ndy, 9, 0x60a5fa, 0.16, 3);
+        addNeedle(root, needleX - ndx, needleY - ndy, needleX + ndx, needleY + ndy, 5, 0xf5f5f5, 0.16, 4);
+        addNeedle(root, needleX - ndx, needleY - ndy, needleX + ndx, needleY + ndy, 2.8, 0x60a5fa, 0.95, 5);
+        addCircle(root, 4.2, 0xf5f5f5, 0.78, needleX, needleY, 6);
+
+        addLine(root, [[width * 0.13, height * 0.78], [width * 0.87, height * 0.78]], 0xf5f5f5, 0.16, 2);
+      }
+
+      function render() {
+        renderer.render(scene, camera);
+      }
+
+      function resize() {
+        const rect = shell.getBoundingClientRect();
+        renderer.setSize(rect.width, rect.height, false);
+        camera.left = 0;
+        camera.right = rect.width;
+        camera.top = 0;
+        camera.bottom = rect.height;
+        camera.updateProjectionMatrix();
+        buildKakeyaScene(rect.width, rect.height);
+        render();
+      }
+
+      resize();
+      window.addEventListener("resize", resize);
+      requestAnimationFrame(render);
+      window.mathAtlasSocialReady = true;
+    </script>
+  </body>
+</html>
