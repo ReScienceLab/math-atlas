@@ -49,6 +49,9 @@ const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
   IlluminationViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.IlluminationViz), { ssr: false }),
 };
 
+const cardVizClassName =
+  "!h-full !w-full !border-0 !rounded-none !aspect-auto [&_.viz-detail-labels]:hidden";
+
 export function ProblemCard({ problem }: { problem: Problem }) {
   const Viz = vizMap[problem.vizComponent];
   const draggableViz = problem.vizComponent === "KakeyaViz" || problem.vizComponent === "NoperthedronViz";
@@ -56,13 +59,15 @@ export function ProblemCard({ problem }: { problem: Problem }) {
   return (
     <article className="group h-full bg-[var(--panel-deep)] transition-colors duration-150 hover:bg-[var(--panel)]">
       <div
-        className={`relative aspect-square w-full overflow-hidden border-b border-[var(--line)] bg-[var(--gray-950)] ${draggableViz ? "touch-none cursor-grab" : ""}`}
+        className={`atlas-grid-panel relative aspect-square w-full overflow-hidden border-b border-[var(--line)] bg-[var(--gray-950)] ${draggableViz ? "touch-none cursor-grab" : ""}`}
         title={draggableViz ? "Drag to rotate" : "Animated visualization"}
       >
         {Viz ? (
-          <Viz className="!border-0 !rounded-none !aspect-auto [&_.viz-detail-labels]:hidden" />
+          <div className="absolute inset-[6%] overflow-hidden">
+            <Viz className={cardVizClassName} />
+          </div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-[var(--gray-700)] text-[11px]">viz</div>
+          <div className="absolute inset-[6%] flex items-center justify-center text-[11px] text-[var(--gray-700)]">viz</div>
         )}
         <div className="pointer-events-none absolute top-1.5 left-1.5">
           <span className={`inline-block font-[var(--font-mono)] text-[8px] font-medium uppercase px-1 py-px border backdrop-blur-sm ${statusColor[problem.status]}`}>
