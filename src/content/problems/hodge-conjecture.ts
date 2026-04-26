@@ -58,6 +58,23 @@ export const hodgeConjecture = defineProblem({
         year: 2002,
       },
     ],
+  videos: [
+    {
+      title: "Geometers Abandoned 2,000 Year-Old Math",
+      videoId: "UNNAoCy3yrk",
+      channel: "Aleph 0",
+    },
+    {
+      title: "The Hodge Conjecture (Part 1)",
+      videoId: "gIi92JSZ9J4",
+      channel: "Clay Mathematics Institute",
+    },
+    {
+      title: "Pierre Deligne | What is the Hodge conjecture?",
+      videoId: "d23FICTAC1Y",
+      channel: "Clay Mathematics Institute",
+    },
+  ],
   timeline: [
       {
         year: 1924,

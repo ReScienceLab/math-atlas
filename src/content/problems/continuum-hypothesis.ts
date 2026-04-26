@@ -57,6 +57,23 @@ export const continuumHypothesis = defineProblem({
         year: 1966,
       },
     ],
+  videos: [
+    {
+      title: "The Infinity Problem that BROKE Mathematics",
+      videoId: "Gz6qefUi3Ho",
+      channel: "Up and Atom",
+    },
+    {
+      title: "How Big is Infinity?",
+      videoId: "WIrdyu9WquQ",
+      channel: "Undefined Behavior",
+    },
+    {
+      title: "Mathematician W. Hugh Woodin Explains Continuum Hypothesis",
+      videoId: "ZC7wglkBWMM",
+      channel: "World Science Festival",
+    },
+  ],
   timeline: [
       {
         year: 1878,

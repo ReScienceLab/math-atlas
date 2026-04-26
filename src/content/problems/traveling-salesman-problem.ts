@@ -51,6 +51,18 @@ export const travelingSalesmanProblem = defineProblem({
         year: 2006,
       },
     ],
+  videos: [
+    {
+      title: "The Traveling Salesman Problem: When Good Enough Beats Perfect",
+      videoId: "GiDsjIBOVoA",
+      channel: "Reducible",
+    },
+    {
+      title: "What is the Traveling Salesman Problem?",
+      videoId: "1pmBjIZ20pE",
+      channel: "TED-Ed",
+    },
+  ],
   timeline: [
       {
         year: 1930,

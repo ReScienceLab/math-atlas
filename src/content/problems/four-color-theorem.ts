@@ -54,6 +54,18 @@ export const fourColorTheorem = defineProblem({
         year: 2008,
       },
     ],
+  videos: [
+    {
+      title: "The Four Color Map Theorem - Numberphile",
+      videoId: "NgbK43jB4rQ",
+      channel: "Numberphile",
+    },
+    {
+      title: "Four Color Theorem (extra footage) - Numberphile",
+      videoId: "laMkuPrad3s",
+      channel: "Numberphile",
+    },
+  ],
   timeline: [
       {
         year: 1852,

@@ -63,6 +63,18 @@ export const movingSofaProblem = defineProblem({
         year: 2017,
       },
     ],
+  videos: [
+    {
+      title: "The Moving Sofa Problem - Numberphile",
+      videoId: "rXfKWIZQIo4",
+      channel: "Numberphile",
+    },
+    {
+      title: "The 60 Year Quest for the Perfect Sofa",
+      videoId: "HOLHGSDLCWk",
+      channel: "Wrath of Math",
+    },
+  ],
   timeline: [
       {
         year: 1966,

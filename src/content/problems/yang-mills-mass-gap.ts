@@ -57,6 +57,23 @@ export const yangMillsMassGap = defineProblem({
         year: 2000,
       },
     ],
+  videos: [
+    {
+      title: "Yang-Mills and Mass Gap (Millennium Prize Problem!)",
+      videoId: "g5C5bwS4p7s",
+      channel: "Looking Glass Universe",
+    },
+    {
+      title: "What is...the Yang-Mills mass gap?",
+      videoId: "uMiR0ZlZdaQ",
+      channel: "VisualMath",
+    },
+    {
+      title: "Lorenzo Sadun on the Yang-Mills and Mass Gap",
+      videoId: "pCQ9GIqpGBI",
+      channel: "Clay Mathematics Institute",
+    },
+  ],
   timeline: [
       {
         year: 1954,

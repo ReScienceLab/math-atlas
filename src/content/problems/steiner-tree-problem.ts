@@ -55,6 +55,18 @@ export const steinerTreeProblem = defineProblem({
         year: 1992,
       },
     ],
+  videos: [
+    {
+      title: "Episode 7 - Steiner Trees",
+      videoId: "BG4vAoV5kWw",
+      channel: "Reducible",
+    },
+    {
+      title: "Analog computing with soap films (Steiner tree problem)",
+      videoId: "BVbIRM01UTs",
+      channel: "Chirag Kalelkar",
+    },
+  ],
   timeline: [
       {
         year: 1640,

@@ -54,6 +54,23 @@ export const illuminationProblem = defineProblem({
         year: 2025,
       },
     ],
+  videos: [
+    {
+      title: "The Illumination Problem - Numberphile",
+      videoId: "xhj5er1k6GQ",
+      channel: "Numberphile",
+    },
+    {
+      title: "Penrose's solution to the illumination problem",
+      videoId: "1BfFf1dmPtY",
+      channel: "Nils Berglund",
+    },
+    {
+      title: "Penrose Unilluminable Room Is Impossible To Light",
+      videoId: "x3VluzZTReE",
+      channel: "Steve Mould",
+    },
+  ],
   timeline: [
       {
         year: 1957,

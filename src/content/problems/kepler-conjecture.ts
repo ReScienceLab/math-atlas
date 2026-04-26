@@ -59,6 +59,18 @@ export const keplerConjecture = defineProblem({
         year: 2017,
       },
     ],
+  videos: [
+    {
+      title: "The Best Way to Pack Spheres - Numberphile",
+      videoId: "CROeIGfr3gs",
+      channel: "Numberphile",
+    },
+    {
+      title: "Calculating the optimal sphere packing density: with oranges",
+      videoId: "3inLMXcetUA",
+      channel: "Stand-up Maths",
+    },
+  ],
   timeline: [
       {
         year: 1611,

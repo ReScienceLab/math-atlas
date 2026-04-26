@@ -65,6 +65,23 @@ export const kakeya3d = defineProblem({
         year: 2025,
       },
     ],
+  videos: [
+    {
+      title: "A Once-in-a-Century Proof: The Kakeya Conjecture",
+      videoId: "5J3tYU_-IZI",
+      channel: "Quanta Magazine",
+    },
+    {
+      title: "Kakeya's Needle Problem - Numberphile",
+      videoId: "j-dce6QmVAQ",
+      channel: "Numberphile",
+    },
+    {
+      title: "The Kakeya needle problem (the squeegee approach)",
+      videoId: "IM-n9c-ARHU",
+      channel: "Mathologer",
+    },
+  ],
   timeline: [
       { year: 1917, title: "Kakeya poses the needle problem", type: "origin" },
       {
