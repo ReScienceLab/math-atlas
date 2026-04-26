@@ -22,7 +22,9 @@ function Particles() {
     for (let i = 0; i < N; i++) {
       positions[i * 3] = (seeded(i * 5 + 1) - 0.5) * 5;
       positions[i * 3 + 1] = (seeded(i * 5 + 2) - 0.5) * 5;
-      colors[i * 3] = colors[i * 3 + 1] = colors[i * 3 + 2] = 0.5 + seeded(i * 5 + 3) * 0.5;
+      colors[i * 3] = 0.55 + seeded(i * 5 + 3) * 0.2;
+      colors[i * 3 + 1] = 0.7 + seeded(i * 5 + 4) * 0.25;
+      colors[i * 3 + 2] = 0.95;
       velocities.push({ vx: (seeded(i * 5 + 4) - 0.5) * 0.04, vy: (seeded(i * 5 + 5) - 0.5) * 0.04 });
     }
     const geom = new THREE.BufferGeometry();
@@ -49,14 +51,24 @@ function Particles() {
       pos[iy] += 0.005 * Math.sin(pos[ix] * 2 + time * 0.7) * p;
       if (pos[ix] > 3) pos[ix] = -3; if (pos[ix] < -3) pos[ix] = 3;
       if (pos[iy] > 3) pos[iy] = -3; if (pos[iy] < -3) pos[iy] = 3;
-      col[ix] = 0.7 - p * 0.3; col[ix + 1] = 0.7 + p * 0.1; col[ix + 2] = 0.7 + p * 0.3;
+      col[ix] = 0.55 - p * 0.1;
+      col[ix + 1] = 0.75 + p * 0.15;
+      col[ix + 2] = 1;
     }
     geom.attributes.position.needsUpdate = true;
     geom.attributes.color.needsUpdate = true;
   });
 
   return <points ref={pointsRef} geometry={geom}>
-    <pointsMaterial size={0.08} vertexColors transparent opacity={0.9} />
+    <pointsMaterial
+      size={3.2}
+      vertexColors
+      transparent
+      opacity={0.92}
+      sizeAttenuation={false}
+      depthWrite={false}
+      blending={THREE.AdditiveBlending}
+    />
   </points>;
 }
 
@@ -73,12 +85,12 @@ export function HilbertViz({ className = "" }: { className?: string }) {
           <Particles />
         </Canvas>
       </WebGLGuard>
-      <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
+      <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-400)]">
         <span className="absolute left-4 top-4">Newtonian particles</span>
         <span className="absolute left-1/2 top-4 -translate-x-1/2">Boltzmann limit</span>
         <span className="absolute bottom-4 right-4 text-[var(--blue)]">Euler / Navier-Stokes</span>
-        <span className="absolute left-[24%] top-1/2 h-px w-[52%] bg-white/[0.14]" />
-        <span className="absolute right-[22%] top-[calc(50%-3px)] h-0 w-0 border-y-[4px] border-l-[7px] border-y-transparent border-l-white/25" />
+        <span className="absolute left-[24%] top-1/2 h-px w-[52%] bg-white/[0.28]" />
+        <span className="absolute right-[22%] top-[calc(50%-4px)] h-0 w-0 border-y-[5px] border-l-[8px] border-y-transparent border-l-white/45" />
       </div>
     </div>
   );

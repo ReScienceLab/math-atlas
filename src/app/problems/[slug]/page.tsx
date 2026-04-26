@@ -4,6 +4,7 @@ import { problems, getProblem, fieldLabel, type ProblemFormula } from "@/lib/pro
 import { Badge } from "@/components/ui/badge";
 import { AuthorCard } from "@/components/ui/author-card";
 import { EscBackLink } from "@/components/ui/esc-back-link";
+import { ExpandableText } from "@/components/ui/expandable-text";
 import { ProblemKeyNav } from "@/components/ui/problem-key-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Timeline } from "@/components/ui/timeline";
@@ -98,9 +99,11 @@ export default async function ProblemPage({
               {problem.shortDescription}
             </p>
           </div>
-          <p className="hidden max-w-[560px] text-[14px] leading-6 text-[var(--gray-400)] lg:block lg:pb-0.5">
-            {problem.longDescription || problem.shortDescription}
-          </p>
+          <div className="hidden max-w-[560px] lg:block lg:pb-0.5">
+            <ExpandableText className="text-[14px] leading-6 text-[var(--gray-400)]">
+              {problem.longDescription || problem.shortDescription}
+            </ExpandableText>
+          </div>
         </header>
 
         <div className={`${detailColumns} items-start pt-4 sm:pt-5 lg:pt-6`}>
@@ -115,9 +118,9 @@ export default async function ProblemPage({
               <h3 className="mb-3 flex h-5 items-center font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">
                 Summary
               </h3>
-              <p className="text-[14px] leading-6 text-[var(--gray-400)]">
+              <ExpandableText className="text-[14px] leading-6 text-[var(--gray-400)]">
                 {problem.longDescription || problem.shortDescription}
-              </p>
+              </ExpandableText>
             </section>
 
             <section>

@@ -31,18 +31,30 @@ export function WebGLGuard({
   children: ReactNode;
   label?: string;
 }) {
-  const [supported, setSupported] = useState<boolean | null>(null);
+  const [supported, setSupported] = useState<boolean | null>(() =>
+    typeof document === "undefined" ? null : canCreateWebGLContext(),
+  );
 
   useEffect(() => {
+    if (supported !== null) return;
+
     const frame = window.requestAnimationFrame(() => {
       setSupported(canCreateWebGLContext());
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, []);
+  }, [supported]);
 
-  if (!supported) {
+  if (supported === false) {
     return <WebGLFallback label={label} />;
+  }
+
+  if (supported === null) {
+    return (
+      <div className="h-full w-full bg-[#0a0a0a]">
+        <span className="sr-only">{label}</span>
+      </div>
+    );
   }
 
   return <>{children}</>;
