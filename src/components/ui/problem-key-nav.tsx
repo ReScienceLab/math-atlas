@@ -24,6 +24,13 @@ export function ProblemKeyNav({
   nextTitle: string;
 }) {
   const router = useRouter();
+  const previousHref = `/problems/${previousSlug}`;
+  const nextHref = `/problems/${nextSlug}`;
+
+  useEffect(() => {
+    router.prefetch(previousHref);
+    router.prefetch(nextHref);
+  }, [nextHref, previousHref, router]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -40,24 +47,26 @@ export function ProblemKeyNav({
 
       if (event.key === "ArrowLeft") {
         event.preventDefault();
-        router.push(`/problems/${previousSlug}`);
+        router.push(previousHref);
       }
 
       if (event.key === "ArrowRight") {
         event.preventDefault();
-        router.push(`/problems/${nextSlug}`);
+        router.push(nextHref);
       }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [nextSlug, previousSlug, router]);
+  }, [nextHref, previousHref, router]);
 
   return (
     <div className="ml-auto hidden items-center gap-1.5 font-[var(--font-mono)] text-[10px] uppercase text-[var(--gray-600)] md:flex">
       <button
         type="button"
-        onClick={() => router.push(`/problems/${previousSlug}`)}
+        onMouseEnter={() => router.prefetch(previousHref)}
+        onFocus={() => router.prefetch(previousHref)}
+        onClick={() => router.push(previousHref)}
         className="inline-flex h-6 w-6 items-center justify-center border border-white/[0.12] bg-white/[0.02] text-[var(--gray-500)] transition-colors hover:border-white/[0.22] hover:text-white"
         title={`Previous: ${previousTitle}`}
       >
@@ -65,7 +74,9 @@ export function ProblemKeyNav({
       </button>
       <button
         type="button"
-        onClick={() => router.push(`/problems/${nextSlug}`)}
+        onMouseEnter={() => router.prefetch(nextHref)}
+        onFocus={() => router.prefetch(nextHref)}
+        onClick={() => router.push(nextHref)}
         className="inline-flex h-6 w-6 items-center justify-center border border-white/[0.12] bg-white/[0.02] text-[var(--gray-500)] transition-colors hover:border-white/[0.22] hover:text-white"
         title={`Next: ${nextTitle}`}
       >

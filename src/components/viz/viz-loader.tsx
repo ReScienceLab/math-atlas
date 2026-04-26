@@ -1,49 +1,65 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { ComponentType } from "react";
 
-const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  KakeyaViz: dynamic(() => import("@/components/viz/kakeya-viz").then((m) => m.KakeyaViz), { ssr: false }),
-  LanglandsViz: dynamic(() => import("@/components/viz/langlands-viz").then((m) => m.LanglandsViz), { ssr: false }),
-  HilbertViz: dynamic(() => import("@/components/viz/hilbert-viz").then((m) => m.HilbertViz), { ssr: false }),
-  MizohataViz: dynamic(() => import("@/components/viz/mizohata-viz").then((m) => m.MizohataViz), { ssr: false }),
-  NoperthedronViz: dynamic(() => import("@/components/viz/noperthedron-viz").then((m) => m.NoperthedronViz), { ssr: false }),
-  AlphaEvolveViz: dynamic(() => import("@/components/viz/alphaevolve-viz").then((m) => m.AlphaEvolveViz), { ssr: false }),
-  RiemannViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.RiemannViz), { ssr: false }),
-  Kakeya2DViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.Kakeya2DViz), { ssr: false }),
-  PvsNPViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.PvsNPViz), { ssr: false }),
-  NavierStokesViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.NavierStokesViz), { ssr: false }),
-  HodgeViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.HodgeViz), { ssr: false }),
-  BSDViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.BSDViz), { ssr: false }),
-  YangMillsViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.YangMillsViz), { ssr: false }),
-  CollatzViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.CollatzViz), { ssr: false }),
-  GoldbachViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.GoldbachViz), { ssr: false }),
-  TwinPrimeViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.TwinPrimeViz), { ssr: false }),
-  AbcViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.AbcViz), { ssr: false }),
-  ContinuumViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.ContinuumViz), { ssr: false }),
-  PoincareViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.PoincareViz), { ssr: false }),
-  AbcVerificationViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.AbcVerificationViz), { ssr: false }),
-  FaltingsAbelViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.FaltingsAbelViz), { ssr: false }),
-  FourColorViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.FourColorViz), { ssr: false }),
-  SpherePackingViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.SpherePackingViz), { ssr: false }),
-  TSPViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.TSPViz), { ssr: false }),
-  AperiodicTilingViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.AperiodicTilingViz), { ssr: false }),
-  MandelbrotViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.MandelbrotViz), { ssr: false }),
-  SquarePegViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.SquarePegViz), { ssr: false }),
-  HadwigerNelsonViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.HadwigerNelsonViz), { ssr: false }),
-  PlateauViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.PlateauViz), { ssr: false }),
-  KissingNumberViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.KissingNumberViz), { ssr: false }),
-  SteinerTreeViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.SteinerTreeViz), { ssr: false }),
-  IsoperimetricViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.IsoperimetricViz), { ssr: false }),
-  HoneycombViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.HoneycombViz), { ssr: false }),
-  BrouwerViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.BrouwerViz), { ssr: false }),
-  BorsukUlamViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.BorsukUlamViz), { ssr: false }),
-  HamSandwichViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.HamSandwichViz), { ssr: false }),
-  HairyBallViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.HairyBallViz), { ssr: false }),
-  GaussCircleViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.GaussCircleViz), { ssr: false }),
-  MovingSofaViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.MovingSofaViz), { ssr: false }),
-  MoserWormViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.MoserWormViz), { ssr: false }),
-  IlluminationViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.IlluminationViz), { ssr: false }),
+type VizComponent = ComponentType<{ className?: string }>;
+
+function VizLoading() {
+  return (
+    <div className="h-full w-full border border-white/[0.08] bg-[var(--gray-950)]" />
+  );
+}
+
+function dynamicViz(loader: () => Promise<VizComponent>) {
+  return dynamic(loader, {
+    ssr: false,
+    loading: VizLoading,
+  });
+}
+
+const vizMap: Record<string, VizComponent> = {
+  KakeyaViz: dynamicViz(() => import("@/components/viz/kakeya-viz").then((m) => m.KakeyaViz)),
+  LanglandsViz: dynamicViz(() => import("@/components/viz/langlands-viz").then((m) => m.LanglandsViz)),
+  HilbertViz: dynamicViz(() => import("@/components/viz/hilbert-viz").then((m) => m.HilbertViz)),
+  MizohataViz: dynamicViz(() => import("@/components/viz/mizohata-viz").then((m) => m.MizohataViz)),
+  NoperthedronViz: dynamicViz(() => import("@/components/viz/noperthedron-viz").then((m) => m.NoperthedronViz)),
+  AlphaEvolveViz: dynamicViz(() => import("@/components/viz/alphaevolve-viz").then((m) => m.AlphaEvolveViz)),
+  RiemannViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.RiemannViz)),
+  Kakeya2DViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.Kakeya2DViz)),
+  PvsNPViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.PvsNPViz)),
+  NavierStokesViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.NavierStokesViz)),
+  HodgeViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.HodgeViz)),
+  BSDViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.BSDViz)),
+  YangMillsViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.YangMillsViz)),
+  CollatzViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.CollatzViz)),
+  GoldbachViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.GoldbachViz)),
+  TwinPrimeViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.TwinPrimeViz)),
+  AbcViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.AbcViz)),
+  ContinuumViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.ContinuumViz)),
+  PoincareViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.PoincareViz)),
+  AbcVerificationViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.AbcVerificationViz)),
+  FaltingsAbelViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.FaltingsAbelViz)),
+  FourColorViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.FourColorViz)),
+  SpherePackingViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.SpherePackingViz)),
+  TSPViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.TSPViz)),
+  AperiodicTilingViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.AperiodicTilingViz)),
+  MandelbrotViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.MandelbrotViz)),
+  SquarePegViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.SquarePegViz)),
+  HadwigerNelsonViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.HadwigerNelsonViz)),
+  PlateauViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.PlateauViz)),
+  KissingNumberViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.KissingNumberViz)),
+  SteinerTreeViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.SteinerTreeViz)),
+  IsoperimetricViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.IsoperimetricViz)),
+  HoneycombViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.HoneycombViz)),
+  BrouwerViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.BrouwerViz)),
+  BorsukUlamViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.BorsukUlamViz)),
+  HamSandwichViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.HamSandwichViz)),
+  HairyBallViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.HairyBallViz)),
+  GaussCircleViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.GaussCircleViz)),
+  MovingSofaViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.MovingSofaViz)),
+  MoserWormViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.MoserWormViz)),
+  IlluminationViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.IlluminationViz)),
 };
 
 export function VizLoader({ name, className }: { name: string; className?: string }) {
