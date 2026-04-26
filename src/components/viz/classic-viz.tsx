@@ -12,6 +12,13 @@ type DrawFrame = (
   pointer: Pointer,
 ) => void;
 
+const CARD_PREVIEW_CLASS = "viz-card-preview";
+const DEFAULT_BG = "#050505";
+
+function isCardPreviewCanvas(ctx: CanvasRenderingContext2D) {
+  return ctx.canvas.dataset.cardPreview === "true";
+}
+
 function seeded(index: number) {
   const value = Math.sin(index * 12.9898) * 43758.5453;
   return value - Math.floor(value);
@@ -19,7 +26,9 @@ function seeded(index: number) {
 
 function clear(ctx: CanvasRenderingContext2D, width: number, height: number) {
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = "#050505";
+  if (isCardPreviewCanvas(ctx)) return;
+
+  ctx.fillStyle = DEFAULT_BG;
   ctx.fillRect(0, 0, width, height);
 }
 
@@ -30,6 +39,8 @@ function drawGrid(
   step = 24,
   alpha = 0.055,
 ) {
+  if (isCardPreviewCanvas(ctx)) return;
+
   ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
   ctx.lineWidth = 1;
   for (let x = 0; x <= width; x += step) {
@@ -89,6 +100,7 @@ function CanvasViz({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerRef = useRef<Pointer>({ x: 0.5, y: 0.5, active: false });
+  const isCardPreview = className.includes(CARD_PREVIEW_CLASS);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -150,9 +162,14 @@ function CanvasViz({
 
   return (
     <div
-      className={`h-full w-full overflow-hidden bg-[var(--gray-950)] ${className}`}
+      className={`h-full w-full overflow-hidden ${isCardPreview ? "bg-[#0a0a0a]" : "bg-[var(--gray-950)]"} ${className}`}
     >
-      <canvas ref={canvasRef} className="h-full w-full" aria-hidden="true" />
+      <canvas
+        ref={canvasRef}
+        className="h-full w-full"
+        data-card-preview={isCardPreview ? "true" : undefined}
+        aria-hidden="true"
+      />
     </div>
   );
 }
@@ -821,8 +838,12 @@ function drawContinuum(ctx: CanvasRenderingContext2D, width: number, height: num
     const third = (x1 - x0) / 3;
     ctx.fillStyle = `rgba(96,165,250,${0.15 + level * 0.08})`;
     ctx.fillRect(x0, y, x1 - x0, barH * 0.6);
-    ctx.fillStyle = "#050505";
-    ctx.fillRect(x0 + third, y, third, barH * 0.6);
+    if (isCardPreviewCanvas(ctx)) {
+      ctx.clearRect(x0 + third, y, third, barH * 0.6);
+    } else {
+      ctx.fillStyle = DEFAULT_BG;
+      ctx.fillRect(x0 + third, y, third, barH * 0.6);
+    }
     drawCantor(level + 1, x0, x0 + third, y + barH);
     drawCantor(level + 1, x0 + 2 * third, x1, y + barH);
   }

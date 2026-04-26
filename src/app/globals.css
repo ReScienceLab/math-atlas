@@ -92,6 +92,10 @@ body {
   background-size: 24px 24px;
 }
 
+.viz-card-preview canvas {
+  filter: brightness(1.22) contrast(1.08) saturate(1.14);
+}
+
 .atlas-button-primary {
   align-items: center;
   background: linear-gradient(180deg, var(--gold-strong), var(--gold));

@@ -56,7 +56,11 @@ export function KakeyaViz({ className = "" }: { className?: string }) {
   return (
     <div className={`w-full h-full overflow-hidden bg-[var(--gray-950)] border border-white/[0.08] ${className}`}>
       <WebGLGuard label="3D preview">
-        <Canvas camera={{ position: [2, 1.5, 2], fov: 50 }}>
+        <Canvas
+          camera={{ position: [2, 1.5, 2], fov: 50 }}
+          gl={{ alpha: true }}
+          onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
+        >
           <KakeyaLines />
           <OrbitControls autoRotate autoRotateSpeed={1.2} enableZoom={false} enableDamping dampingFactor={0.04} />
         </Canvas>
