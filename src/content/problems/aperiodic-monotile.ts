@@ -51,6 +51,23 @@ export const aperiodicMonotile = defineProblem({
         year: 1966,
       },
     ],
+  videos: [
+    {
+      title: "Discovery of the Aperiodic Monotile - Numberphile",
+      videoId: "_ZS3Oqg1AX0",
+      channel: "Numberphile",
+    },
+    {
+      title: "How a Hobbyist Solved a 50-Year-Old Math Problem",
+      videoId: "A1BhOVW8qZU",
+      channel: "Up and Atom",
+    },
+    {
+      title: "Aperiodic Monotile - Mad as a Hat",
+      videoId: "vtpswcAfWiI",
+      channel: "Ayliean",
+    },
+  ],
   timeline: [
       {
         year: 1961,

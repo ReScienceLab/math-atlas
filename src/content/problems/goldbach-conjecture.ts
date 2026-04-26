@@ -59,6 +59,23 @@ export const goldbachConjecture = defineProblem({
         year: 1973,
       },
     ],
+  videos: [
+    {
+      title: "The Obviously True Theorem No One Can Prove",
+      videoId: "x32Zq-XvID4",
+      channel: "Veritasium",
+    },
+    {
+      title: "Goldbach Conjecture - Numberphile",
+      videoId: "MxiTG96QOxw",
+      channel: "Numberphile",
+    },
+    {
+      title: "Goldbach Conjecture (but with TWIN PRIMES) - Numberphile",
+      videoId: "Gojd8mTl3Do",
+      channel: "Numberphile",
+    },
+  ],
   timeline: [
       {
         year: 1742,

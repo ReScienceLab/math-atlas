@@ -91,6 +91,7 @@ export function SiteNavbar({
   onToggleField,
   onClearFilters,
   filteredCount,
+  onSearchOpen,
 }: {
   problems: Problem[];
   zenMode?: boolean;
@@ -103,6 +104,7 @@ export function SiteNavbar({
   onToggleField?: (f: MathField) => void;
   onClearFilters?: () => void;
   filteredCount?: number;
+  onSearchOpen?: () => void;
 }) {
   const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
   const openCount = countByStatus(problems, "open");
@@ -144,6 +146,28 @@ export function SiteNavbar({
 
         {/* Middle: view switcher + filter dropdowns */}
         <div className="flex min-w-0 items-center gap-3 border-r border-[var(--line)] px-4 max-lg:hidden">
+          {/* Search button */}
+          {onSearchOpen && (
+            <button
+              type="button"
+              onClick={onSearchOpen}
+              className="inline-flex items-center gap-2 border border-white/[0.08] px-2 py-1 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)] transition-colors hover:border-white/20 hover:text-white"
+              title="Search problems (⌘K)"
+            >
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M11 11L14.5 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <span>Search</span>
+              <kbd className="border border-white/[0.1] bg-white/[0.04] px-1 py-px text-[8px] text-[var(--gray-600)]">
+                ⌘K
+              </kbd>
+            </button>
+          )}
+
+          {/* Divider after search */}
+          {onSearchOpen && onViewModeChange && <div className="h-5 w-px bg-[var(--line)]" />}
+
           {/* View switcher */}
           {onViewModeChange && (
             <div className="flex items-center gap-1 font-[var(--font-mono)] text-[10px] uppercase">

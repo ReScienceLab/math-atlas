@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Problem, ProblemStatus, MathField } from "@/lib/problems";
 import { SiteNavbar } from "@/components/layout/site-navbar";
 import { HomeCatalog } from "@/components/ui/home-catalog";
+import { SearchDialog } from "@/components/ui/search-dialog";
 
 export type ViewMode = "grid" | "table";
 
@@ -29,6 +30,7 @@ export function HomeShell({ problems }: { problems: Problem[] }) {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [statusFilters, setStatusFilters] = useState<Set<ProblemStatus>>(new Set());
   const [fieldFilters, setFieldFilters] = useState<Set<MathField>>(new Set());
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const filteredProblems = useMemo(() => {
     return problems.filter((p) => {
@@ -63,6 +65,12 @@ export function HomeShell({ problems }: { problems: Problem[] }) {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setSearchOpen((v) => !v);
+        return;
+      }
+
       if (shouldIgnoreShortcut(event) || event.key.toLowerCase() !== "z") {
         return;
       }
@@ -88,8 +96,14 @@ export function HomeShell({ problems }: { problems: Problem[] }) {
         onToggleField={toggleField}
         onClearFilters={clearFilters}
         filteredCount={filteredProblems.length}
+        onSearchOpen={() => setSearchOpen(true)}
       />
       <HomeCatalog problems={filteredProblems} zenMode={zenMode} viewMode={viewMode} />
+      <SearchDialog
+        problems={problems}
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
     </>
   );
 }

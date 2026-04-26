@@ -59,6 +59,18 @@ export const navierStokes = defineProblem({
         year: 2016,
       },
     ],
+  videos: [
+    {
+      title: "Navier-Stokes Equations - Numberphile",
+      videoId: "ERBVFcutl3M",
+      channel: "Numberphile",
+    },
+    {
+      title: "The million dollar problem of fluid dynamics",
+      videoId: "7ZgcydJdEMo",
+      channel: "Dr. Trefor Bazett",
+    },
+  ],
   timeline: [
       {
         year: 1822,

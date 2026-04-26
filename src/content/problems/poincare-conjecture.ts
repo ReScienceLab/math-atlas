@@ -67,6 +67,18 @@ export const poincareConjecture = defineProblem({
         year: 2003,
       },
     ],
+  videos: [
+    {
+      title: "Poincare Conjecture - Numberphile",
+      videoId: "GItmC9lxeco",
+      channel: "Numberphile",
+    },
+    {
+      title: "What is the Poincare Conjecture?",
+      videoId: "YPuOt0JUZBY",
+      channel: "World Science Festival",
+    },
+  ],
   timeline: [
       {
         year: 1904,
