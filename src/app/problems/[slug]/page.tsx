@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { problems, getProblem, fieldLabel } from "@/lib/problems";
+import katex from "katex";
+import { problems, getProblem, fieldLabel, type ProblemFormula } from "@/lib/problems";
 import { Badge } from "@/components/ui/badge";
 import { AuthorCard } from "@/components/ui/author-card";
 import { EscBackLink } from "@/components/ui/esc-back-link";
@@ -11,6 +12,40 @@ import { VizLoader } from "@/components/viz/viz-loader";
 const pageShell = "mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8";
 const detailColumns =
   "grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(360px,0.92fr)] lg:gap-10";
+
+function FormulaSection({ formulas }: { formulas: ProblemFormula[] }) {
+  return (
+    <section>
+      <h3 className="mb-3 flex h-5 items-center font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">
+        Formula
+      </h3>
+      <div className="divide-y divide-white/[0.06] border-y border-white/[0.08]">
+        {formulas.map((formula) => (
+          <div key={formula.label} className="bg-[var(--gray-950)] p-4">
+            <div className="mb-3 font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">
+              {formula.label}
+            </div>
+            <div
+              className="formula-katex overflow-x-auto text-[15px] text-[var(--gray-200)]"
+              dangerouslySetInnerHTML={{
+                __html: katex.renderToString(formula.latex, {
+                  displayMode: true,
+                  strict: "ignore",
+                  throwOnError: false,
+                }),
+              }}
+            />
+            {formula.description && (
+              <p className="mt-3 text-[13px] leading-5 text-[var(--gray-500)]">
+                {formula.description}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export function generateStaticParams() {
   return problems.map((p) => ({ slug: p.slug }));
@@ -73,6 +108,8 @@ export default async function ProblemPage({
             <div className="h-[calc(100vw-32px)] min-h-[300px] max-h-[420px] w-full overflow-hidden border border-white/[0.08] bg-[var(--gray-950)] sm:h-[clamp(320px,48vh,560px)] sm:max-h-none">
               <VizLoader name={problem.vizComponent} className="!border-0" />
             </div>
+
+            {problem.formulas && <FormulaSection formulas={problem.formulas} />}
 
             <section className="border-y border-white/[0.08] py-4 lg:hidden">
               <h3 className="mb-3 flex h-5 items-center font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">

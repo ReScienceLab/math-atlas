@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 
 type Pointer = { x: number; y: number; active: boolean };
+type Vec2 = { x: number; y: number };
 type DrawFrame = (ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) => void;
 
 function seeded(index: number) {
@@ -1278,134 +1279,298 @@ function drawGaussCircle(ctx: CanvasRenderingContext2D, width: number, height: n
   }
 }
 
+const SOFA_HALF_PI = Math.PI / 2;
+const GERVER_PHI = 0.03917736479008364;
+const GERVER_THETA = 0.6813015093827249;
+const GERVER_AREA = 2.2195316688719674;
+const GERVER_K = [
+  { x: -0.21032242207268875, y: 0.25 },
+  { x: -0.9191792927715933, y: 0.47240661975080547 },
+  { x: -0.6137632294302517, y: 0.8896264790032219 },
+  { x: -0.30834716608891, y: 0.47240661975080547 },
+  { x: -1.0172040367878146, y: 0.25 },
+];
+const GERVER_C = {
+  a1: 1.2103224220726888,
+  a2: -0.25,
+  b1: -0.5276245980267846,
+  b2: 0.9202583851606376,
+  c1: 0.6260455228484659,
+  c2: -0.9447508039464308,
+  d1: 1.313022761424233,
+  d2: -0.5253826704145544,
+  e1: 1.2103224220726888,
+  e2: 0.25,
+};
+const SOFA_VIEW_BOUNDS = { minX: -2.72, maxX: 1.34, minY: -2.48, maxY: 1.18 };
+
+function addVec(a: Vec2, b: Vec2): Vec2 {
+  return { x: a.x + b.x, y: a.y + b.y };
+}
+
+function subVec(a: Vec2, b: Vec2): Vec2 {
+  return { x: a.x - b.x, y: a.y - b.y };
+}
+
+function dotVec(a: Vec2, b: Vec2) {
+  return a.x * b.x + a.y * b.y;
+}
+
+function rotateVec(point: Vec2, angle: number): Vec2 {
+  const c = Math.cos(angle);
+  const s = Math.sin(angle);
+  return { x: c * point.x - s * point.y, y: s * point.x + c * point.y };
+}
+
+function sofaMu(angle: number): Vec2 {
+  return { x: Math.cos(angle), y: Math.sin(angle) };
+}
+
+function sofaNu(angle: number): Vec2 {
+  return { x: -Math.sin(angle), y: Math.cos(angle) };
+}
+
+function gerverSegment(angle: number) {
+  const t = Math.min(SOFA_HALF_PI, Math.max(0, angle));
+  if (t < GERVER_PHI) {
+    return {
+      offset: GERVER_K[0],
+      local: {
+        x: GERVER_C.a1 * Math.cos(t) + GERVER_C.a2 * Math.sin(t) - 1,
+        y: -GERVER_C.a2 * Math.cos(t) + GERVER_C.a1 * Math.sin(t) - 0.5,
+      },
+      localPrime: {
+        x: -GERVER_C.a1 * Math.sin(t) + GERVER_C.a2 * Math.cos(t),
+        y: GERVER_C.a2 * Math.sin(t) + GERVER_C.a1 * Math.cos(t),
+      },
+    };
+  }
+  if (t < GERVER_THETA) {
+    return {
+      offset: GERVER_K[1],
+      local: { x: -0.25 * t * t + GERVER_C.b1 * t + GERVER_C.b2, y: 0.5 * t - GERVER_C.b1 - 1 },
+      localPrime: { x: -0.5 * t + GERVER_C.b1, y: 0.5 },
+    };
+  }
+  if (t < SOFA_HALF_PI - GERVER_THETA) {
+    return {
+      offset: GERVER_K[2],
+      local: { x: GERVER_C.c1 - t, y: GERVER_C.c2 + t },
+      localPrime: { x: -1, y: 1 },
+    };
+  }
+  if (t < SOFA_HALF_PI - GERVER_PHI) {
+    return {
+      offset: GERVER_K[3],
+      local: { x: -0.5 * t + GERVER_C.d1 - 1, y: -0.25 * t * t + GERVER_C.d1 * t + GERVER_C.d2 },
+      localPrime: { x: -0.5, y: -0.5 * t + GERVER_C.d1 },
+    };
+  }
+  return {
+    offset: GERVER_K[4],
+    local: {
+      x: GERVER_C.e1 * Math.cos(t) + GERVER_C.e2 * Math.sin(t) - 0.5,
+      y: -GERVER_C.e2 * Math.cos(t) + GERVER_C.e1 * Math.sin(t) - 1,
+    },
+    localPrime: {
+      x: -GERVER_C.e1 * Math.sin(t) + GERVER_C.e2 * Math.cos(t),
+      y: GERVER_C.e2 * Math.sin(t) + GERVER_C.e1 * Math.cos(t),
+    },
+  };
+}
+
+function gerverX(angle: number): Vec2 {
+  const segment = gerverSegment(angle);
+  return addVec(segment.offset, rotateVec(segment.local, angle));
+}
+
+function gerverXPrime(angle: number): Vec2 {
+  const segment = gerverSegment(angle);
+  return rotateVec(addVec({ x: -segment.local.y, y: segment.local.x }, segment.localPrime), angle);
+}
+
+function gerverContact(angle: number, kind: "A" | "B" | "C" | "D"): Vec2 {
+  const x = gerverX(angle);
+  const xp = gerverXPrime(angle);
+  const mu = sofaMu(angle);
+  const nu = sofaNu(angle);
+  if (kind === "A") return addVec(addVec(x, mu), { x: dotVec(xp, mu) * nu.x, y: dotVec(xp, mu) * nu.y });
+  if (kind === "B") return addVec(x, { x: dotVec(xp, mu) * nu.x, y: dotVec(xp, mu) * nu.y });
+  if (kind === "C") return addVec(addVec(x, nu), { x: -dotVec(xp, nu) * mu.x, y: -dotVec(xp, nu) * mu.y });
+  return addVec(x, { x: -dotVec(xp, nu) * mu.x, y: -dotVec(xp, nu) * mu.y });
+}
+
+function sampleSofaCurve(fn: (angle: number) => Vec2, start: number, end: number, steps: number) {
+  return Array.from({ length: steps + 1 }, (_, index) => fn(start + (end - start) * (index / steps)));
+}
+
+function buildGerverSofaBoundary() {
+  return [
+    ...sampleSofaCurve(gerverX, GERVER_PHI, SOFA_HALF_PI - GERVER_PHI, 118),
+    ...sampleSofaCurve((angle) => gerverContact(angle, "D"), GERVER_THETA, 0, 56),
+    ...sampleSofaCurve((angle) => gerverContact(angle, "C"), SOFA_HALF_PI, GERVER_PHI, 118),
+    ...sampleSofaCurve((angle) => gerverContact(angle, "A"), SOFA_HALF_PI, GERVER_PHI, 118),
+    ...sampleSofaCurve((angle) => gerverContact(angle, "B"), SOFA_HALF_PI, SOFA_HALF_PI - GERVER_THETA, 56),
+  ];
+}
+
+const GERVER_SOFA_BOUNDARY = buildGerverSofaBoundary();
+
+function gerverContactSet(angle: number): Array<{ point: Vec2; corner: boolean }> {
+  const corner = { point: gerverX(angle), corner: true };
+  const wall = (kind: "A" | "B" | "C" | "D") => ({ point: gerverContact(angle, kind), corner: false });
+  if (angle < GERVER_PHI) return [wall("A"), wall("C"), wall("D")];
+  if (angle <= GERVER_THETA) return [corner, wall("A"), wall("C"), wall("D")];
+  if (angle < SOFA_HALF_PI - GERVER_THETA) return [corner, wall("A"), wall("C")];
+  if (angle <= SOFA_HALF_PI - GERVER_PHI) return [corner, wall("A"), wall("B"), wall("C")];
+  return [wall("A"), wall("B"), wall("C")];
+}
+
+function movingSofaViewport(width: number, height: number) {
+  const bounds = SOFA_VIEW_BOUNDS;
+  const viewWidth = bounds.maxX - bounds.minX;
+  const viewHeight = bounds.maxY - bounds.minY;
+  const scale = Math.min(width / viewWidth, height / viewHeight) * 0.9;
+  const offsetX = (width - viewWidth * scale) / 2 - bounds.minX * scale;
+  const offsetY = (height - viewHeight * scale) / 2 + bounds.maxY * scale;
+  return {
+    scale,
+    toScreen: (point: Vec2): Vec2 => ({ x: offsetX + point.x * scale, y: offsetY - point.y * scale }),
+  };
+}
+
+function worldFromSofa(point: Vec2, angle: number): Vec2 {
+  return rotateVec(subVec(point, gerverX(angle)), -angle);
+}
+
+function drawMathPath(ctx: CanvasRenderingContext2D, points: Vec2[], toScreen: (point: Vec2) => Vec2, close = false) {
+  points.forEach((point, index) => {
+    const screen = toScreen(point);
+    if (index === 0) ctx.moveTo(screen.x, screen.y);
+    else ctx.lineTo(screen.x, screen.y);
+  });
+  if (close) ctx.closePath();
+}
+
+function drawMathArc(
+  ctx: CanvasRenderingContext2D,
+  toScreen: (point: Vec2) => Vec2,
+  radius: number,
+  startAngle: number,
+  endAngle: number,
+) {
+  ctx.beginPath();
+  for (let i = 0; i <= 48; i++) {
+    const angle = startAngle + (endAngle - startAngle) * (i / 48);
+    const screen = toScreen({ x: Math.cos(angle) * radius, y: Math.sin(angle) * radius });
+    if (i === 0) ctx.moveTo(screen.x, screen.y);
+    else ctx.lineTo(screen.x, screen.y);
+  }
+  ctx.stroke();
+}
+
+function drawMovingSofaHallway(ctx: CanvasRenderingContext2D, toScreen: (point: Vec2) => Vec2, fill = true) {
+  const xMin = SOFA_VIEW_BOUNDS.minX;
+  const yMin = SOFA_VIEW_BOUNDS.minY;
+  const hallway = [
+    { x: xMin, y: 0 },
+    { x: 0, y: 0 },
+    { x: 0, y: yMin },
+    { x: 1, y: yMin },
+    { x: 1, y: 1 },
+    { x: xMin, y: 1 },
+  ];
+  ctx.beginPath();
+  drawMathPath(ctx, hallway, toScreen, true);
+  if (fill) {
+    ctx.fillStyle = "rgba(245,245,245,0.052)";
+    ctx.fill();
+  }
+  ctx.strokeStyle = "rgba(245,245,245,0.26)";
+  ctx.lineWidth = 1.25;
+  ctx.stroke();
+}
+
+function drawGerverSofaAt(
+  ctx: CanvasRenderingContext2D,
+  toScreen: (point: Vec2) => Vec2,
+  angle: number,
+  fillStyle: string,
+  strokeStyle: string,
+  lineWidth: number,
+) {
+  ctx.beginPath();
+  GERVER_SOFA_BOUNDARY.forEach((point, index) => {
+    const screen = toScreen(worldFromSofa(point, angle));
+    if (index === 0) ctx.moveTo(screen.x, screen.y);
+    else ctx.lineTo(screen.x, screen.y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = fillStyle;
+  ctx.strokeStyle = strokeStyle;
+  ctx.lineWidth = lineWidth;
+  ctx.fill();
+  ctx.stroke();
+}
+
 function drawMovingSofa(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
 
-  const corridor = Math.min(width * 0.22, height * 0.34);
-  const cornerX = width * 0.52;
-  const cornerY = height * 0.4;
-  const hLeft = width * 0.08;
-  const vLeft = cornerX - corridor * 0.5;
-  const vRight = cornerX + corridor * 0.5;
-  const hTop = cornerY - corridor * 0.5;
-  const hBottom = cornerY + corridor * 0.5;
-  const vBottom = height * 0.91;
-  const innerCorner = { x: vLeft, y: hBottom };
+  const { scale, toScreen } = movingSofaViewport(width, height);
+  const phase = pointer.active ? Math.min(1, Math.max(0, pointer.x)) : (Math.sin(time * 0.34) + 1) / 2;
+  const angle = phase * SOFA_HALF_PI;
 
-  ctx.beginPath();
-  ctx.moveTo(hLeft, hTop);
-  ctx.lineTo(vRight, hTop);
-  ctx.lineTo(vRight, vBottom);
-  ctx.lineTo(vLeft, vBottom);
-  ctx.lineTo(vLeft, hBottom);
-  ctx.lineTo(hLeft, hBottom);
-  ctx.closePath();
-  ctx.fillStyle = "rgba(245,245,245,0.052)";
-  ctx.fill();
-  ctx.strokeStyle = "rgba(245,245,245,0.24)";
-  ctx.lineWidth = 1.2;
-  ctx.stroke();
+  drawMovingSofaHallway(ctx, toScreen);
 
-  ctx.strokeStyle = "rgba(96,165,250,0.22)";
+  ctx.strokeStyle = "rgba(96,165,250,0.18)";
   ctx.lineWidth = 1;
-  for (let i = 1; i <= 3; i++) {
-    ctx.beginPath();
-    ctx.arc(innerCorner.x, innerCorner.y, corridor * (0.34 + i * 0.22), -Math.PI / 2, 0);
-    ctx.stroke();
-  }
+  [0.5, 1, 1.5].forEach((radius) => drawMathArc(ctx, toScreen, radius, Math.PI, Math.PI * 1.5));
 
-  const phase = pointer.active ? Math.min(1, Math.max(0, pointer.x)) : (Math.sin(time * 0.42) + 1) / 2;
-  const sofaScale = corridor * 0.47;
+  [0, 0.18, 0.36, 0.54, 0.72, 0.9, 1].forEach((ghostPhase) => {
+    if (Math.abs(ghostPhase - phase) < 0.045) return;
+    drawGerverSofaAt(
+      ctx,
+      toScreen,
+      ghostPhase * SOFA_HALF_PI,
+      "rgba(245,245,245,0.055)",
+      "rgba(245,245,245,0.18)",
+      1,
+    );
+  });
 
-  const poseAt = (p: number) => {
-    if (p < 0.28) {
-      const t = p / 0.28;
-      return {
-        x: hLeft + corridor * 1.35 + t * (innerCorner.x + corridor * 0.34 - hLeft - corridor * 1.35),
-        y: cornerY,
-        angle: 0,
-      };
-    }
-    if (p < 0.74) {
-      const t = (p - 0.28) / 0.46;
-      const eased = 0.5 - Math.cos(t * Math.PI) * 0.5;
-      return {
-        x: innerCorner.x + corridor * (0.28 + Math.sin(eased * Math.PI) * 0.12 + eased * 0.08),
-        y: cornerY + eased * corridor * 0.68,
-        angle: -eased * Math.PI / 2,
-      };
-    }
-    const t = (p - 0.74) / 0.26;
-    return {
-      x: cornerX,
-      y: hBottom + corridor * (0.2 + t * 0.34),
-      angle: -Math.PI / 2,
-    };
-  };
+  drawGerverSofaAt(ctx, toScreen, angle, "rgba(96,165,250,0.42)", "rgba(96,165,250,0.95)", Math.max(1.7, scale * 0.012));
 
-  ctx.strokeStyle = "rgba(96,165,250,0.28)";
-  ctx.lineWidth = 1.1;
+  ctx.save();
+  ctx.setLineDash([5, 6]);
   ctx.beginPath();
-  for (let i = 0; i <= 64; i++) {
-    const pose = poseAt(i / 64);
-    if (i === 0) ctx.moveTo(pose.x, pose.y);
-    else ctx.lineTo(pose.x, pose.y);
+  for (let i = 0; i <= 128; i++) {
+    const pathAngle = (i / 128) * SOFA_HALF_PI;
+    const screen = toScreen(worldFromSofa(gerverX(pathAngle), angle));
+    if (i === 0) ctx.moveTo(screen.x, screen.y);
+    else ctx.lineTo(screen.x, screen.y);
   }
+  ctx.strokeStyle = "rgba(96,165,250,0.46)";
+  ctx.lineWidth = 1.35;
   ctx.stroke();
+  ctx.restore();
 
-  const drawSofa = (p: number, alpha: number, active = false) => {
-    const pose = poseAt(p);
-    ctx.save();
-    ctx.translate(pose.x, pose.y);
-    ctx.rotate(pose.angle);
-    ctx.scale(sofaScale, sofaScale);
+  gerverContactSet(angle).forEach(({ point, corner }) => {
+    const screen = toScreen(worldFromSofa(point, angle));
     ctx.beginPath();
-    ctx.moveTo(-1.58, -0.38);
-    ctx.bezierCurveTo(-1.1, -0.7, -0.42, -0.72, 0.32, -0.55);
-    ctx.bezierCurveTo(0.98, -0.39, 1.48, -0.1, 1.48, 0.12);
-    ctx.bezierCurveTo(1.47, 0.36, 0.96, 0.49, 0.46, 0.45);
-    ctx.bezierCurveTo(0.1, 0.42, -0.02, 0.15, -0.27, 0.14);
-    ctx.bezierCurveTo(-0.58, 0.12, -0.7, 0.48, -1.04, 0.42);
-    ctx.bezierCurveTo(-1.48, 0.34, -1.88, -0.08, -1.58, -0.38);
-    ctx.closePath();
-    ctx.fillStyle = active ? `rgba(96,165,250,${alpha})` : `rgba(245,245,245,${alpha})`;
-    ctx.strokeStyle = active ? "rgba(96,165,250,0.92)" : "rgba(245,245,245,0.2)";
-    ctx.lineWidth = active ? 0.04 : 0.022;
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-  };
-
-  [0.02, 0.18, 0.34, 0.5, 0.66, 0.82, 0.98].forEach((p) => drawSofa(p, 0.075));
-  drawSofa(phase, 0.42, true);
-
-  const pose = poseAt(phase);
-  const contactPoints = [
-    { x: -1.46, y: -0.27 },
-    { x: 1.34, y: 0.1 },
-    { x: -0.24, y: 0.16 },
-  ].map((point) => {
-    const x = point.x * sofaScale;
-    const y = point.y * sofaScale;
-    const c = Math.cos(pose.angle);
-    const s = Math.sin(pose.angle);
-    return {
-      x: pose.x + x * c - y * s,
-      y: pose.y + x * s + y * c,
-    };
-  });
-  contactPoints.forEach((point) => {
-    ctx.beginPath();
-    ctx.arc(point.x, point.y, 2.2, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(245,245,245,0.72)";
+    ctx.arc(screen.x, screen.y, corner ? 3.6 : 2.7, 0, Math.PI * 2);
+    ctx.fillStyle = corner ? "rgba(96,165,250,0.95)" : "rgba(245,245,245,0.72)";
     ctx.fill();
   });
 
+  const corner = toScreen({ x: 0, y: 0 });
   ctx.beginPath();
-  ctx.arc(pose.x, pose.y, 2.4, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(96,165,250,0.84)";
+  ctx.arc(corner.x, corner.y, 3.2, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(96,165,250,0.95)";
   ctx.fill();
+
+  drawMovingSofaHallway(ctx, toScreen, false);
+  drawMono(ctx, `Gerver area ${GERVER_AREA.toFixed(7)}    rotation ${((angle * 180) / Math.PI).toFixed(1)} deg`, 18, height - 18, 12);
 }
 
 function drawMoserWorm(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {

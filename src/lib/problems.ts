@@ -29,6 +29,12 @@ export interface TimelineEvent {
   type: "origin" | "progress" | "breakthrough" | "recognition";
 }
 
+export interface ProblemFormula {
+  label: string;
+  latex: string;
+  description?: string;
+}
+
 export type ProblemCollection = "canonical" | "beautiful" | "frontier" | "unification" | "recent";
 
 export type ConsensusStatus = "settled" | "active" | "emerging" | "watch";
@@ -54,6 +60,7 @@ export interface Problem {
   authors: Author[];
   papers: Paper[];
   timeline: TimelineEvent[];
+  formulas?: ProblemFormula[];
   collections?: ProblemCollection[];
   coordinates?: ProblemCoordinates;
   consensusStatus?: ConsensusStatus;
@@ -64,7 +71,7 @@ export interface Problem {
 const scholarSearch = (query: string) =>
   `https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`;
 
-export const problems: Problem[] = [
+const rawProblems: Problem[] = [
   {
     slug: "abc-secret-verification",
     title: "abc Secret Verification Project",
@@ -873,16 +880,23 @@ export const problems: Problem[] = [
         year: 2026,
       },
       {
-        title: "A computer-assisted proof of the moving sofa problem",
+        title: "Optimality of Gerver's Sofa",
         arxivId: "2411.19826",
         url: "https://arxiv.org/abs/2411.19826",
         year: 2024,
       },
     ],
+    formulas: [
+      {
+        label: "Core question",
+        latex: String.raw`\mu=\sup \operatorname{area}(S),\qquad |G|=2.219531668\ldots`,
+        description: "The moving sofa constant is the largest area among shapes that can pass through a unit-width right-angle hallway. Gerver's shape reaches the value shown here.",
+      },
+    ],
     timeline: [
       { year: 1966, title: "Moser popularizes the moving sofa problem", type: "origin" },
       { year: 1992, title: "Gerver constructs a famous candidate sofa", type: "progress" },
-      { year: 2024, title: "Baek announces a computer-assisted proof claim", type: "breakthrough" },
+      { year: 2024, title: "Baek posts a proof of Gerver's optimality", type: "breakthrough" },
     ],
   },
   {
@@ -1568,6 +1582,186 @@ export const problems: Problem[] = [
     ],
   },
 ];
+
+const coreFormula = (latex: string, description: string, label = "Core question"): ProblemFormula[] => [
+  { label, latex, description },
+];
+
+const coreFormulas: Record<string, ProblemFormula[]> = {
+  "abc-secret-verification": coreFormula(
+    String.raw`a+b=c,\qquad c\lesssim_{\varepsilon}\operatorname{rad}(abc)^{1+\varepsilon}`,
+    "The verification projects are about making the claimed proof of this compact inequality precise enough for a proof assistant.",
+    "abc shape",
+  ),
+  "faltings-abel-prize-2026": coreFormula(
+    String.raw`g(C)>1\quad\Longrightarrow\quad |C(\mathbb{Q})|<\infty`,
+    "Faltings proved that a curve of genus greater than one has only finitely many rational points.",
+    "Mordell conjecture",
+  ),
+  "kakeya-2d": coreFormula(
+    String.raw`K\subset\mathbb{R}^2\text{ has every direction}\quad\Longrightarrow\quad \dim_H K=2`,
+    "A Kakeya set contains a unit segment pointing in every direction; in the plane its dimension must be full.",
+  ),
+  "kakeya-3d": coreFormula(
+    String.raw`K\subset\mathbb{R}^3\text{ has every direction}\quad\Longrightarrow\quad \dim_H K=3`,
+    "The three-dimensional version asks whether every such needle set has full dimension.",
+  ),
+  "four-color-theorem": coreFormula(
+    String.raw`G\text{ planar}\quad\Longrightarrow\quad \chi(G)\le 4`,
+    "Every planar map becomes a planar graph, and four colors are always enough.",
+  ),
+  "kepler-conjecture": coreFormula(
+    String.raw`\Delta\le \frac{\pi}{\sqrt{18}}\approx0.74048`,
+    "No packing of equal spheres can beat the density of the familiar cannonball arrangement.",
+  ),
+  "traveling-salesman-problem": coreFormula(
+    String.raw`\min_{\pi}\sum_{i=1}^{n} d\!\left(v_{\pi_i},v_{\pi_{i+1}}\right)`,
+    "The salesman wants the shortest closed route that visits every city once.",
+  ),
+  "aperiodic-monotile": coreFormula(
+    String.raw`\exists T:\ T\text{ tiles }\mathbb{R}^2,\qquad \nexists\text{ periodic tiling by }T`,
+    "The monotile is one shape that can tile the plane, but never in a repeating pattern.",
+  ),
+  "mandelbrot-local-connectivity": coreFormula(
+    String.raw`M=\{c\in\mathbb{C}: z_{n+1}=z_n^2+c\text{ stays bounded}\}`,
+    "Local connectivity asks whether the Mandelbrot set has no infinitely fine disconnected fuzz.",
+  ),
+  "square-peg-problem": coreFormula(
+    String.raw`\exists\,x_1,x_2,x_3,x_4\in\gamma\quad\text{forming a square}`,
+    "The conjecture says every simple closed curve contains four points that are the corners of a square.",
+  ),
+  "hadwiger-nelson-problem": coreFormula(
+    String.raw`5\le \chi(\mathbb{R}^2)\le 7`,
+    "The unknown number is how many colors are needed so points one unit apart never share a color.",
+  ),
+  "plateau-problem": coreFormula(
+    String.raw`\min_{\partial\Sigma=\Gamma}\operatorname{area}(\Sigma)`,
+    "A soap film spanning a wire loop tries to minimize area among all surfaces with that boundary.",
+  ),
+  "kissing-number-problem": coreFormula(
+    String.raw`N(n)=\max\{m:\ u_i\cdot u_j\le 1/2\text{ for }i\ne j\}`,
+    "This counts the most unit spheres that can all touch one central unit sphere in dimension n.",
+  ),
+  "steiner-tree-problem": coreFormula(
+    String.raw`\min_T\sum_{e\in T}|e|`,
+    "Steiner points are allowed if they shorten the network connecting the required terminals.",
+  ),
+  "isoperimetric-problem": coreFormula(
+    String.raw`L^2\ge 4\pi A`,
+    "Among plane curves with a fixed perimeter, the circle encloses the largest area.",
+  ),
+  "honeycomb-conjecture": coreFormula(
+    String.raw`P^2\ge 8\sqrt{3}\,A`,
+    "For equal-area cells, the regular hexagonal honeycomb gives the least perimeter per cell.",
+  ),
+  "brouwer-fixed-point": coreFormula(
+    String.raw`f:D^n\to D^n\quad\Longrightarrow\quad \exists x,\ f(x)=x`,
+    "Any continuous self-map of a solid ball leaves at least one point fixed.",
+  ),
+  "borsuk-ulam-theorem": coreFormula(
+    String.raw`f:S^n\to\mathbb{R}^n\quad\Longrightarrow\quad \exists x,\ f(x)=f(-x)`,
+    "Some pair of opposite points on a sphere must share the same measured data.",
+  ),
+  "ham-sandwich-theorem": coreFormula(
+    String.raw`\exists H:\ \mu_i(H^+)=\mu_i(H^-)\quad(i=1,\dots,n)`,
+    "One cut can bisect n measurable objects in n-dimensional space.",
+  ),
+  "hairy-ball-theorem": coreFormula(
+    String.raw`X\text{ tangent on }S^2\quad\Longrightarrow\quad \exists p,\ X(p)=0`,
+    "A continuous tangent vector field on a sphere must vanish somewhere.",
+  ),
+  "gauss-circle-problem": coreFormula(
+    String.raw`N(R)=\#(\mathbb{Z}^2\cap B_R)=\pi R^2+E(R)`,
+    "The problem is to understand how large the boundary error E(R) can be.",
+  ),
+  "moser-worm-problem": coreFormula(
+    String.raw`\min |U|:\ \text{every unit-length curve fits inside }U`,
+    "A universal cover must contain a copy of every curve of length one.",
+  ),
+  "illumination-problem": coreFormula(
+    String.raw`I(K)=\min\{m:\ m\text{ directions illuminate }\partial K\}`,
+    "The illumination number counts how many light directions are needed to reach every boundary point.",
+  ),
+  "geometric-langlands": coreFormula(
+    String.raw`D\text{-}\mathrm{mod}(\operatorname{Bun}_G)\simeq \mathrm{QCoh}(\operatorname{LocSys}_{G^\vee})`,
+    "The geometric Langlands correspondence matches two very different categories attached to a curve.",
+    "Correspondence",
+  ),
+  "hilbert-sixth": coreFormula(
+    String.raw`\partial_t f+v\cdot\nabla_x f=Q(f,f)`,
+    "A central bridge in Hilbert's sixth problem is deriving macroscopic equations from particle dynamics.",
+    "Kinetic limit",
+  ),
+  "mizohata-takeuchi": coreFormula(
+    String.raw`\|\widehat{f\,d\sigma}\|_{L^2(\mu)}\le C\,\|f\|_{L^2(\sigma)}`,
+    "The disproved conjecture predicted broad weighted Fourier restriction estimates of this flavor.",
+    "Restriction estimate",
+  ),
+  "noperthedron": coreFormula(
+    String.raw`P\text{ is Rupert}\quad\Longleftrightarrow\quad P\text{ fits through a straight hole in }P`,
+    "The noperthedron is a convex polyhedron for which this self-passage property fails.",
+    "Rupert property",
+  ),
+  "alphaevolve-strassen": coreFormula(
+    String.raw`M_{2\times2}=7,\qquad M^{\mathbb{C}}_{4\times4}\le 48`,
+    "The breakthrough is an algorithm multiplying 4 by 4 complex matrices using 48 scalar multiplications.",
+    "Matrix multiplication",
+  ),
+  "riemann-hypothesis": coreFormula(
+    String.raw`\zeta(s)=0,\ 0<\operatorname{Re}(s)<1\quad\Longrightarrow\quad \operatorname{Re}(s)=\frac12`,
+    "All nontrivial zeros of the zeta function should lie on the critical line.",
+  ),
+  "p-vs-np": coreFormula(
+    String.raw`P\stackrel{?}{=}NP`,
+    "The question is whether every efficiently checkable solution can also be efficiently found.",
+  ),
+  "navier-stokes": coreFormula(
+    String.raw`\partial_t u+(u\cdot\nabla)u=-\nabla p+\nu\Delta u,\qquad \nabla\cdot u=0`,
+    "The Millennium problem asks whether smooth three-dimensional flows can break down.",
+  ),
+  "hodge-conjecture": coreFormula(
+    String.raw`H^{2p}(X,\mathbb{Q})\cap H^{p,p}(X)\stackrel{?}{=}\operatorname{span}_{\mathbb{Q}}\{[Z]\}`,
+    "The conjecture says certain topological classes should come from algebraic subvarieties.",
+  ),
+  "birch-swinnerton-dyer": coreFormula(
+    String.raw`\operatorname{rank}E(\mathbb{Q})=\operatorname{ord}_{s=1}L(E,s)`,
+    "The rank of rational points on an elliptic curve should be read from its L-function.",
+  ),
+  "yang-mills-mass-gap": coreFormula(
+    String.raw`\Delta E\ge m>0`,
+    "A mass gap means the first nonzero quantum excitation has positive energy above the vacuum.",
+  ),
+  "collatz-conjecture": coreFormula(
+    String.raw`T(n)=\begin{cases}n/2,&n\text{ even}\\3n+1,&n\text{ odd}\end{cases}\quad\Longrightarrow\quad 1`,
+    "Iterating this simple rule is conjectured to eventually reach 1 for every positive integer.",
+  ),
+  "goldbach-conjecture": coreFormula(
+    String.raw`2n=p+q\qquad(p,q\text{ prime})`,
+    "Every even integer greater than 2 is expected to split into two primes.",
+  ),
+  "twin-prime-conjecture": coreFormula(
+    String.raw`\#\{p:\ p\text{ and }p+2\text{ prime}\}=\infty`,
+    "There should be infinitely many prime pairs separated by exactly 2.",
+  ),
+  "abc-conjecture": coreFormula(
+    String.raw`a+b=c,\qquad c\lesssim_{\varepsilon}\operatorname{rad}(abc)^{1+\varepsilon}`,
+    "The conjecture says sums rarely produce a result much larger than the product of distinct prime factors involved.",
+    "abc inequality",
+  ),
+  "continuum-hypothesis": coreFormula(
+    String.raw`2^{\aleph_0}\stackrel{?}{=}\aleph_1`,
+    "The question asks whether there is a size of infinity strictly between the integers and the real numbers.",
+  ),
+  "poincare-conjecture": coreFormula(
+    String.raw`\pi_1(M)=0,\ M^3\text{ closed}\quad\Longrightarrow\quad M\cong S^3`,
+    "A closed simply connected 3-manifold must be the 3-sphere.",
+  ),
+};
+
+export const problems: Problem[] = rawProblems.map((problem) => ({
+  ...problem,
+  formulas: coreFormulas[problem.slug] ?? problem.formulas,
+}));
 
 export function getProblem(slug: string): Problem | undefined {
   return problems.find((p) => p.slug === slug);

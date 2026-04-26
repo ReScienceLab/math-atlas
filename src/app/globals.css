@@ -37,6 +37,25 @@ body {
   font-family: var(--font-sans, -apple-system, system-ui, sans-serif);
 }
 
+.formula-katex .katex-display {
+  margin: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+  text-align: left;
+}
+
+.formula-katex .katex {
+  color: var(--gray-200);
+  font-size: 1.02em;
+}
+
+@media (max-width: 640px) {
+  .formula-katex .katex {
+    font-size: 0.9em;
+  }
+}
+
 ::selection {
   background: rgba(59, 130, 246, 0.35);
   color: var(--fg);
