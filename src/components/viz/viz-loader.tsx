@@ -34,6 +34,16 @@ const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
   PlateauViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.PlateauViz), { ssr: false }),
   KissingNumberViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.KissingNumberViz), { ssr: false }),
   SteinerTreeViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.SteinerTreeViz), { ssr: false }),
+  IsoperimetricViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.IsoperimetricViz), { ssr: false }),
+  HoneycombViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.HoneycombViz), { ssr: false }),
+  BrouwerViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.BrouwerViz), { ssr: false }),
+  BorsukUlamViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.BorsukUlamViz), { ssr: false }),
+  HamSandwichViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.HamSandwichViz), { ssr: false }),
+  HairyBallViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.HairyBallViz), { ssr: false }),
+  GaussCircleViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.GaussCircleViz), { ssr: false }),
+  MovingSofaViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.MovingSofaViz), { ssr: false }),
+  MoserWormViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.MoserWormViz), { ssr: false }),
+  IlluminationViz: dynamic(() => import("@/components/viz/classic-viz").then((m) => m.IlluminationViz), { ssr: false }),
 };
 
 export function VizLoader({ name, className }: { name: string; className?: string }) {

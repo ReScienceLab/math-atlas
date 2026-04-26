@@ -61,6 +61,9 @@ export interface Problem {
   connections?: string[];
 }
 
+const scholarSearch = (query: string) =>
+  `https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`;
+
 export const problems: Problem[] = [
   {
     slug: "abc-secret-verification",
@@ -576,6 +579,399 @@ export const problems: Problem[] = [
       { year: 1836, title: "Steiner studies shortest geometric networks", type: "origin" },
       { year: 1934, title: "Courant and Robbins popularize the problem", type: "progress" },
       { year: 1977, title: "Computational hardness results clarify the algorithmic barrier", type: "breakthrough" },
+    ],
+  },
+  {
+    slug: "isoperimetric-problem",
+    title: "Isoperimetric Problem",
+    status: "proved",
+    field: "geometry",
+    year: 1838,
+    shortDescription:
+      "Among plane figures with a fixed perimeter, the circle encloses the greatest area.",
+    longDescription:
+      "The isoperimetric problem is one of the oldest optimization problems in geometry. Its visual statement is immediate: deform any closed curve while holding perimeter fixed, and the enclosed area is maximized exactly when the curve becomes a circle.",
+    vizComponent: "IsoperimetricViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 6, beauty: 10, visual: 10, importance: 8, activity: 5, accessibility: 10 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Calculus of variations", "Geometry", "Dido's problem"],
+    authors: [
+      { name: "Dido", institution: "Classical legend" },
+      { name: "Jakob Steiner", institution: "University of Berlin", scholarUrl: scholarSearch("Jakob Steiner isoperimetric problem") },
+    ],
+    papers: [
+      {
+        title: "Isoperimetric problem",
+        url: "https://www.britannica.com/science/isoperimetric-problem",
+        year: 2026,
+      },
+      {
+        title: "The Riemannian Quantitative Isoperimetric Inequality",
+        arxivId: "1908.00677",
+        url: "https://arxiv.org/abs/1908.00677",
+        year: 2019,
+      },
+    ],
+    timeline: [
+      { year: 1838, title: "Steiner gives a famous geometric treatment", type: "breakthrough" },
+      { year: 1884, title: "Weierstrass supplies a rigorous variational proof framework", type: "progress" },
+    ],
+  },
+  {
+    slug: "honeycomb-conjecture",
+    title: "Honeycomb Conjecture",
+    status: "proved",
+    field: "geometry",
+    year: 1999,
+    shortDescription:
+      "Regular hexagons give the least-perimeter way to divide the plane into equal-area cells.",
+    longDescription:
+      "The honeycomb conjecture asks why hexagonal cells are optimal for equal-area partitions of the plane. Hales proved that the regular hexagonal tiling minimizes total perimeter.",
+    vizComponent: "HoneycombViz",
+    collections: ["beautiful", "canonical"],
+    coordinates: { difficulty: 7, beauty: 10, visual: 10, importance: 7, activity: 5, accessibility: 10 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Tilings", "Minimal perimeter", "Discrete geometry"],
+    authors: [
+      { name: "Thomas Hales", institution: "University of Pittsburgh", scholarUrl: scholarSearch("Thomas C Hales honeycomb conjecture") },
+    ],
+    papers: [
+      {
+        title: "The honeycomb conjecture",
+        arxivId: "math/9906042",
+        url: "https://arxiv.org/abs/math/9906042",
+        year: 1999,
+      },
+    ],
+    timeline: [
+      { year: 36, title: "Pappus praises the efficiency of honeycomb cells", type: "origin" },
+      { year: 1999, title: "Hales proves the honeycomb conjecture", type: "breakthrough" },
+    ],
+  },
+  {
+    slug: "brouwer-fixed-point",
+    title: "Brouwer Fixed Point Theorem",
+    status: "proved",
+    field: "topology",
+    year: 1912,
+    shortDescription:
+      "Every continuous map from a disk to itself has at least one point that stays fixed.",
+    longDescription:
+      "Brouwer's fixed point theorem turns a simple visual intuition into topology: if a disk is continuously moved inside itself, at least one point must land back where it started.",
+    vizComponent: "BrouwerViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 7, beauty: 9, visual: 9, importance: 9, activity: 6, accessibility: 8 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Topology", "Fixed points", "Game theory"],
+    authors: [
+      { name: "L. E. J. Brouwer", institution: "University of Amsterdam", scholarUrl: scholarSearch("L E J Brouwer fixed point theorem") },
+    ],
+    papers: [
+      {
+        title: "Brouwer fixed point theorem",
+        url: "https://encyclopediaofmath.org/wiki/Brouwer_fixed_point_theorem",
+        year: 2026,
+      },
+      {
+        title: "Brouwer Fixed Point Theorem in (L^0)^d",
+        arxivId: "1305.2890",
+        url: "https://arxiv.org/abs/1305.2890",
+        year: 2013,
+      },
+    ],
+    timeline: [
+      { year: 1912, title: "Brouwer proves the fixed point theorem", type: "breakthrough" },
+      { year: 1950, title: "Fixed point theorems become central in economics and games", type: "recognition" },
+    ],
+  },
+  {
+    slug: "borsuk-ulam-theorem",
+    title: "Borsuk-Ulam Theorem",
+    status: "proved",
+    field: "topology",
+    year: 1933,
+    shortDescription:
+      "Every continuous map from a sphere to a plane identifies some pair of antipodal points.",
+    longDescription:
+      "The Borsuk-Ulam theorem says that for any continuous measurement on a sphere, some opposite pair has the same measurement. The familiar weather analogy is two antipodal points on Earth with equal temperature and pressure.",
+    vizComponent: "BorsukUlamViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 7, beauty: 9, visual: 9, importance: 8, activity: 6, accessibility: 8 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Topology", "Antipodal maps", "Combinatorics"],
+    authors: [
+      { name: "Karol Borsuk", institution: "University of Warsaw", scholarUrl: scholarSearch("Karol Borsuk Borsuk Ulam theorem") },
+      { name: "Stanislaw Ulam", institution: "Scottish School of Mathematics", scholarUrl: scholarSearch("Stanislaw Ulam Borsuk Ulam theorem") },
+    ],
+    papers: [
+      {
+        title: "Borsuk-Ulam theorem",
+        url: "https://mathworld.wolfram.com/Borsuk-UlamTheorem.html",
+        year: 2026,
+      },
+      {
+        title: "The Borsuk-Ulam Theorem",
+        url: "https://eudml.org/doc/267694",
+        year: 2006,
+      },
+      {
+        title: "A parametrized version of the Borsuk Ulam theorem",
+        arxivId: "0709.1774",
+        url: "https://arxiv.org/abs/0709.1774",
+        year: 2007,
+      },
+    ],
+    timeline: [
+      { year: 1933, title: "Borsuk proves the theorem after Ulam's formulation", type: "breakthrough" },
+      { year: 1970, title: "The theorem becomes a standard tool in combinatorial topology", type: "recognition" },
+    ],
+  },
+  {
+    slug: "ham-sandwich-theorem",
+    title: "Ham Sandwich Theorem",
+    status: "proved",
+    field: "geometry",
+    year: 1942,
+    shortDescription:
+      "In n dimensions, one hyperplane can simultaneously bisect n measurable bodies.",
+    longDescription:
+      "The ham sandwich theorem is a vivid consequence of topology: three solids in 3D can all be cut exactly in half by one plane. In 2D, the visualization becomes one line bisecting two regions at once.",
+    vizComponent: "HamSandwichViz",
+    collections: ["beautiful", "canonical"],
+    coordinates: { difficulty: 6, beauty: 9, visual: 10, importance: 7, activity: 5, accessibility: 10 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Measure theory", "Topology", "Borsuk-Ulam"],
+    authors: [
+      { name: "Arthur H. Stone", institution: "Mathematics", scholarUrl: scholarSearch("Arthur H Stone ham sandwich theorem") },
+      { name: "John Tukey", institution: "Princeton University", scholarUrl: scholarSearch("John Tukey ham sandwich theorem") },
+    ],
+    papers: [
+      {
+        title: "Ham sandwich theorem",
+        url: "https://mathworld.wolfram.com/HamSandwichTheorem.html",
+        year: 2026,
+      },
+      {
+        title: "Computational Complexity of the alpha-Ham-Sandwich Problem",
+        arxivId: "2003.09266",
+        url: "https://arxiv.org/abs/2003.09266",
+        year: 2020,
+      },
+    ],
+    timeline: [
+      { year: 1942, title: "Stone and Tukey prove the general theorem", type: "breakthrough" },
+      { year: 1960, title: "The theorem becomes a core example of topological existence proofs", type: "recognition" },
+    ],
+  },
+  {
+    slug: "hairy-ball-theorem",
+    title: "Hairy Ball Theorem",
+    status: "proved",
+    field: "topology",
+    year: 1912,
+    shortDescription:
+      "Every continuous tangent vector field on an even-dimensional sphere must vanish somewhere.",
+    longDescription:
+      "The hairy ball theorem says that a sphere cannot be combed flat without a cowlick. It is a compact visual form of a deep topological obstruction.",
+    vizComponent: "HairyBallViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 6, beauty: 9, visual: 10, importance: 7, activity: 5, accessibility: 10 },
+    consensusStatus: "settled",
+    lastReviewed: "2026-04",
+    connections: ["Topology", "Vector fields", "Euler characteristic"],
+    authors: [
+      { name: "L. E. J. Brouwer", institution: "University of Amsterdam", scholarUrl: scholarSearch("L E J Brouwer hairy ball theorem") },
+      { name: "Henri Poincare", institution: "University of Paris", scholarUrl: scholarSearch("Henri Poincare vector fields sphere") },
+    ],
+    papers: [
+      {
+        title: "Hairy ball theorem",
+        url: "https://mathworld.wolfram.com/HairyBallTheorem.html",
+        year: 2026,
+      },
+      {
+        title: "Surface Instabilities and Patterning in Liquids: Exemplifications of the Hairy Ball Theorem",
+        arxivId: "1503.06996",
+        url: "https://arxiv.org/abs/1503.06996",
+        year: 2015,
+      },
+    ],
+    timeline: [
+      { year: 1885, title: "Poincare-Hopf ideas connect vector fields and topology", type: "origin" },
+      { year: 1912, title: "Brouwer's work clarifies the sphere obstruction", type: "breakthrough" },
+    ],
+  },
+  {
+    slug: "gauss-circle-problem",
+    title: "Gauss Circle Problem",
+    status: "open",
+    field: "number-theory",
+    year: 1837,
+    shortDescription:
+      "Estimate how many integer lattice points lie inside a circle of radius r.",
+    longDescription:
+      "The Gauss circle problem asks for the sharp error term when counting lattice points in a disk. The image is simple: the main term is area, and the hard part lives near the boundary.",
+    vizComponent: "GaussCircleViz",
+    collections: ["canonical", "beautiful"],
+    coordinates: { difficulty: 8, beauty: 8, visual: 9, importance: 7, activity: 8, accessibility: 9 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Lattice points", "Analytic number theory", "Exponential sums"],
+    authors: [
+      { name: "Carl Friedrich Gauss", institution: "Gottingen", scholarUrl: scholarSearch("Carl Friedrich Gauss circle problem lattice points") },
+    ],
+    papers: [
+      {
+        title: "Gauss's circle problem",
+        url: "https://mathworld.wolfram.com/GausssCircleProblem.html",
+        year: 2026,
+      },
+      {
+        title: "Improvement on Gauss circle Problem and Dirichlet divisor Problem",
+        arxivId: "2308.14859",
+        url: "https://arxiv.org/abs/2308.14859",
+        year: 2023,
+      },
+    ],
+    timeline: [
+      { year: 1837, title: "Gauss studies lattice points in circles", type: "origin" },
+      { year: 1915, title: "Hardy develops analytic estimates", type: "progress" },
+      { year: 2026, title: "The optimal boundary error remains open", type: "recognition" },
+    ],
+  },
+  {
+    slug: "moving-sofa-problem",
+    title: "Moving Sofa Problem",
+    status: "watch",
+    field: "geometry",
+    year: 1966,
+    shortDescription:
+      "Find the largest-area shape that can move around a right-angled hallway corner.",
+    longDescription:
+      "The moving sofa problem asks for the largest possible shape that can be maneuvered around a 90-degree turn in a unit-width hallway. Gerver's shape has long been the best-known candidate; recent claimed solutions make this an active-watch entry.",
+    vizComponent: "MovingSofaViz",
+    collections: ["beautiful", "frontier"],
+    coordinates: { difficulty: 8, beauty: 9, visual: 10, importance: 6, activity: 8, accessibility: 9 },
+    consensusStatus: "watch",
+    lastReviewed: "2026-04",
+    connections: ["Geometric optimization", "Motion planning", "Convex geometry"],
+    authors: [
+      { name: "Leo Moser", institution: "University of Alberta", scholarUrl: scholarSearch("Leo Moser moving sofa problem") },
+      { name: "Joseph Gerver", institution: "Mathematics", scholarUrl: scholarSearch("Joseph Gerver moving sofa problem") },
+      { name: "Jineon Baek", institution: "Mathematics", scholarUrl: scholarSearch("Jineon Baek moving sofa problem") },
+    ],
+    papers: [
+      {
+        title: "Moving sofa problem",
+        url: "https://mathworld.wolfram.com/MovingSofaProblem.html",
+        year: 2026,
+      },
+      {
+        title: "A computer-assisted proof of the moving sofa problem",
+        arxivId: "2411.19826",
+        url: "https://arxiv.org/abs/2411.19826",
+        year: 2024,
+      },
+    ],
+    timeline: [
+      { year: 1966, title: "Moser popularizes the moving sofa problem", type: "origin" },
+      { year: 1992, title: "Gerver constructs a famous candidate sofa", type: "progress" },
+      { year: 2024, title: "Baek announces a computer-assisted proof claim", type: "breakthrough" },
+    ],
+  },
+  {
+    slug: "moser-worm-problem",
+    title: "Moser's Worm Problem",
+    status: "open",
+    field: "geometry",
+    year: 1966,
+    shortDescription:
+      "Find the smallest-area planar region that can cover every curve of length 1.",
+    longDescription:
+      "Moser's worm problem asks for a universal cover for all unit-length curves. The problem is visually natural but technically subtle because every possible bent curve must fit inside one region.",
+    vizComponent: "MoserWormViz",
+    collections: ["beautiful", "frontier"],
+    coordinates: { difficulty: 8, beauty: 9, visual: 10, importance: 6, activity: 7, accessibility: 9 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Geometric optimization", "Universal covers", "Plane curves"],
+    authors: [
+      { name: "Leo Moser", institution: "University of Alberta", scholarUrl: scholarSearch("Leo Moser worm problem") },
+    ],
+    papers: [
+      {
+        title: "Moser's worm problem",
+        url: "https://mathworld.wolfram.com/MosersWormProblem.html",
+        year: 2026,
+      },
+      {
+        title: "An Improved Lower Bound for Moser's Worm Problem",
+        arxivId: "math/0701391",
+        url: "https://arxiv.org/abs/math/0701391",
+        year: 2007,
+      },
+      {
+        title: "Curve packing and modulus estimates",
+        arxivId: "1602.01707",
+        url: "https://arxiv.org/abs/1602.01707",
+        year: 2016,
+      },
+    ],
+    timeline: [
+      { year: 1966, title: "Moser poses the universal-cover problem for unit curves", type: "origin" },
+      { year: 1970, title: "A sequence of upper and lower bounds begins", type: "progress" },
+      { year: 2026, title: "The optimal cover remains unknown", type: "recognition" },
+    ],
+  },
+  {
+    slug: "illumination-problem",
+    title: "Illumination Problem",
+    status: "open",
+    field: "geometry",
+    year: 1957,
+    shortDescription:
+      "Ask how many directions are needed to illuminate every boundary point of a convex body.",
+    longDescription:
+      "The illumination problem studies how convex bodies can be lit from outside. Its visual form is direct: place light sources or directions so every boundary point is reached by a ray.",
+    vizComponent: "IlluminationViz",
+    collections: ["beautiful", "frontier"],
+    coordinates: { difficulty: 8, beauty: 8, visual: 9, importance: 7, activity: 7, accessibility: 8 },
+    consensusStatus: "active",
+    lastReviewed: "2026-04",
+    connections: ["Convex geometry", "Covering problems", "Discrete geometry"],
+    authors: [
+      { name: "Hugo Hadwiger", institution: "University of Bern", scholarUrl: scholarSearch("Hugo Hadwiger illumination problem") },
+      { name: "Vladimir Boltyansky", institution: "Moscow State University", scholarUrl: scholarSearch("Vladimir Boltyansky illumination problem") },
+    ],
+    papers: [
+      {
+        title: "Illumination problem",
+        url: "https://mathworld.wolfram.com/IlluminationProblem.html",
+        year: 2026,
+      },
+      {
+        title: "Illuminating and covering convex bodies",
+        arxivId: "1308.0791",
+        url: "https://arxiv.org/abs/1308.0791",
+        year: 2013,
+      },
+      {
+        title: "On lattice illumination of smooth convex bodies",
+        arxivId: "2501.10570",
+        url: "https://arxiv.org/abs/2501.10570",
+        year: 2025,
+      },
+    ],
+    timeline: [
+      { year: 1957, title: "Hadwiger formulates the illumination conjecture", type: "origin" },
+      { year: 1960, title: "Boltyansky develops related covering formulations", type: "progress" },
+      { year: 2026, title: "General high-dimensional cases remain open", type: "recognition" },
     ],
   },
   {

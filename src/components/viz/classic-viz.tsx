@@ -1060,6 +1060,422 @@ function drawSteinerTree(ctx: CanvasRenderingContext2D, width: number, height: n
   });
 }
 
+function drawIsoperimetric(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.024);
+  const cx = width * 0.5;
+  const cy = height * 0.52;
+  const r = Math.min(width, height) * 0.25;
+  const mix = pointer.active ? pointer.x : 0.55 + Math.sin(time * 0.55) * 0.2;
+
+  ctx.beginPath();
+  for (let i = 0; i <= 220; i++) {
+    const a = (i / 220) * Math.PI * 2;
+    const rough = 1 + (1 - mix) * (0.2 * Math.sin(a * 3 + time) + 0.12 * Math.cos(a * 5));
+    const x = cx + Math.cos(a) * r * rough * (1.12 - mix * 0.08);
+    const y = cy + Math.sin(a) * r * rough * (0.78 + mix * 0.22);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.fillStyle = "rgba(245,245,245,0.055)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(245,245,245,0.3)";
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.92, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(96,165,250,0.72)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function drawHoneycomb(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  const size = Math.min(width, height) * 0.085;
+  const dx = size * 1.72;
+  const dy = size * 1.5;
+  const hotX = pointer.active ? pointer.x * width : width * (0.5 + Math.sin(time * 0.5) * 0.16);
+  const hotY = pointer.active ? pointer.y * height : height * 0.5;
+  for (let row = -2; row < 8; row++) {
+    for (let col = -2; col < 9; col++) {
+      const cx = col * dx + (row % 2) * dx * 0.5;
+      const cy = row * dy;
+      const x = cx + width * 0.05;
+      const y = cy + height * 0.05;
+      const hot = Math.hypot(hotX - x, hotY - y) < size * 1.1;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = Math.PI / 6 + i * Math.PI / 3;
+        const px = x + Math.cos(a) * size;
+        const py = y + Math.sin(a) * size;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fillStyle = hot ? "rgba(96,165,250,0.25)" : "rgba(245,245,245,0.055)";
+      ctx.fill();
+      ctx.strokeStyle = hot ? "rgba(96,165,250,0.7)" : "rgba(245,245,245,0.16)";
+      ctx.stroke();
+    }
+  }
+}
+
+function drawBrouwer(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.024);
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  const r = Math.min(width, height) * 0.32;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(96,165,250,0.045)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(245,245,245,0.22)";
+  ctx.stroke();
+
+  for (let i = 0; i < 44; i++) {
+    const a = seeded(i) * Math.PI * 2;
+    const rr = Math.sqrt(seeded(i + 200)) * r * 0.88;
+    const x = cx + Math.cos(a) * rr;
+    const y = cy + Math.sin(a) * rr;
+    const tx = cx + (x - cx) * 0.58 - (y - cy) * 0.18 * Math.sin(time * 0.7);
+    const ty = cy + (y - cy) * 0.58 + (x - cx) * 0.18 * Math.cos(time * 0.7);
+    ctx.strokeStyle = "rgba(245,245,245,0.16)";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(tx, ty);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(tx, ty, 2, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(245,245,245,0.36)";
+    ctx.fill();
+  }
+
+  const fx = pointer.active ? cx + (pointer.x - 0.5) * r * 0.18 : cx;
+  const fy = pointer.active ? cy + (pointer.y - 0.5) * r * 0.18 : cy;
+  ctx.beginPath();
+  ctx.arc(fx, fy, 6, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(96,165,250,0.95)";
+  ctx.fill();
+}
+
+function drawBorsukUlam(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.022);
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  const r = Math.min(width, height) * 0.3;
+  const angle = pointer.active ? pointer.x * Math.PI * 2 : time * 0.45;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, r, r * 0.78, 0, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(245,245,245,0.045)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(245,245,245,0.24)";
+  ctx.stroke();
+  for (let i = 0; i < 8; i++) {
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, r * (1 - i * 0.09), r * 0.78 * Math.abs(Math.cos(i * 0.25)), 0, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(245,245,245,0.055)";
+    ctx.stroke();
+  }
+  const p1 = { x: cx + Math.cos(angle) * r * 0.86, y: cy + Math.sin(angle) * r * 0.58 };
+  const p2 = { x: cx - Math.cos(angle) * r * 0.86, y: cy - Math.sin(angle) * r * 0.58 };
+  ctx.strokeStyle = "rgba(96,165,250,0.36)";
+  ctx.beginPath();
+  ctx.moveTo(p1.x, p1.y);
+  ctx.lineTo(p2.x, p2.y);
+  ctx.stroke();
+  [p1, p2].forEach((p) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(96,165,250,0.92)";
+    ctx.fill();
+  });
+}
+
+function drawHamSandwich(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.022);
+  const blobs = [
+    { x: 0.32, y: 0.38, rx: 0.17, ry: 0.1, c: "rgba(96,165,250,0.22)" },
+    { x: 0.58, y: 0.44, rx: 0.21, ry: 0.13, c: "rgba(34,197,94,0.18)" },
+    { x: 0.46, y: 0.63, rx: 0.25, ry: 0.09, c: "rgba(249,115,22,0.2)" },
+  ];
+  blobs.forEach((b, i) => {
+    ctx.beginPath();
+    ctx.ellipse(width * b.x, height * b.y, width * b.rx, height * b.ry, i * 0.35, 0, Math.PI * 2);
+    ctx.fillStyle = b.c;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(245,245,245,0.15)";
+    ctx.stroke();
+  });
+  const angle = pointer.active ? pointer.x * Math.PI : 0.28 + Math.sin(time * 0.4) * 0.35;
+  const cx = width * 0.5;
+  const cy = height * (pointer.active ? 0.25 + pointer.y * 0.5 : 0.52);
+  const len = Math.hypot(width, height);
+  ctx.strokeStyle = "rgba(245,245,245,0.78)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx - Math.cos(angle) * len, cy - Math.sin(angle) * len);
+  ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+  ctx.stroke();
+}
+
+function drawHairyBall(ctx: CanvasRenderingContext2D, width: number, height: number, time: number) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.02);
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  const r = Math.min(width, height) * 0.31;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(245,245,245,0.04)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(245,245,245,0.18)";
+  ctx.stroke();
+  for (let i = 0; i < 90; i++) {
+    const a = seeded(i) * Math.PI * 2;
+    const rr = Math.sqrt(seeded(i + 30)) * r * 0.92;
+    const x = cx + Math.cos(a) * rr;
+    const y = cy + Math.sin(a) * rr;
+    const singular = Math.max(0, 1 - Math.hypot(x - cx, y - (cy - r * 0.18)) / (r * 0.55));
+    const theta = a + Math.PI / 2 + Math.sin(time + rr * 0.02) * 0.35;
+    const len = 8 * (1 - singular * 0.75);
+    ctx.strokeStyle = `rgba(245,245,245,${0.12 + (1 - singular) * 0.22})`;
+    ctx.beginPath();
+    ctx.moveTo(x - Math.cos(theta) * len, y - Math.sin(theta) * len);
+    ctx.lineTo(x + Math.cos(theta) * len, y + Math.sin(theta) * len);
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.arc(cx, cy - r * 0.18, 6, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(96,165,250,0.86)";
+  ctx.fill();
+}
+
+function drawGaussCircle(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  const spacing = Math.min(width, height) * 0.065;
+  const radius = Math.min(width, height) * (pointer.active ? 0.18 + pointer.x * 0.22 : 0.31 + Math.sin(time * 0.3) * 0.03);
+  ctx.strokeStyle = "rgba(96,165,250,0.68)";
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.stroke();
+  for (let x = cx - spacing * 6; x <= cx + spacing * 6; x += spacing) {
+    for (let y = cy - spacing * 6; y <= cy + spacing * 6; y += spacing) {
+      const d = Math.hypot(x - cx, y - cy);
+      const inside = d <= radius;
+      const boundary = Math.abs(d - radius) < spacing * 0.55;
+      ctx.beginPath();
+      ctx.arc(x, y, boundary ? 3 : 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = inside ? (boundary ? "rgba(96,165,250,0.85)" : "rgba(245,245,245,0.42)") : "rgba(245,245,245,0.08)";
+      ctx.fill();
+    }
+  }
+}
+
+function drawMovingSofa(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.02);
+
+  const corridor = Math.min(width * 0.22, height * 0.34);
+  const cornerX = width * 0.52;
+  const cornerY = height * 0.4;
+  const hLeft = width * 0.08;
+  const vLeft = cornerX - corridor * 0.5;
+  const vRight = cornerX + corridor * 0.5;
+  const hTop = cornerY - corridor * 0.5;
+  const hBottom = cornerY + corridor * 0.5;
+  const vBottom = height * 0.91;
+  const innerCorner = { x: vLeft, y: hBottom };
+
+  ctx.beginPath();
+  ctx.moveTo(hLeft, hTop);
+  ctx.lineTo(vRight, hTop);
+  ctx.lineTo(vRight, vBottom);
+  ctx.lineTo(vLeft, vBottom);
+  ctx.lineTo(vLeft, hBottom);
+  ctx.lineTo(hLeft, hBottom);
+  ctx.closePath();
+  ctx.fillStyle = "rgba(245,245,245,0.052)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(245,245,245,0.24)";
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  ctx.strokeStyle = "rgba(96,165,250,0.22)";
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 3; i++) {
+    ctx.beginPath();
+    ctx.arc(innerCorner.x, innerCorner.y, corridor * (0.34 + i * 0.22), -Math.PI / 2, 0);
+    ctx.stroke();
+  }
+
+  const phase = pointer.active ? Math.min(1, Math.max(0, pointer.x)) : (Math.sin(time * 0.42) + 1) / 2;
+  const sofaScale = corridor * 0.47;
+
+  const poseAt = (p: number) => {
+    if (p < 0.28) {
+      const t = p / 0.28;
+      return {
+        x: hLeft + corridor * 1.35 + t * (innerCorner.x + corridor * 0.34 - hLeft - corridor * 1.35),
+        y: cornerY,
+        angle: 0,
+      };
+    }
+    if (p < 0.74) {
+      const t = (p - 0.28) / 0.46;
+      const eased = 0.5 - Math.cos(t * Math.PI) * 0.5;
+      return {
+        x: innerCorner.x + corridor * (0.28 + Math.sin(eased * Math.PI) * 0.12 + eased * 0.08),
+        y: cornerY + eased * corridor * 0.68,
+        angle: -eased * Math.PI / 2,
+      };
+    }
+    const t = (p - 0.74) / 0.26;
+    return {
+      x: cornerX,
+      y: hBottom + corridor * (0.2 + t * 0.34),
+      angle: -Math.PI / 2,
+    };
+  };
+
+  ctx.strokeStyle = "rgba(96,165,250,0.28)";
+  ctx.lineWidth = 1.1;
+  ctx.beginPath();
+  for (let i = 0; i <= 64; i++) {
+    const pose = poseAt(i / 64);
+    if (i === 0) ctx.moveTo(pose.x, pose.y);
+    else ctx.lineTo(pose.x, pose.y);
+  }
+  ctx.stroke();
+
+  const drawSofa = (p: number, alpha: number, active = false) => {
+    const pose = poseAt(p);
+    ctx.save();
+    ctx.translate(pose.x, pose.y);
+    ctx.rotate(pose.angle);
+    ctx.scale(sofaScale, sofaScale);
+    ctx.beginPath();
+    ctx.moveTo(-1.58, -0.38);
+    ctx.bezierCurveTo(-1.1, -0.7, -0.42, -0.72, 0.32, -0.55);
+    ctx.bezierCurveTo(0.98, -0.39, 1.48, -0.1, 1.48, 0.12);
+    ctx.bezierCurveTo(1.47, 0.36, 0.96, 0.49, 0.46, 0.45);
+    ctx.bezierCurveTo(0.1, 0.42, -0.02, 0.15, -0.27, 0.14);
+    ctx.bezierCurveTo(-0.58, 0.12, -0.7, 0.48, -1.04, 0.42);
+    ctx.bezierCurveTo(-1.48, 0.34, -1.88, -0.08, -1.58, -0.38);
+    ctx.closePath();
+    ctx.fillStyle = active ? `rgba(96,165,250,${alpha})` : `rgba(245,245,245,${alpha})`;
+    ctx.strokeStyle = active ? "rgba(96,165,250,0.92)" : "rgba(245,245,245,0.2)";
+    ctx.lineWidth = active ? 0.04 : 0.022;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  [0.02, 0.18, 0.34, 0.5, 0.66, 0.82, 0.98].forEach((p) => drawSofa(p, 0.075));
+  drawSofa(phase, 0.42, true);
+
+  const pose = poseAt(phase);
+  const contactPoints = [
+    { x: -1.46, y: -0.27 },
+    { x: 1.34, y: 0.1 },
+    { x: -0.24, y: 0.16 },
+  ].map((point) => {
+    const x = point.x * sofaScale;
+    const y = point.y * sofaScale;
+    const c = Math.cos(pose.angle);
+    const s = Math.sin(pose.angle);
+    return {
+      x: pose.x + x * c - y * s,
+      y: pose.y + x * s + y * c,
+    };
+  });
+  contactPoints.forEach((point) => {
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(245,245,245,0.72)";
+    ctx.fill();
+  });
+
+  ctx.beginPath();
+  ctx.arc(pose.x, pose.y, 2.4, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(96,165,250,0.84)";
+  ctx.fill();
+}
+
+function drawMoserWorm(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.02);
+  const cx = width * 0.5;
+  const cy = height * 0.5;
+  const s = Math.min(width, height);
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, s * 0.28, s * 0.18, -0.2, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(96,165,250,0.07)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(96,165,250,0.45)";
+  ctx.stroke();
+  for (let k = 0; k < 8; k++) {
+    const phase = time * 0.35 + k * 0.9 + (pointer.active ? pointer.x * 2 : 0);
+    ctx.beginPath();
+    for (let i = 0; i <= 80; i++) {
+      const t = i / 80;
+      const x = cx - s * 0.22 + t * s * 0.44;
+      const y = cy + Math.sin(t * Math.PI * 2 + phase) * s * (0.04 + k * 0.004) + (k - 3.5) * s * 0.018;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = k === 2 ? "rgba(245,245,245,0.72)" : "rgba(245,245,245,0.18)";
+    ctx.stroke();
+  }
+}
+
+function drawIllumination(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.02);
+  const body = [
+    { x: width * 0.34, y: height * 0.22 },
+    { x: width * 0.7, y: height * 0.32 },
+    { x: width * 0.76, y: height * 0.62 },
+    { x: width * 0.52, y: height * 0.8 },
+    { x: width * 0.24, y: height * 0.64 },
+    { x: width * 0.2, y: height * 0.38 },
+  ];
+  ctx.beginPath();
+  body.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.closePath();
+  ctx.fillStyle = "rgba(245,245,245,0.055)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(245,245,245,0.26)";
+  ctx.stroke();
+  const lights = [
+    { x: width * 0.08, y: height * 0.12 },
+    { x: width * 0.88, y: height * 0.18 },
+    { x: width * 0.9, y: height * 0.86 },
+    { x: pointer.active ? pointer.x * width : width * 0.1, y: pointer.active ? pointer.y * height : height * 0.82 },
+  ];
+  lights.forEach((light, i) => {
+    body.forEach((p, j) => {
+      if ((j + i) % 2 === 0) {
+        ctx.strokeStyle = "rgba(96,165,250,0.12)";
+        ctx.beginPath();
+        ctx.moveTo(light.x, light.y);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+    });
+    ctx.beginPath();
+    ctx.arc(light.x, light.y, 3.4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(96,165,250,0.82)";
+    ctx.fill();
+  });
+}
+
 function drawBox(
   ctx: CanvasRenderingContext2D,
   label: string,
@@ -1284,6 +1700,46 @@ export function KissingNumberViz({ className = "" }: { className?: string }) {
 
 export function SteinerTreeViz({ className = "" }: { className?: string }) {
   return <CanvasViz draw={drawSteinerTree} className={className} />;
+}
+
+export function IsoperimetricViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawIsoperimetric} className={className} />;
+}
+
+export function HoneycombViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawHoneycomb} className={className} />;
+}
+
+export function BrouwerViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawBrouwer} className={className} />;
+}
+
+export function BorsukUlamViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawBorsukUlam} className={className} />;
+}
+
+export function HamSandwichViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawHamSandwich} className={className} />;
+}
+
+export function HairyBallViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawHairyBall} className={className} />;
+}
+
+export function GaussCircleViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawGaussCircle} className={className} />;
+}
+
+export function MovingSofaViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawMovingSofa} className={className} />;
+}
+
+export function MoserWormViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawMoserWorm} className={className} />;
+}
+
+export function IlluminationViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawIllumination} className={className} />;
 }
 
 export function AbcVerificationViz({ className = "" }: { className?: string }) {
