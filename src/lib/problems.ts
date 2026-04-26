@@ -3674,12 +3674,6 @@ const rawProblems: Problem[] = [
   }
 ];
 
-const coreFormula = (
-  latex: string,
-  description: string,
-  label = "Core question",
-): ProblemFormula[] => [{ label, latex, description }];
-
 const coreFormulas: Record<string, ProblemFormula[]> = {
   "kakeya-3d": [
     {

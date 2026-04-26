@@ -574,7 +574,7 @@ function drawCollatz(ctx: CanvasRenderingContext2D, width: number, height: numbe
       const x = (s + 1) * stepW;
       const y = height - 20 - (Math.log(n) / Math.log(maxVal)) * (height - 50);
       pts.push([x, y]);
-      n = n % 2 === 0 ? n / 2 : 3 * n + 1;
+      n = collatzNext(n);
     }
     if (pts.length < 2) continue;
     const alpha = oi === 0 ? 0.7 : 0.25;
