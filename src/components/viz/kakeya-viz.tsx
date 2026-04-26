@@ -14,11 +14,12 @@ function seeded(index: number) {
 function KakeyaLines() {
   const groupRef = useRef<THREE.Group>(null);
 
-  const { tubeGeometry, packetGeometry, tubes } = useMemo(() => {
+  const { tubeGeometry, markerGeometry, tubes, markers } = useMemo(() => {
     const gr = (1 + Math.sqrt(5)) / 2;
     const yAxis = new THREE.Vector3(0, 1, 0);
-    const tubeGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1.02, 8, 1, true);
-    const packetGeometry = new THREE.SphereGeometry(0.72, 32, 16);
+    const segmentLength = 1;
+    const tubeGeometry = new THREE.CylinderGeometry(0.009, 0.009, segmentLength, 8, 1, true);
+    const markerGeometry = new THREE.SphereGeometry(0.026, 8, 8);
     const result: {
       position: THREE.Vector3;
       quaternion: THREE.Quaternion;
@@ -26,6 +27,7 @@ function KakeyaLines() {
       opacity: number;
       radiusScale: number;
     }[] = [];
+    const markers: { position: THREE.Vector3; color: THREE.Color }[] = [];
     const n = 112;
 
     for (let i = 0; i < n; i++) {
@@ -47,37 +49,43 @@ function KakeyaLines() {
       }
       tangent.normalize();
       const bitangent = new THREE.Vector3().crossVectors(direction, tangent).normalize();
-      const packet = 0.28 + Math.pow(seeded(i * 7 + 4), 1.35) * 0.72;
-      const center = tangent
+      const parameter = i / n;
+      const foldedAnchor = new THREE.Vector3(
+        Math.sin(phi * 1.7) * Math.sin(theta) * 0.36,
+        Math.cos(theta * 1.15) * 0.28,
+        Math.cos(phi * 1.35) * Math.sin(theta) * 0.3,
+      );
+      const localJitter = tangent
         .clone()
-        .multiplyScalar((seeded(i * 7 + 5) - 0.5) * 0.82 * packet)
-        .add(bitangent.clone().multiplyScalar((seeded(i * 7 + 6) - 0.5) * 0.58 * packet))
-        .add(direction.clone().multiplyScalar((seeded(i * 7 + 8) - 0.5) * 0.1));
-      const highlight = i % 29 === 0;
+        .multiplyScalar((seeded(i * 7 + 5) - 0.5) * 0.18)
+        .add(bitangent.clone().multiplyScalar((seeded(i * 7 + 6) - 0.5) * 0.14));
+      const anchor = foldedAnchor
+        .add(localJitter)
+        .multiplyScalar(0.72 + Math.sin(parameter * Math.PI * 2) * 0.12);
+      const center = anchor.clone().add(direction.clone().multiplyScalar(segmentLength * 0.5));
+      const highlight = i % 23 === 0;
 
       result.push({
         position: center,
         quaternion: new THREE.Quaternion().setFromUnitVectors(yAxis, direction),
         color: highlight ? new THREE.Color("#f5f5f5") : new THREE.Color("#93c5fd"),
-        opacity: highlight ? 0.5 : 0.14 + seeded(i * 7 + 7) * 0.16,
-        radiusScale: highlight ? 1.65 : 1,
+        opacity: highlight ? 0.6 : 0.15 + seeded(i * 7 + 7) * 0.14,
+        radiusScale: highlight ? 1.55 : 1,
       });
+
+      if (highlight) {
+        markers.push(
+          { position: anchor, color: new THREE.Color("#60a5fa") },
+          { position: center.clone().add(direction.clone().multiplyScalar(segmentLength * 0.5)), color: new THREE.Color("#f5f5f5") },
+        );
+      }
     }
 
-    return { tubeGeometry, packetGeometry, tubes: result };
+    return { tubeGeometry, markerGeometry, tubes: result, markers };
   }, []);
 
   return (
     <group ref={groupRef}>
-      <mesh geometry={packetGeometry}>
-        <meshBasicMaterial
-          color="#60a5fa"
-          transparent
-          opacity={0.035}
-          wireframe
-          depthWrite={false}
-        />
-      </mesh>
       {tubes.map((tube, i) => (
         <mesh
           key={i}
@@ -94,6 +102,11 @@ function KakeyaLines() {
             blending={THREE.AdditiveBlending}
             side={THREE.DoubleSide}
           />
+        </mesh>
+      ))}
+      {markers.map((marker, i) => (
+        <mesh key={`marker-${i}`} geometry={markerGeometry} position={marker.position}>
+          <meshBasicMaterial color={marker.color} transparent opacity={0.7} depthWrite={false} />
         </mesh>
       ))}
     </group>
@@ -114,8 +127,8 @@ export function KakeyaViz({ className = "" }: { className?: string }) {
         </Canvas>
       </WebGLGuard>
       <div className="viz-detail-labels pointer-events-none absolute inset-0 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)]">
-        <span className="absolute left-4 top-4">δ-tubes in many directions</span>
-        <span className="absolute bottom-4 right-4 text-[var(--blue)]">dim_H = upper dim_M = 3</span>
+        <span className="absolute left-4 top-4">e ∈ S², a(e)+[0,1]e ⊂ K</span>
+        <span className="absolute bottom-4 right-4 text-[var(--blue)]">K_δ tube union; dim_H = upper dim_M = 3</span>
       </div>
     </div>
   );
