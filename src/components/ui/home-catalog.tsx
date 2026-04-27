@@ -92,8 +92,8 @@ export function HomeCatalog({
   if (viewMode === "table" && !zenMode) {
     return (
       <section aria-label="Problem catalog — table view">
-        <div id="catalog" className="border-b border-[var(--line)]">
-          <table className="w-full border-collapse font-[var(--font-mono)] text-[11px]">
+        <div id="catalog" className="overflow-x-auto border-b border-[var(--line)]">
+          <table className="w-full min-w-[720px] border-collapse font-[var(--font-mono)] text-[11px]">
             <thead>
               <tr className="border-b border-[var(--line)] bg-white/[0.02] text-left text-[9px] uppercase text-[var(--gray-500)]">
                 <th className={thClass} onClick={() => handleSort("title")}>

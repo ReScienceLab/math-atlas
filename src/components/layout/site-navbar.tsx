@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Grid3X3, List, Search } from "lucide-react";
+import { ChevronDown, Grid3X3, List, Search, SlidersHorizontal } from "lucide-react";
 import type { Problem, ProblemStatus, MathField } from "@/lib/problems";
 import { statusLabel, statusColor, fieldLabel } from "@/lib/problems";
 import { GitHubSourceLink } from "@/components/layout/github-source-link";
@@ -104,10 +104,12 @@ export function SiteNavbar({
   onSearchOpen?: () => void;
 }) {
   const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const openCount = countByStatus(problems, "open");
   const recentCount = problems.filter((problem) => problem.collections?.includes("recent")).length;
   const fieldCount = new Set(problems.map((problem) => problem.field)).size;
   const hasFilters = (statusFilters?.size ?? 0) > 0 || (fieldFilters?.size ?? 0) > 0;
+  const activeFilterCount = (statusFilters?.size ?? 0) + (fieldFilters?.size ?? 0);
 
   return (
     <nav aria-label="Site navigation" className="sticky top-0 z-40 border-b border-[var(--line)] bg-black/90 backdrop-blur-md">
@@ -286,6 +288,139 @@ export function SiteNavbar({
           <GitHubSourceLink className="flex items-center justify-center text-[var(--gray-500)] transition-colors hover:bg-white/[0.025] hover:text-white" />
         </div>
       </div>
+
+      {/* Mobile toolbar: search + filter + view controls (below lg) */}
+      <div className="flex items-center gap-2 border-t border-[var(--line)] px-4 py-2 lg:hidden">
+        {onSearchOpen && (
+          <button
+            type="button"
+            onClick={onSearchOpen}
+            aria-label="Search problems"
+            className="inline-flex h-9 items-center gap-2 border border-white/[0.08] px-3 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)] transition-colors hover:border-white/20 hover:text-white"
+          >
+            <Search aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.8} />
+            <span>Search</span>
+          </button>
+        )}
+
+        {onToggleStatus && (
+          <button
+            type="button"
+            onClick={() => setMobileFiltersOpen((v) => !v)}
+            aria-expanded={mobileFiltersOpen}
+            aria-label="Toggle filters"
+            className={`inline-flex h-9 items-center gap-2 border px-3 font-[var(--font-mono)] text-[10px] uppercase transition-colors ${
+              mobileFiltersOpen || hasFilters
+                ? "border-white/25 bg-white/[0.08] text-white"
+                : "border-white/[0.08] text-[var(--gray-500)] hover:border-white/20 hover:text-white"
+            }`}
+          >
+            <SlidersHorizontal aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.8} />
+            <span>Filter</span>
+            {activeFilterCount > 0 && (
+              <span className="border border-white/20 bg-white/10 px-1.5 py-px text-[8px]">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        )}
+
+        <div className="ml-auto flex items-center gap-1">
+          {onViewModeChange && (
+            <>
+              <button
+                type="button"
+                onClick={() => onViewModeChange("grid")}
+                aria-label="Grid view"
+                aria-pressed={viewMode === "grid"}
+                className={`inline-flex h-9 w-9 items-center justify-center border transition-colors ${
+                  viewMode === "grid"
+                    ? "border-white/25 bg-white/[0.08] text-white"
+                    : "border-white/[0.08] text-[var(--gray-500)] hover:border-white/20 hover:text-white"
+                }`}
+              >
+                <Grid3X3 aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.8} />
+              </button>
+              <button
+                type="button"
+                onClick={() => onViewModeChange("table")}
+                aria-label="Table view"
+                aria-pressed={viewMode === "table"}
+                className={`inline-flex h-9 w-9 items-center justify-center border transition-colors ${
+                  viewMode === "table"
+                    ? "border-white/25 bg-white/[0.08] text-white"
+                    : "border-white/[0.08] text-[var(--gray-500)] hover:border-white/20 hover:text-white"
+                }`}
+              >
+                <List aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.8} />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile filter panel (below lg) */}
+      {mobileFiltersOpen && (
+        <div className="border-t border-[var(--line)] bg-[#0a0a0a] px-4 py-3 lg:hidden">
+          <div className="flex flex-wrap gap-2">
+            {onToggleStatus && (
+              <div className="w-full">
+                <span className="mb-2 block font-[var(--font-mono)] text-[9px] uppercase text-[var(--gray-600)]">Status</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {allStatuses.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => onToggleStatus(s)}
+                      className={`inline-flex h-8 items-center gap-1.5 border px-2.5 font-[var(--font-mono)] text-[9px] uppercase transition-colors ${
+                        statusFilters?.has(s)
+                          ? statusColor[s]
+                          : "border-white/[0.08] text-[var(--gray-500)] hover:border-white/20 hover:text-white"
+                      }`}
+                    >
+                      <span className={`inline-block h-1.5 w-1.5 shrink-0 border ${statusFilters?.has(s) ? "bg-current opacity-80" : "border-current opacity-40"}`} />
+                      {statusLabel[s]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {onToggleField && (
+              <div className="mt-2 w-full">
+                <span className="mb-2 block font-[var(--font-mono)] text-[9px] uppercase text-[var(--gray-600)]">Field</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {allFields.map((f) => (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => onToggleField(f)}
+                      className={`inline-flex h-8 items-center gap-1.5 border px-2.5 font-[var(--font-mono)] text-[9px] uppercase transition-colors ${
+                        fieldFilters?.has(f)
+                          ? "border-white/25 bg-white/[0.08] text-white"
+                          : "border-white/[0.08] text-[var(--gray-500)] hover:border-white/20 hover:text-white"
+                      }`}
+                    >
+                      <span className={`inline-block h-1.5 w-1.5 shrink-0 border ${fieldFilters?.has(f) ? "border-white bg-white/60" : "border-current opacity-40"}`} />
+                      {fieldLabel[f]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {hasFilters && onClearFilters && (
+              <button
+                type="button"
+                onClick={onClearFilters}
+                className="mt-2 inline-flex h-8 items-center border border-white/[0.08] px-3 font-[var(--font-mono)] text-[9px] uppercase text-[var(--gray-500)] transition-colors hover:border-white/20 hover:text-white"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
