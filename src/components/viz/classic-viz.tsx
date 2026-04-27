@@ -2884,6 +2884,178 @@ function drawBox(
   );
 }
 
+function drawErdos1196(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.032);
+
+  const scale = Math.min(width, height);
+  const compact = isCardPreviewCanvas(ctx) || width < 560 || height < 300;
+  const leftW = compact ? width : width * 0.68;
+  const leftX = compact ? 0 : width * 0.02;
+  const top = height * 0.12;
+  const nodeR = Math.max(10, Math.min(22, scale * 0.045));
+  const text = (
+    value: string,
+    x: number,
+    y: number,
+    size = 12,
+    color = "rgba(245,245,245,0.72)",
+    align: CanvasTextAlign = "center",
+  ) => {
+    if (compact) return;
+    ctx.font = `${size}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+    ctx.textAlign = align;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = color;
+    ctx.fillText(value, x, y);
+  };
+  const point = (x: number, y: number) => ({
+    x: leftX + leftW * x,
+    y: top + height * y,
+  });
+  const nodes = {
+    n2310: { label: "2310", ...point(0.43, 0.06), kind: "source" },
+    n1155: { label: "1155", ...point(0.12, 0.29), kind: "primitive" },
+    n770: { label: "770", ...point(0.28, 0.29), kind: "hit" },
+    n462: { label: "462", ...point(0.44, 0.29), kind: "primitive" },
+    n330: { label: "330", ...point(0.60, 0.29), kind: "primitive" },
+    n210: { label: "210", ...point(0.76, 0.29), kind: "primitive" },
+    n154: { label: "154", ...point(0.28, 0.50), kind: "chain" },
+    n22: { label: "22", ...point(0.28, 0.67), kind: "chain" },
+    n2: { label: "2", ...point(0.28, 0.82), kind: "chain" },
+  };
+  const edges = [
+    ["n2310", "n1155", "2", false],
+    ["n2310", "n770", "3", true],
+    ["n2310", "n462", "5", false],
+    ["n2310", "n330", "7", false],
+    ["n2310", "n210", "11", false],
+    ["n770", "n154", "5", true],
+    ["n154", "n22", "7", true],
+    ["n22", "n2", "11", true],
+  ] as const;
+  const drawArrow = (
+    from: (typeof nodes)[keyof typeof nodes],
+    to: (typeof nodes)[keyof typeof nodes],
+    q: string,
+    active: boolean,
+  ) => {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const ux = dx / length;
+    const uy = dy / length;
+    const sx = from.x + ux * nodeR;
+    const sy = from.y + uy * nodeR;
+    const ex = to.x - ux * nodeR;
+    const ey = to.y - uy * nodeR;
+    const pulse = active ? 0.58 + 0.18 * Math.sin(time * 2.2) : 0.15;
+    ctx.strokeStyle = active ? `rgba(96,165,250,${pulse})` : "rgba(245,245,245,0.16)";
+    ctx.lineWidth = active ? 2 : 1;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
+    const head = active ? 7 : 5;
+    ctx.fillStyle = active ? "rgba(96,165,250,0.78)" : "rgba(245,245,245,0.22)";
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.lineTo(ex - ux * head - uy * head * 0.55, ey - uy * head + ux * head * 0.55);
+    ctx.lineTo(ex - ux * head + uy * head * 0.55, ey - uy * head - ux * head * 0.55);
+    ctx.closePath();
+    ctx.fill();
+    if (active) {
+      const mx = (sx + ex) * 0.5;
+      const my = (sy + ey) * 0.5;
+      text(`Λ(${q})/log n`, mx, my - 10, active ? 11 : 10, active ? "rgba(147,197,253,0.82)" : "rgba(245,245,245,0.38)");
+    }
+  };
+
+  ctx.fillStyle = "rgba(34,197,94,0.055)";
+  ctx.strokeStyle = "rgba(34,197,94,0.28)";
+  ctx.lineWidth = 1;
+  const bandX = nodes.n1155.x - nodeR * 1.8;
+  const bandY = nodes.n1155.y - nodeR * 1.7;
+  const bandW = nodes.n210.x - nodes.n1155.x + nodeR * 3.6;
+  const bandH = nodeR * 3.4;
+  ctx.fillRect(bandX, bandY, bandW, bandH);
+  ctx.strokeRect(bandX, bandY, bandW, bandH);
+  text("primitive antichain A", bandX + 10, bandY - 12, 11, "rgba(134,239,172,0.66)", "left");
+
+  edges.forEach(([from, to, q, active]) =>
+    drawArrow(nodes[from], nodes[to], q, active),
+  );
+
+  Object.values(nodes).forEach((node) => {
+    const active =
+      pointer.active &&
+      Math.hypot(pointer.x * width - node.x, pointer.y * height - node.y) <
+        nodeR * 1.8;
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, active ? nodeR * 1.18 : nodeR, 0, Math.PI * 2);
+    ctx.fillStyle =
+      node.kind === "hit"
+        ? "rgba(34,197,94,0.7)"
+        : node.kind === "source"
+          ? "rgba(96,165,250,0.66)"
+          : node.kind === "primitive"
+            ? "rgba(134,239,172,0.18)"
+            : "rgba(245,245,245,0.13)";
+    ctx.fill();
+    ctx.strokeStyle =
+      node.kind === "hit"
+        ? "rgba(134,239,172,0.86)"
+        : active
+          ? "rgba(96,165,250,0.78)"
+          : "rgba(245,245,245,0.24)";
+    ctx.lineWidth = node.kind === "hit" || active ? 1.7 : 1;
+    ctx.stroke();
+    text(node.label, node.x, node.y + 1, 12, "rgba(245,245,245,0.82)");
+  });
+
+  text("sample downward chain: 2310 -> 770 -> 154 -> 22 -> 2", leftX + 18, height - 24, 12, "rgba(147,197,253,0.72)", "left");
+
+  if (compact) return;
+
+  const rightX = width * 0.72;
+  const rightW = width * 0.23;
+  const boxH = 48;
+  const boxes = [
+    ["transition", "P(n -> n/q) = Λ(q)/log n"],
+    ["normalization", "sum_{q|n} Λ(q) = log n"],
+    ["primitive set", "a chain can hit A at most once"],
+    ["zeta weight", "sum_{a in A} ν(a) <= 1"],
+    ["asymptotic", "ν(a) ~ 1/(a log a)"],
+  ];
+  boxes.forEach(([label, value], i) => {
+    const y = height * 0.14 + i * (boxH + 12);
+    drawBox(
+      ctx,
+      "",
+      rightX,
+      y,
+      rightW,
+      boxH,
+      i === 3 ? "rgba(34,197,94,0.55)" : "rgba(96,165,250,0.45)",
+      i === 3,
+    );
+    text(label, rightX + 10, y - 10, 10, "rgba(245,245,245,0.42)", "left");
+    text(value, rightX + 12, y + boxH * 0.56, 11, "rgba(245,245,245,0.7)", "left");
+  });
+  drawLabel(
+    ctx,
+    "legal divisibility edges only; highlighted path hits the primitive set once",
+    16,
+    height - 18,
+  );
+}
+
 function drawAbcVerification(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -3209,6 +3381,10 @@ export function MoserWormViz({ className = "" }: { className?: string }) {
 
 export function IlluminationViz({ className = "" }: { className?: string }) {
   return <CanvasViz draw={drawIllumination} className={className} />;
+}
+
+export function Erdos1196Viz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawErdos1196} className={className} />;
 }
 
 export function AbcVerificationViz({ className = "" }: { className?: string }) {

@@ -1,4 +1,5 @@
 import type { Problem } from "@/lib/problem-types";
+import { erdosProblem1196 } from "./erdos-problem-1196";
 import { abcSecretVerification } from "./abc-secret-verification";
 import { faltingsAbelPrize2026 } from "./faltings-abel-prize-2026";
 import { kakeya2d } from "./kakeya-2d";
@@ -42,6 +43,7 @@ import { continuumHypothesis } from "./continuum-hypothesis";
 import { poincareConjecture } from "./poincare-conjecture";
 
 export const configuredProblems: Problem[] = [
+  erdosProblem1196,
   abcSecretVerification,
   faltingsAbelPrize2026,
   kakeya2d,

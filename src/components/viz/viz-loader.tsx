@@ -60,6 +60,7 @@ const vizMap: Record<string, VizComponent> = {
   MovingSofaViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.MovingSofaViz)),
   MoserWormViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.MoserWormViz)),
   IlluminationViz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.IlluminationViz)),
+  Erdos1196Viz: dynamicViz(() => import("@/components/viz/classic-viz").then((m) => m.Erdos1196Viz)),
 };
 
 export function VizLoader({ name, className }: { name: string; className?: string }) {

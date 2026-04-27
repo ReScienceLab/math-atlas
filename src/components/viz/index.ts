@@ -40,4 +40,5 @@ export {
   MovingSofaViz,
   MoserWormViz,
   IlluminationViz,
+  Erdos1196Viz,
 } from "./classic-viz";

@@ -47,6 +47,7 @@ const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
   MovingSofaViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.MovingSofaViz), { ssr: false }),
   MoserWormViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.MoserWormViz), { ssr: false }),
   IlluminationViz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.IlluminationViz), { ssr: false }),
+  Erdos1196Viz: dynamic(() => import("@/components/viz/classic-viz").then(m => m.Erdos1196Viz), { ssr: false }),
 };
 
 const cardVizClassName =
