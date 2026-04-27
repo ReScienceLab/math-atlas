@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Search } from "lucide-react";
 import type { Problem } from "@/lib/problems";
 import { statusLabel, statusColor, fieldLabel } from "@/lib/problems";
 
@@ -38,6 +39,18 @@ export function SearchDialog({
   open: boolean;
   onClose: () => void;
 }) {
+  if (!open) return null;
+
+  return <SearchDialogContent problems={problems} onClose={onClose} />;
+}
+
+function SearchDialogContent({
+  problems,
+  onClose,
+}: {
+  problems: Problem[];
+  onClose: () => void;
+}) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
@@ -53,16 +66,9 @@ export function SearchDialog({
     : problems.slice(0, 8);
 
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setActiveIndex(0);
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }
-  }, [open]);
-
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [query]);
+    const frame = requestAnimationFrame(() => inputRef.current?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   const navigate = useCallback(
     (slug: string) => {
@@ -73,16 +79,17 @@ export function SearchDialog({
   );
 
   useEffect(() => {
-    if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
         e.stopImmediatePropagation();
         onClose();
       } else if (e.key === "ArrowDown") {
+        if (results.length === 0) return;
         e.preventDefault();
         setActiveIndex((i) => (i + 1) % results.length);
       } else if (e.key === "ArrowUp") {
+        if (results.length === 0) return;
         e.preventDefault();
         setActiveIndex((i) => (i - 1 + results.length) % results.length);
       } else if (e.key === "Enter" && results[activeIndex]) {
@@ -92,9 +99,7 @@ export function SearchDialog({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose, results, activeIndex, navigate]);
-
-  if (!open) return null;
+  }, [onClose, results, activeIndex, navigate]);
 
   return (
     <div
@@ -105,21 +110,19 @@ export function SearchDialog({
     >
       <div className="w-full max-w-[520px] border border-[var(--line)] bg-[#0a0a0a] shadow-2xl">
         <div className="flex items-center gap-3 border-b border-[var(--line)] px-4 py-3">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 16 16"
-            fill="none"
-            className="shrink-0 text-[var(--gray-500)]"
-          >
-            <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M11 11L14.5 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
+          <Search
+            aria-hidden="true"
+            className="h-3.5 w-3.5 shrink-0 text-[var(--gray-500)]"
+            strokeWidth={1.8}
+          />
           <input
             ref={inputRef}
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActiveIndex(0);
+            }}
             placeholder="Search problems..."
             className="flex-1 bg-transparent font-[var(--font-mono)] text-[13px] text-white placeholder-[var(--gray-600)] outline-none"
           />

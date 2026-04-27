@@ -20,6 +20,7 @@ const pngDpi = 300;
 const pngPixelsPerMeter = Math.round(pngDpi / 0.0254);
 
 const outputs = [
+  { name: "og", width: 1200, height: 630, scale: 2, file: "og.png" },
   { name: "github", width: 1500, height: 500, scale: 2, file: "github-banner.png" },
 ];
 

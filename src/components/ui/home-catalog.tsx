@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import type { Problem } from "@/lib/problems";
 import { statusLabel, statusColor, fieldLabel } from "@/lib/problems";
 import { ProblemCard } from "@/components/ui/problem-card";
@@ -48,22 +49,11 @@ function compare(a: Problem, b: Problem, key: SortKey): number {
 
 function SortArrow({ active, dir }: { active: boolean; dir: SortDir }) {
   if (!active) {
-    return (
-      <svg width="7" height="10" viewBox="0 0 7 10" fill="none" className="ml-1 inline-block opacity-30">
-        <path d="M3.5 1L6 4H1L3.5 1Z" fill="currentColor" />
-        <path d="M3.5 9L1 6H6L3.5 9Z" fill="currentColor" />
-      </svg>
-    );
+    return <ArrowUpDown aria-hidden="true" className="ml-1 inline-block h-2.5 w-2.5 opacity-30" strokeWidth={2} />;
   }
-  return (
-    <svg width="7" height="10" viewBox="0 0 7 10" fill="none" className="ml-1 inline-block">
-      {dir === "asc" ? (
-        <path d="M3.5 1L6 4H1L3.5 1Z" fill="currentColor" />
-      ) : (
-        <path d="M3.5 9L1 6H6L3.5 9Z" fill="currentColor" />
-      )}
-    </svg>
-  );
+
+  const Icon = dir === "asc" ? ArrowUp : ArrowDown;
+  return <Icon aria-hidden="true" className="ml-1 inline-block h-2.5 w-2.5" strokeWidth={2} />;
 }
 
 export function HomeCatalog({

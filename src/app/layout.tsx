@@ -19,10 +19,10 @@ export const metadata: Metadata = {
     siteName: "Math Atlas",
     images: [
       {
-        url: "/og",
+        url: "/og.png",
         width: 2400,
         height: 1260,
-        alt: "Math Atlas social preview with a Kakeya Conjecture 2D visualization.",
+        alt: "Math Atlas social preview with a Kakeya Conjecture 3D visualization.",
       },
     ],
     type: "website",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: "Math Atlas",
     description:
       "A curated atlas of mathematical problems, conjectures, and theorems.",
-    images: ["/og"],
+    images: ["/og.png"],
   },
 };
 

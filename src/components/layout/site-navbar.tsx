@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { ChevronDown, Grid3X3, List, Search } from "lucide-react";
 import type { Problem, ProblemStatus, MathField } from "@/lib/problems";
 import { statusLabel, statusColor, fieldLabel } from "@/lib/problems";
 import { GitHubSourceLink } from "@/components/layout/github-source-link";
@@ -60,15 +61,11 @@ function FilterDropdown({
             {activeCount}
           </span>
         )}
-        <svg
-          width="8"
-          height="8"
-          viewBox="0 0 8 8"
-          fill="none"
-          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-        >
-          <path d="M1.5 3L4 5.5L6.5 3" stroke="currentColor" strokeWidth="1" />
-        </svg>
+        <ChevronDown
+          aria-hidden="true"
+          className={`h-2 w-2 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          strokeWidth={2}
+        />
       </button>
       {isOpen && (
         <div className="absolute left-0 top-full z-50 mt-1 flex min-w-[140px] flex-col gap-0.5 border border-[var(--line)] bg-[#0a0a0a] p-1.5 shadow-xl">
@@ -154,10 +151,7 @@ export function SiteNavbar({
               className="inline-flex items-center gap-2 border border-white/[0.08] px-2 py-1 font-[var(--font-mono)] text-[10px] text-[var(--gray-500)] transition-colors hover:border-white/20 hover:text-white"
               title="Search problems (⌘K)"
             >
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M11 11L14.5 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              <Search aria-hidden="true" className="h-3 w-3" strokeWidth={1.8} />
               <span>Search</span>
               <kbd className="border border-white/[0.1] bg-white/[0.04] px-1 py-px text-[8px] text-[var(--gray-600)]">
                 ⌘K
@@ -181,12 +175,7 @@ export function SiteNavbar({
                 }`}
                 title="Grid view"
               >
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="1" y="1" width="6" height="6" stroke="currentColor" strokeWidth="1.5" />
-                  <rect x="9" y="1" width="6" height="6" stroke="currentColor" strokeWidth="1.5" />
-                  <rect x="1" y="9" width="6" height="6" stroke="currentColor" strokeWidth="1.5" />
-                  <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
+                <Grid3X3 aria-hidden="true" className="h-3 w-3" strokeWidth={1.8} />
               </button>
               <button
                 type="button"
@@ -198,11 +187,7 @@ export function SiteNavbar({
                 }`}
                 title="Table view"
               >
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <line x1="1" y1="3" x2="15" y2="3" stroke="currentColor" strokeWidth="1.5" />
-                  <line x1="1" y1="8" x2="15" y2="8" stroke="currentColor" strokeWidth="1.5" />
-                  <line x1="1" y1="13" x2="15" y2="13" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
+                <List aria-hidden="true" className="h-3 w-3" strokeWidth={1.8} />
               </button>
             </div>
           )}

@@ -28,8 +28,7 @@ bun run social
 ```
 
 The source HTML lives at `assets/social/banner.html` and renders
-`public/github-banner.png` as a 3:1 banner at 2x resolution with 300 DPI PNG metadata.
-Open Graph images are generated dynamically by `src/app/og/route.tsx`.
+`public/og.png` and `public/github-banner.png` at 2x resolution with 300 DPI PNG metadata.
 
 ## Deployment
 
