@@ -5,6 +5,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  readdirSync,
   rmSync,
   statSync,
   writeFileSync,
@@ -16,8 +17,10 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = path.join(root, "public");
+const problemOgDir = path.join(publicDir, "og", "problems");
 const pngDpi = 300;
 const pngPixelsPerMeter = Math.round(pngDpi / 0.0254);
+const problemOgWaitMs = Number(process.env.PROBLEM_OG_WAIT_MS ?? 2500);
 
 const outputs = [
   { name: "og", width: 1200, height: 630, scale: 2, file: "og.png" },
@@ -53,6 +56,13 @@ function findChrome() {
   throw new Error("Could not find Chrome/Chromium. Set CHROME_PATH to a headless-capable browser binary.");
 }
 
+function packageRunner() {
+  if (commandExists("bun")) return { command: "bun", args: ["x"] };
+  if (commandExists("bunx")) return { command: "bunx", args: [] };
+  if (commandExists("npx")) return { command: "npx", args: [] };
+  throw new Error("Could not find bun, bunx, or npx to launch Next.js.");
+}
+
 function contentType(filePath) {
   const extension = path.extname(filePath);
   if (extension === ".html") return "text/html; charset=utf-8";
@@ -85,6 +95,91 @@ function startServer() {
       resolve({ server, port: address.port });
     });
   });
+}
+
+function getFreePort() {
+  const server = createServer();
+
+  return new Promise((resolve, reject) => {
+    server.on("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      const address = server.address();
+      const port = address.port;
+      server.close(() => resolve(port));
+    });
+  });
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForHttp(url, timeoutMs = 45000) {
+  const start = Date.now();
+  let lastError;
+
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (response.ok) return;
+      lastError = new Error(`HTTP ${response.status} for ${url}`);
+    } catch (error) {
+      lastError = error;
+    }
+
+    await sleep(300);
+  }
+
+  throw new Error(`Timed out waiting for ${url}: ${lastError?.message ?? "no response"}`);
+}
+
+async function startNextServer() {
+  const port = await getFreePort();
+  const runner = packageRunner();
+  const args = [
+    ...runner.args,
+    "next",
+    "dev",
+    "-H",
+    "127.0.0.1",
+    "-p",
+    String(port),
+  ];
+  const child = spawn(runner.command, args, {
+    cwd: root,
+    env: {
+      ...process.env,
+      NEXT_TELEMETRY_DISABLED: "1",
+    },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const baseUrl = `http://127.0.0.1:${port}`;
+  let output = "";
+
+  child.stdout.on("data", (chunk) => {
+    output += chunk;
+  });
+  child.stderr.on("data", (chunk) => {
+    output += chunk;
+  });
+
+  child.on("exit", (status, signal) => {
+    if (status !== null && status !== 0) {
+      console.error(`Next.js server exited with ${status ?? signal}\n${output}`);
+    }
+  });
+
+  await waitForHttp(baseUrl);
+
+  return {
+    baseUrl,
+    stop: async () => {
+      if (child.exitCode !== null) return;
+      child.kill("SIGTERM");
+      await sleep(600);
+      if (child.exitCode === null) child.kill("SIGKILL");
+    },
+  };
 }
 
 function crc32(buffer) {
@@ -144,11 +239,19 @@ function setPngDpi(filePath) {
   writeFileSync(filePath, Buffer.concat(chunks));
 }
 
-function render(baseUrl, { name, width, height, scale, file }) {
+function renderUrlToPng({
+  name,
+  url,
+  outPath,
+  width,
+  height,
+  scale,
+  waitMs = 0,
+  timeoutMs = 15000,
+}) {
   const chrome = findChrome();
-  const outPath = path.join(publicDir, file);
   const userDataDir = mkdtempSync(path.join(tmpdir(), `math-atlas-social-${name}-`));
-  const url = `${baseUrl}/assets/social/banner.html?variant=${name}`;
+  mkdirSync(path.dirname(outPath), { recursive: true });
   rmSync(outPath, { force: true });
   const args = [
     "--headless=new",
@@ -163,8 +266,9 @@ function render(baseUrl, { name, width, height, scale, file }) {
     `--user-data-dir=${userDataDir}`,
     `--window-size=${width},${height}`,
     `--screenshot=${outPath}`,
-    url,
   ];
+  if (waitMs > 0) args.push(`--virtual-time-budget=${waitMs}`);
+  args.push(url);
 
   return new Promise((resolve, reject) => {
     let stdout = "";
@@ -197,7 +301,7 @@ function render(baseUrl, { name, width, height, scale, file }) {
       timedOut = true;
       child.kill("SIGTERM");
       forceKillTimer = setTimeout(() => child.kill("SIGKILL"), 2000);
-    }, 15000);
+    }, timeoutMs);
 
     child.stdout.on("data", (chunk) => {
       stdout += chunk;
@@ -236,11 +340,68 @@ function render(baseUrl, { name, width, height, scale, file }) {
   });
 }
 
-mkdirSync(publicDir, { recursive: true });
-const { server, port } = await startServer();
-try {
-  const baseUrl = `http://127.0.0.1:${port}`;
-  for (const output of outputs) await render(baseUrl, output);
-} finally {
-  server.close();
+function renderStaticBanner(baseUrl, { name, width, height, scale, file }) {
+  return renderUrlToPng({
+    name,
+    url: `${baseUrl}/assets/social/banner.html?variant=${name}`,
+    outPath: path.join(publicDir, file),
+    width,
+    height,
+    scale,
+  });
 }
+
+function readProblemSlugs() {
+  const requested = process.env.PROBLEM_OG_SLUGS?.split(",")
+    .map((slug) => slug.trim())
+    .filter(Boolean);
+  if (requested?.length) return requested;
+
+  const problemDir = path.join(root, "src", "content", "problems");
+  return readdirSync(problemDir)
+    .filter((file) => file.endsWith(".ts") && file !== "index.ts")
+    .map((file) => {
+      const source = readFileSync(path.join(problemDir, file), "utf8");
+      return source.match(/slug:\s*"([^"]+)"/)?.[1];
+    })
+    .filter(Boolean)
+    .sort();
+}
+
+async function renderProblemImages() {
+  if (process.env.SKIP_PROBLEM_OG === "1") return;
+
+  const slugs = readProblemSlugs();
+  if (!slugs.length) return;
+
+  mkdirSync(problemOgDir, { recursive: true });
+  const next = await startNextServer();
+  try {
+    for (const slug of slugs) {
+      await renderUrlToPng({
+        name: `problem-${slug}`,
+        url: `${next.baseUrl}/og/problems/${slug}`,
+        outPath: path.join(problemOgDir, `${slug}.png`),
+        width: 1200,
+        height: 630,
+        scale: 2,
+        waitMs: problemOgWaitMs,
+        timeoutMs: 45000,
+      });
+    }
+  } finally {
+    await next.stop();
+  }
+}
+
+mkdirSync(publicDir, { recursive: true });
+if (process.env.SKIP_STATIC_SOCIAL !== "1") {
+  const { server, port } = await startServer();
+  try {
+    const baseUrl = `http://127.0.0.1:${port}`;
+    for (const output of outputs) await renderStaticBanner(baseUrl, output);
+  } finally {
+    server.close();
+  }
+}
+await renderProblemImages();

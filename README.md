@@ -29,6 +29,15 @@ bun run social
 
 The source HTML lives at `assets/social/banner.html` and renders
 `public/og.png` and `public/github-banner.png` at 2x resolution with 300 DPI PNG metadata.
+Problem pages use pre-rendered Open Graph images in `public/og/problems/`,
+generated from a screenshot-only Next route that reuses each problem's real visualization.
+
+Useful options:
+
+```bash
+SKIP_STATIC_SOCIAL=1 PROBLEM_OG_SLUGS=erdos-problem-1196 bun run social
+SKIP_PROBLEM_OG=1 bun run social
+```
 
 ## Deployment
 

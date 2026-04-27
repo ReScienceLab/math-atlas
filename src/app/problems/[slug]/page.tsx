@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import katex from "katex";
-import { problems, getProblem, fieldLabel, type ProblemFormula, type Video } from "@/lib/problems";
+import { problems, getProblem, fieldLabel, type ProblemFormula } from "@/lib/problems";
 import { Badge } from "@/components/ui/badge";
 import { AuthorCard } from "@/components/ui/author-card";
 import { EscBackLink } from "@/components/ui/esc-back-link";
@@ -52,6 +53,49 @@ export function generateStaticParams() {
   return problems.map((p) => ({ slug: p.slug }));
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const problem = getProblem(slug);
+  if (!problem) return {};
+
+  const path = `/problems/${problem.slug}`;
+  const image = `/og/problems/${problem.slug}.png`;
+  const title = `${problem.title} — Math Atlas`;
+
+  return {
+    title,
+    description: problem.shortDescription,
+    alternates: {
+      canonical: path,
+    },
+    openGraph: {
+      title,
+      description: problem.shortDescription,
+      url: path,
+      siteName: "Math Atlas",
+      images: [
+        {
+          url: image,
+          width: 2400,
+          height: 1260,
+          alt: `${problem.title} visual preview on Math Atlas.`,
+        },
+      ],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: problem.shortDescription,
+      images: [image],
+    },
+  };
+}
+
 export default async function ProblemPage({
   params,
 }: {
@@ -65,8 +109,8 @@ export default async function ProblemPage({
   const nextProblem = problems[(problemIndex + 1) % problems.length];
 
   return (
-    <main className="min-h-screen bg-[var(--bg)]">
-      <nav className="sticky top-0 z-50 border-b border-white/[0.08] bg-black/85 backdrop-blur-md">
+    <main id="main-content" className="min-h-screen bg-[var(--bg)]">
+      <nav aria-label="Problem navigation" className="sticky top-0 z-50 border-b border-white/[0.08] bg-black/85 backdrop-blur-md">
         <div className={`${pageShell} flex h-11 min-w-0 items-center gap-2 sm:h-12 sm:gap-3`}>
           <EscBackLink />
           <span className="font-[var(--font-mono)] text-[12px] text-[var(--gray-500)] sm:text-[13px]">Math Atlas</span>
