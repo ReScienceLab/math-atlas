@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-04-27T00:00:00Z",
+  "title": "Design System: Math Atlas",
+  "extensions": {
+    "colorMeta": {
+      "observatory-ink": {
+        "role": "neutral",
+        "displayName": "Observatory Ink",
+        "canonical": "oklch(0.13 0.005 250)",
+        "tonalRamp": ["oklch(0.13 0.005 250)", "oklch(0.15 0.005 250)", "oklch(0.18 0.005 250)", "oklch(0.22 0.005 250)", "oklch(0.30 0.005 250)", "oklch(0.40 0.005 250)", "oklch(0.55 0.005 250)", "oklch(0.70 0.005 250)"]
+      },
+      "observatory-paper": {
+        "role": "neutral",
+        "displayName": "Observatory Paper",
+        "canonical": "oklch(0.96 0.005 250)",
+        "tonalRamp": ["oklch(0.30 0.005 250)", "oklch(0.40 0.005 250)", "oklch(0.55 0.005 250)", "oklch(0.65 0.005 250)", "oklch(0.75 0.005 250)", "oklch(0.85 0.005 250)", "oklch(0.92 0.005 250)", "oklch(0.96 0.005 250)"]
+      },
+      "signal-blue": {
+        "role": "primary",
+        "displayName": "Signal Blue",
+        "canonical": "oklch(0.62 0.21 255)",
+        "tonalRamp": ["oklch(0.20 0.08 255)", "oklch(0.30 0.12 255)", "oklch(0.40 0.16 255)", "oklch(0.50 0.19 255)", "oklch(0.62 0.21 255)", "oklch(0.72 0.17 255)", "oklch(0.82 0.12 255)", "oklch(0.92 0.06 255)"]
+      },
+      "warm-amber": {
+        "role": "secondary",
+        "displayName": "Warm Amber",
+        "canonical": "oklch(0.73 0.14 75)",
+        "tonalRamp": ["oklch(0.20 0.04 75)", "oklch(0.30 0.06 75)", "oklch(0.40 0.08 75)", "oklch(0.53 0.10 75)", "oklch(0.63 0.12 75)", "oklch(0.73 0.14 75)", "oklch(0.83 0.10 75)", "oklch(0.93 0.04 75)"]
+      },
+      "panel-deep": {
+        "role": "neutral",
+        "displayName": "Panel Deep",
+        "canonical": "oklch(0.14 0.005 250)",
+        "tonalRamp": ["oklch(0.14 0.005 250)", "oklch(0.17 0.005 250)", "oklch(0.20 0.005 250)", "oklch(0.24 0.005 250)", "oklch(0.30 0.005 250)", "oklch(0.40 0.005 250)", "oklch(0.55 0.005 250)", "oklch(0.70 0.005 250)"]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "canonical": "oklch(0.17 0.005 250)",
+        "tonalRamp": ["oklch(0.13 0.005 250)", "oklch(0.17 0.005 250)", "oklch(0.21 0.005 250)", "oklch(0.26 0.005 250)", "oklch(0.34 0.005 250)", "oklch(0.44 0.005 250)", "oklch(0.58 0.005 250)", "oklch(0.72 0.005 250)"]
+      },
+      "panel-soft": {
+        "role": "neutral",
+        "displayName": "Panel Soft",
+        "canonical": "oklch(0.20 0.005 250)",
+        "tonalRamp": ["oklch(0.13 0.005 250)", "oklch(0.16 0.005 250)", "oklch(0.20 0.005 250)", "oklch(0.25 0.005 250)", "oklch(0.33 0.005 250)", "oklch(0.43 0.005 250)", "oklch(0.57 0.005 250)", "oklch(0.72 0.005 250)"]
+      },
+      "status-proved": { "role": "status", "displayName": "Proved", "canonical": "oklch(0.62 0.21 255)" },
+      "status-disproved": { "role": "status", "displayName": "Disproved", "canonical": "oklch(0.58 0.22 25)" },
+      "status-resolved": { "role": "status", "displayName": "Resolved", "canonical": "oklch(0.72 0.20 150)" },
+      "status-partial": { "role": "status", "displayName": "Partial", "canonical": "oklch(0.80 0.18 95)" },
+      "status-watch": { "role": "status", "displayName": "Watch", "canonical": "oklch(0.72 0.18 55)" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Problem titles on detail pages. Bold, tight, impactful." },
+      "body": { "displayName": "Body", "purpose": "Descriptions, long-form text, paper titles. Max 65-75ch." },
+      "label": { "displayName": "Label", "purpose": "Section headings, filter labels, navigation breadcrumbs. Mono uppercase." },
+      "kicker": { "displayName": "Kicker", "purpose": "Status badges, field tags, stat labels, smallest text in the system. Mono uppercase." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default transition easing for hover states and color shifts." },
+      { "name": "duration-fast", "value": "150ms", "purpose": "Color transitions, opacity changes on hover." },
+      { "name": "duration-standard", "value": "200ms", "purpose": "Background color transitions, border opacity shifts." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Status Badge (Open)",
+      "kind": "chip",
+      "refersTo": "badge-open",
+      "description": "Status indicator for open/unresolved problems. Monospaced uppercase, sharp rectangle.",
+      "html": "<span class=\"ds-badge-open\">OPEN</span>",
+      "css": ".ds-badge-open { display: inline-flex; align-items: center; font-family: 'Geist Mono', ui-monospace, SFMono-Regular, monospace; font-size: 8px; font-weight: 500; text-transform: uppercase; padding: 2px 8px; border: 1px solid rgba(255,255,255,0.14); color: #a3a3a3; background: rgba(255,255,255,0.04); border-radius: 0; }"
+    },
+    {
+      "name": "Status Badge (Proved)",
+      "kind": "chip",
+      "refersTo": "badge-proved",
+      "description": "Status indicator for proved problems. Blue tint variant.",
+      "html": "<span class=\"ds-badge-proved\">PROVED</span>",
+      "css": ".ds-badge-proved { display: inline-flex; align-items: center; font-family: 'Geist Mono', ui-monospace, SFMono-Regular, monospace; font-size: 8px; font-weight: 500; text-transform: uppercase; padding: 2px 8px; border: 1px solid rgba(59,130,246,0.2); color: #60a5fa; background: rgba(59,130,246,0.06); border-radius: 0; }"
+    },
+    {
+      "name": "Navigation Button",
+      "kind": "button",
+      "refersTo": "button-nav",
+      "description": "Small chrome button for keyboard nav (ESC, arrows), view toggles, and filter triggers.",
+      "html": "<button class=\"ds-btn-nav\">ESC</button>",
+      "css": ".ds-btn-nav { display: inline-flex; align-items: center; justify-content: center; min-height: 24px; min-width: 32px; padding: 4px 6px; font-family: 'Geist Mono', ui-monospace, SFMono-Regular, monospace; font-size: 10px; font-weight: 400; text-transform: uppercase; color: #a3a3a3; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14); border-radius: 0; cursor: pointer; transition: border-color 200ms, color 200ms; } .ds-btn-nav:hover { border-color: rgba(255,255,255,0.24); color: #f5f5f5; } .ds-btn-nav:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Dialog",
+      "kind": "custom",
+      "refersTo": "search-dialog",
+      "description": "Command-K search overlay. Sharp rectangle, solid dark background, no shadow.",
+      "html": "<div class=\"ds-search-overlay\"><div class=\"ds-search-dialog\"><div class=\"ds-search-header\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-search-input\" type=\"text\" placeholder=\"Search problems...\" /><kbd class=\"ds-search-kbd\">ESC</kbd></div><div class=\"ds-search-results\"><button class=\"ds-search-item ds-search-item--active\"><span class=\"ds-search-title\">Riemann Hypothesis</span><span class=\"ds-badge-open\" style=\"font-size:7px;padding:1px 4px\">OPEN</span></button><button class=\"ds-search-item\"><span class=\"ds-search-title\">P vs NP</span><span class=\"ds-badge-open\" style=\"font-size:7px;padding:1px 4px\">OPEN</span></button></div></div></div>",
+      "css": ".ds-search-overlay { position: fixed; inset: 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 15vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); } .ds-search-dialog { width: 100%; max-width: 520px; border: 1px solid rgba(255,255,255,0.09); background: #0a0a0a; } .ds-search-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.09); color: #737373; } .ds-search-input { flex: 1; background: transparent; border: none; outline: none; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 13px; color: #f5f5f5; } .ds-search-input::placeholder { color: #525252; } .ds-search-kbd { padding: 2px 6px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 9px; color: #525252; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); } .ds-search-results { padding: 4px 0; } .ds-search-item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 16px; border: none; background: transparent; cursor: pointer; text-align: left; transition: background 150ms; } .ds-search-item:hover, .ds-search-item--active { background: rgba(255,255,255,0.06); } .ds-search-title { font-size: 13px; color: #f5f5f5; }"
+    },
+    {
+      "name": "Filter Dropdown Trigger",
+      "kind": "button",
+      "refersTo": "filter-trigger",
+      "description": "Compact dropdown trigger for status/field filters in the navbar.",
+      "html": "<button class=\"ds-filter-trigger\"><span>STATUS</span><span class=\"ds-filter-count\">2</span><svg width=\"8\" height=\"8\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"m6 9 6 6 6-6\"/></svg></button>",
+      "css": ".ds-filter-trigger { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 8px; text-transform: uppercase; color: #737373; border: 1px solid rgba(255,255,255,0.08); background: transparent; cursor: pointer; transition: border-color 200ms, color 200ms; border-radius: 0; } .ds-filter-trigger:hover { border-color: rgba(255,255,255,0.2); color: #f5f5f5; } .ds-filter-count { margin-left: 2px; padding: 0 4px; font-size: 7px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); } .ds-filter-trigger:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Author Card",
+      "kind": "card",
+      "refersTo": "author-card",
+      "description": "Researcher card with avatar, name, institution, and outbound links.",
+      "html": "<div class=\"ds-author-card\"><div class=\"ds-author-avatar\">EP</div><div class=\"ds-author-info\"><div class=\"ds-author-header\"><span class=\"ds-author-name\">Erd\u0151s P\u00e1l</span><a class=\"ds-author-link\" href=\"#\" title=\"Google Scholar\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 10v6M2 10l10-5 10 5-10 5z\"/><path d=\"M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5\"/></svg></a></div><span class=\"ds-author-inst\">Hungarian Academy of Sciences</span></div></div>",
+      "css": ".ds-author-card { display: grid; grid-template-columns: 40px minmax(0,1fr); align-items: center; gap: 16px; padding: 16px 0; } .ds-author-avatar { width: 40px; height: 40px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.08); background: #262626; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: #a3a3a3; overflow: hidden; } .ds-author-info { min-width: 0; } .ds-author-header { display: flex; align-items: center; gap: 8px; } .ds-author-name { font-size: 15px; font-weight: 500; color: #f5f5f5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-author-link { color: #737373; transition: color 200ms; } .ds-author-link:hover { color: #3b82f6; } .ds-author-inst { display: block; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 13px; color: #737373; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }"
+    },
+    {
+      "name": "Timeline Event (Breakthrough)",
+      "kind": "custom",
+      "refersTo": "timeline-breakthrough",
+      "description": "Breakthrough event in the problem timeline. Blue dot with ring, bold title.",
+      "html": "<div class=\"ds-timeline-event\"><div class=\"ds-timeline-track\"><div class=\"ds-timeline-dot ds-timeline-dot--breakthrough\"></div><div class=\"ds-timeline-line\"></div></div><span class=\"ds-timeline-year ds-timeline-year--breakthrough\">2025</span><div class=\"ds-timeline-content\"><p class=\"ds-timeline-title ds-timeline-title--breakthrough\">3D Kakeya conjecture proved</p><p class=\"ds-timeline-desc\">Hong Wang and Joshua Zahl resolve the full conjecture</p></div></div>",
+      "css": ".ds-timeline-event { display: grid; grid-template-columns: 18px 76px minmax(0,1fr); gap: 12px; padding-bottom: 24px; } .ds-timeline-track { display: flex; flex-direction: column; align-items: center; padding-top: 6px; } .ds-timeline-dot { width: 8px; height: 8px; border-radius: 9999px; background: #525252; flex-shrink: 0; } .ds-timeline-dot--breakthrough { background: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.3), 0 0 0 3px #000; } .ds-timeline-line { width: 1px; flex: 1; margin-top: 4px; background: #262626; } .ds-timeline-year { padding-top: 2px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: #737373; } .ds-timeline-year--breakthrough { color: #3b82f6; } .ds-timeline-content { min-width: 0; padding-bottom: 4px; } .ds-timeline-title { font-size: 14px; line-height: 1.4; color: #a3a3a3; } .ds-timeline-title--breakthrough { color: #f5f5f5; font-weight: 500; } .ds-timeline-desc { font-size: 13px; color: #737373; margin-top: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Observatory Catalog",
+    "overview": "Math Atlas is a systematic, precise interface with a hushed reverence for its subject. The design acts as an astronomical observatory's reference catalog: dark, minimal chrome, monospaced indexing, and the subject matter (mathematical visualizations) displayed as the sole spectacle. The UI never competes with what it frames.\n\nThe system rejects generic SaaS aesthetics (card grids with gradient accents), flashy crypto/Web3 dark themes (neon, glow, glassmorphism), textbook-dry academic layouts, and overdesigned portfolio sites where style overshadows content. The current observatory-like aesthetic is intentional and should be preserved; changes refine, never reinvent.",
+    "keyCharacteristics": [
+      "Dark, gridded surfaces with near-zero radius",
+      "Monospaced uppercase chrome for all indexing and metadata",
+      "Single blue accent at less than 10% surface area",
+      "Visualizations are the emotional center; UI recedes",
+      "Flat elevation; depth expressed through background tints and border opacity",
+      "Sharp, rectilinear geometry throughout"
+    ],
+    "rules": [
+      { "name": "The One-Accent Rule", "body": "Signal Blue occupies no more than 10% of any screen. Its restraint creates meaning; overuse would make it invisible. Status colors are exempt because they carry data, not decoration.", "section": "colors" },
+      { "name": "The Warm Exception Rule", "body": "Warm Amber appears only at editorial moments: breakthrough events, award highlights. It is never structural (no amber buttons, no amber borders). Maximum two instances per viewport.", "section": "colors" },
+      { "name": "The Mono-Chrome Rule", "body": "Every piece of navigational or indexing text is Geist Mono, uppercase. Sans-serif (Geist) is reserved for content: titles, descriptions, and prose. Never mix them within one role.", "section": "typography" },
+      { "name": "The No-Serif Rule", "body": "Georgia is defined but prohibited from use. The observatory catalog does not employ decorative serifs. If editorial warmth is needed, express it through Warm Amber color, not typeface change.", "section": "typography" },
+      { "name": "The No-Shadow Rule", "body": "Shadows are prohibited. If an element needs to appear elevated, shift its background one step lighter in the tint hierarchy. If it needs focus attention, use border opacity increase, not shadow.", "section": "elevation" },
+      { "name": "The Tint-Step Rule", "body": "Each elevation step is exactly one tint darker or lighter. Never skip steps (don't jump from Ground to Hover without passing through Resting). The gradient is subtle and sequential.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Geist Mono uppercase for all navigational chrome, metadata labels, and status indicators.",
+      "Do express depth through background tint steps (#080808 -> #101010 -> #161616), never through shadows.",
+      "Do keep Signal Blue below 10% of any viewport. Its power comes from scarcity.",
+      "Do use sharp corners (0px radius) on all rectangular UI elements. The only exception is avatars and timeline dots (fully round).",
+      "Do let visualizations be the largest, most colorful element on any page. UI recedes.",
+      "Do use 1px borders at white/6-9% opacity for dividers and region boundaries.",
+      "Do respect prefers-reduced-motion by stopping canvas animations."
+    ],
+    "donts": [
+      "Don't use box-shadows anywhere. Not on cards, not on hover, not on dialogs. Flat is the doctrine.",
+      "Don't use border-radius between 1px and 9998px. It's either sharp (0) or fully round (avatar/dot).",
+      "Don't use Georgia or any serif typeface in rendered UI.",
+      "Don't apply status colors decoratively. Blue/red/green/yellow/orange are data indicators only.",
+      "Don't use gradient text, glassmorphism, bounce easing, or side-stripe colored borders.",
+      "Don't use neon glows, high-chroma backgrounds, or animated gradients.",
+      "Don't allow the design to feel textbook-dry through lack of craft.",
+      "Don't let style overshadow content. The visualization is always the hero.",
+      "Don't use em dashes in UI copy.",
+      "Don't nest cards inside cards."
+    ]
+  }
+}
