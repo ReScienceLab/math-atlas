@@ -16,7 +16,7 @@ const detailColumns =
 
 function FormulaSection({ formulas }: { formulas: ProblemFormula[] }) {
   return (
-    <section>
+    <section aria-label="Formulas">
       <h3 className="mb-3 flex h-5 items-center font-[var(--font-mono)] text-[11px] uppercase text-[var(--gray-500)]">
         Formula
       </h3>
@@ -27,6 +27,8 @@ function FormulaSection({ formulas }: { formulas: ProblemFormula[] }) {
               {formula.label}
             </div>
             <div
+              role="math"
+              aria-label={formula.latex}
               className="formula-katex overflow-x-auto text-[15px] text-[var(--gray-200)]"
               dangerouslySetInnerHTML={{
                 __html: katex.renderToString(formula.latex, {
@@ -108,7 +110,11 @@ export default async function ProblemPage({
 
         <div className={`${detailColumns} items-start pt-4 sm:pt-5 lg:pt-6`}>
           <div className="min-w-0 space-y-6">
-            <div className="h-[calc(100vw-32px)] min-h-[300px] max-h-[420px] w-full overflow-hidden border border-white/[0.08] bg-[var(--gray-950)] sm:h-[clamp(320px,48vh,560px)] sm:max-h-none">
+            <div
+              role="img"
+              aria-label={`Interactive visualization: ${problem.title}`}
+              className="h-[calc(100vw-32px)] min-h-[300px] max-h-[420px] w-full overflow-hidden border border-white/[0.08] bg-[var(--gray-950)] sm:h-[clamp(320px,48vh,560px)] sm:max-h-none"
+            >
               <VizLoader name={problem.vizComponent} className="!border-0" />
             </div>
 
@@ -166,9 +172,10 @@ export default async function ProblemPage({
                     >
                       <img
                         src={`https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`}
-                        alt=""
+                        alt={`Thumbnail for ${video.title}`}
                         width={168}
                         height={94}
+                        loading="lazy"
                         className="shrink-0 rounded-sm border border-white/[0.06] object-cover"
                       />
                       <div className="min-w-0">

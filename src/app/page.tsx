@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[var(--bg)]">
+    <main id="main-content" className="min-h-screen bg-[var(--bg)]">
       <HomeShell problems={problems} />
 
       <SiteFooter problems={problems} />

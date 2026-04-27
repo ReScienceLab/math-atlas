@@ -53,6 +53,7 @@ function SearchDialogContent({
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -77,6 +78,30 @@ function SearchDialogContent({
     },
     [onClose, router],
   );
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusableSelector = 'input, button, [tabindex]:not([tabindex="-1"])';
+    const trapFocus = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const focusable = dialog.querySelectorAll<HTMLElement>(focusableSelector);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    dialog.addEventListener("keydown", trapFocus);
+    return () => dialog.removeEventListener("keydown", trapFocus);
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -108,7 +133,13 @@ function SearchDialogContent({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-[520px] border border-[var(--line)] bg-[#0a0a0a] shadow-2xl">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search problems"
+        className="w-full max-w-[520px] border border-[var(--line)] bg-[#0a0a0a] shadow-2xl"
+      >
         <div className="flex items-center gap-3 border-b border-[var(--line)] px-4 py-3">
           <Search
             aria-hidden="true"

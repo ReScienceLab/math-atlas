@@ -44,6 +44,12 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${geist.variable} ${geistMono.variable}`}>
       <body className="antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:inline-flex focus:items-center focus:px-3 focus:py-2 focus:bg-[var(--blue)] focus:text-white focus:font-[var(--font-mono)] focus:text-[11px] focus:uppercase"
+        >
+          Skip to content
+        </a>
         <div
           className="fixed inset-0 -z-10 pointer-events-none"
           style={{

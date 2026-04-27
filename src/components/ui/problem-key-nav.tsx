@@ -68,6 +68,7 @@ export function ProblemKeyNav({
         onFocus={() => router.prefetch(previousHref)}
         onClick={() => router.push(previousHref)}
         className="inline-flex h-6 w-6 items-center justify-center border border-white/[0.12] bg-white/[0.02] text-[var(--gray-500)] transition-colors hover:border-white/[0.22] hover:text-white"
+        aria-label={`Previous: ${previousTitle}`}
         title={`Previous: ${previousTitle}`}
       >
         ←
@@ -78,6 +79,7 @@ export function ProblemKeyNav({
         onFocus={() => router.prefetch(nextHref)}
         onClick={() => router.push(nextHref)}
         className="inline-flex h-6 w-6 items-center justify-center border border-white/[0.12] bg-white/[0.02] text-[var(--gray-500)] transition-colors hover:border-white/[0.22] hover:text-white"
+        aria-label={`Next: ${nextTitle}`}
         title={`Next: ${nextTitle}`}
       >
         →
