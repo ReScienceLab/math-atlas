@@ -110,7 +110,7 @@ export function SiteNavbar({
   const hasFilters = (statusFilters?.size ?? 0) > 0 || (fieldFilters?.size ?? 0) > 0;
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-[var(--line)] bg-black/90 backdrop-blur-md">
+    <nav aria-label="Site navigation" className="sticky top-0 z-40 border-b border-[var(--line)] bg-black/90 backdrop-blur-md">
       <div className="grid min-h-14 grid-cols-[minmax(160px,0.95fr)_minmax(0,1.4fr)_minmax(316px,0.95fr)] items-stretch max-lg:grid-cols-[minmax(160px,1fr)_auto]">
         {/* Left: logo + zen */}
         <div className="flex items-center gap-3 border-r border-[var(--line)] px-4 sm:px-5">
@@ -168,6 +168,8 @@ export function SiteNavbar({
               <button
                 type="button"
                 onClick={() => onViewModeChange("grid")}
+                aria-label="Grid view"
+                aria-pressed={viewMode === "grid"}
                 className={`border px-1.5 py-1 transition-colors ${
                   viewMode === "grid"
                     ? "border-white/25 bg-white/[0.08] text-white"
@@ -180,6 +182,8 @@ export function SiteNavbar({
               <button
                 type="button"
                 onClick={() => onViewModeChange("table")}
+                aria-label="Table view"
+                aria-pressed={viewMode === "table"}
                 className={`border px-1.5 py-1 transition-colors ${
                   viewMode === "table"
                     ? "border-white/25 bg-white/[0.08] text-white"
