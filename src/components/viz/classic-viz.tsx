@@ -324,62 +324,111 @@ function drawPvsNP(
   }
 }
 
-function drawNavierStokes(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawNavierStokes(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const scale = Math.min(width, height) * 0.4;
-  const vortexX = pointer.active ? pointer.x * width : cx + Math.sin(time * 0.2) * scale * 0.3;
-  const vortexY = pointer.active ? pointer.y * height : cy + Math.cos(time * 0.15) * scale * 0.2;
-  const cols = 16, rows = 12;
+  const vortexX = pointer.active
+    ? pointer.x * width
+    : cx + Math.sin(time * 0.2) * scale * 0.3;
+  const vortexY = pointer.active
+    ? pointer.y * height
+    : cy + Math.cos(time * 0.15) * scale * 0.2;
+  const cols = 16,
+    rows = 12;
   for (let i = 0; i <= cols; i++) {
     for (let j = 0; j <= rows; j++) {
       const px = (i / cols) * width;
       const py = (j / rows) * height;
-      const dx = px - vortexX, dy = py - vortexY;
+      const dx = px - vortexX,
+        dy = py - vortexY;
       const dist = Math.sqrt(dx * dx + dy * dy) + 1;
-      const strength = scale * 40 / (dist + scale * 0.5);
-      const vx = -dy / dist * strength + 15;
-      const vy = dx / dist * strength;
+      const strength = (scale * 40) / (dist + scale * 0.5);
+      const vx = (-dy / dist) * strength + 15;
+      const vy = (dx / dist) * strength;
       const len = Math.sqrt(vx * vx + vy * vy);
       if (len < 0.5) continue;
       const al = Math.min(0.5, 0.08 + strength / 40);
       const arrowLen = Math.min(20, len * 0.8);
-      const nx = vx / len, ny = vy / len;
-      const ex = px + nx * arrowLen, ey = py + ny * arrowLen;
+      const nx = vx / len,
+        ny = vy / len;
+      const ex = px + nx * arrowLen,
+        ey = py + ny * arrowLen;
       ctx.strokeStyle = `rgba(96,165,250,${al})`;
       ctx.lineWidth = 0.8;
-      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
       const hs = Math.min(4, arrowLen * 0.3);
       ctx.fillStyle = `rgba(96,165,250,${al})`;
       ctx.beginPath();
       ctx.moveTo(ex, ey);
       ctx.lineTo(ex - nx * hs + ny * hs * 0.4, ey - ny * hs - nx * hs * 0.4);
       ctx.lineTo(ex - nx * hs - ny * hs * 0.4, ey - ny * hs + nx * hs * 0.4);
-      ctx.closePath(); ctx.fill();
+      ctx.closePath();
+      ctx.fill();
     }
   }
-  const glow = ctx.createRadialGradient(vortexX, vortexY, 0, vortexX, vortexY, 20);
+  const glow = ctx.createRadialGradient(
+    vortexX,
+    vortexY,
+    0,
+    vortexX,
+    vortexY,
+    20,
+  );
   glow.addColorStop(0, "rgba(96,165,250,0.4)");
   glow.addColorStop(1, "rgba(96,165,250,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(vortexX - 20, vortexY - 20, 40, 40);
-  ctx.beginPath(); ctx.arc(vortexX, vortexY, 4, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(96,165,250,0.9)"; ctx.fill();
-  drawMono(ctx, "vortex", vortexX + 10, vortexY - 8, 10, "rgba(96,165,250,0.7)");
-  drawLabel(ctx, "\u2202\u209cu + (u\xb7\u2207)u = -\u2207p + \u03bd\u2206u", 12, height - 14);
+  ctx.beginPath();
+  ctx.arc(vortexX, vortexY, 4, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(96,165,250,0.9)";
+  ctx.fill();
+  drawMono(
+    ctx,
+    "vortex",
+    vortexX + 10,
+    vortexY - 8,
+    10,
+    "rgba(96,165,250,0.7)",
+  );
+  drawLabel(
+    ctx,
+    "\u2202\u209cu + (u\xb7\u2207)u = -\u2207p + \u03bd\u2206u",
+    12,
+    height - 14,
+  );
 }
 
-function drawHodge(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawHodge(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.28;
   const r = R * 0.38;
   const tiltX = pointer.active ? (pointer.y - 0.5) * 0.6 : 0.4;
   const rotY = pointer.active ? (pointer.x - 0.5) * Math.PI * 1.5 : time * 0.15;
-  const cosX = Math.cos(tiltX), sinX = Math.sin(tiltX);
-  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+  const cosX = Math.cos(tiltX),
+    sinX = Math.sin(tiltX);
+  const cosY = Math.cos(rotY),
+    sinY = Math.sin(rotY);
   const project = (u: number, v: number): [number, number, number] => {
     const x0 = (R + r * Math.cos(v)) * Math.cos(u);
     const y0 = (R + r * Math.cos(v)) * Math.sin(u);
@@ -390,7 +439,8 @@ function drawHodge(ctx: CanvasRenderingContext2D, width: number, height: number,
     const z2 = y0 * sinX + z1 * cosX;
     return [cx + x1, cy + y1, z2];
   };
-  const nU = 36, nV = 18;
+  const nU = 36,
+    nV = 18;
   const meshAlpha = isCardPreviewCanvas(ctx) ? 0.1 : 0.085;
   for (let i = 0; i < nU; i++) {
     const u = (i / nU) * Math.PI * 2;
@@ -398,10 +448,12 @@ function drawHodge(ctx: CanvasRenderingContext2D, width: number, height: number,
     for (let j = 0; j <= nV * 2; j++) {
       const v = (j / (nV * 2)) * Math.PI * 2;
       const [px, py] = project(u, v);
-      if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      if (j === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
     }
     ctx.strokeStyle = `rgba(245,245,245,${meshAlpha})`;
-    ctx.lineWidth = 0.65; ctx.stroke();
+    ctx.lineWidth = 0.65;
+    ctx.stroke();
   }
   for (let j = 0; j < nV; j++) {
     const v = (j / nV) * Math.PI * 2;
@@ -409,10 +461,12 @@ function drawHodge(ctx: CanvasRenderingContext2D, width: number, height: number,
     for (let i = 0; i <= nU * 2; i++) {
       const u = (i / (nU * 2)) * Math.PI * 2;
       const [px, py] = project(u, v);
-      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
     }
     ctx.strokeStyle = `rgba(245,245,245,${meshAlpha})`;
-    ctx.lineWidth = 0.65; ctx.stroke();
+    ctx.lineWidth = 0.65;
+    ctx.stroke();
   }
   ctx.save();
   ctx.shadowColor = "rgba(96,165,250,0.28)";
@@ -421,10 +475,12 @@ function drawHodge(ctx: CanvasRenderingContext2D, width: number, height: number,
   for (let i = 0; i <= 80; i++) {
     const u = (i / 80) * Math.PI * 2;
     const [px, py] = project(u, 0);
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
   }
   ctx.strokeStyle = "rgba(96,165,250,0.52)";
-  ctx.lineWidth = 2.4; ctx.stroke();
+  ctx.lineWidth = 2.4;
+  ctx.stroke();
   ctx.restore();
   ctx.save();
   ctx.shadowColor = "rgba(34,197,94,0.24)";
@@ -433,12 +489,19 @@ function drawHodge(ctx: CanvasRenderingContext2D, width: number, height: number,
   for (let i = 0; i <= 80; i++) {
     const v = (i / 80) * Math.PI * 2;
     const [px, py] = project(0, v);
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
   }
   ctx.strokeStyle = "rgba(34,197,94,0.46)";
-  ctx.lineWidth = 2.4; ctx.stroke();
+  ctx.lineWidth = 2.4;
+  ctx.stroke();
   ctx.restore();
-  drawLabel(ctx, "H^{p,q}(X) \u2014 two independent 1-cycles on torus", 12, height - 14);
+  drawLabel(
+    ctx,
+    "H^{p,q}(X) \u2014 two independent 1-cycles on torus",
+    12,
+    height - 14,
+  );
 }
 
 function drawBSD(
@@ -526,23 +589,37 @@ function drawBSD(
   drawLabel(ctx, "rank <-> order of zero of L(E,s) at s=1", 16, height - 18);
 }
 
-function drawYangMills(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawYangMills(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const n = 12;
   const spacing = Math.min(width, height) * 0.06;
-  const ox = cx - (n - 1) * spacing / 2;
-  const oy = cy - (n - 1) * spacing / 2;
-  const exciteX = pointer.active ? pointer.x * width : cx + Math.sin(time * 0.3) * spacing * 2;
-  const exciteY = pointer.active ? pointer.y * height : cy + Math.cos(time * 0.25) * spacing * 2;
+  const ox = cx - ((n - 1) * spacing) / 2;
+  const oy = cy - ((n - 1) * spacing) / 2;
+  const exciteX = pointer.active
+    ? pointer.x * width
+    : cx + Math.sin(time * 0.3) * spacing * 2;
+  const exciteY = pointer.active
+    ? pointer.y * height
+    : cy + Math.cos(time * 0.25) * spacing * 2;
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
       const x = ox + i * spacing;
       const y = oy + j * spacing;
-      const dx = x - exciteX, dy = y - exciteY;
+      const dx = x - exciteX,
+        dy = y - exciteY;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      const energy = Math.exp(-dist * dist / (spacing * spacing * 8)) * (0.5 + 0.5 * Math.sin(time * 2 - dist * 0.05));
+      const energy =
+        Math.exp((-dist * dist) / (spacing * spacing * 8)) *
+        (0.5 + 0.5 * Math.sin(time * 2 - dist * 0.05));
       if (i < n - 1 && j < n - 1) {
         ctx.fillStyle = `rgba(96,165,250,${energy * 0.18})`;
         ctx.fillRect(x, y, spacing, spacing);
@@ -552,43 +629,88 @@ function drawYangMills(ctx: CanvasRenderingContext2D, width: number, height: num
         const amp = energy * spacing * 0.15;
         ctx.strokeStyle = `rgba(245,245,245,${0.1 + energy * 0.3})`;
         ctx.lineWidth = 0.6 + energy;
-        ctx.beginPath(); ctx.moveTo(x, y);
-        ctx.quadraticCurveTo(x + spacing / 2, y + Math.sin(phase) * amp, x + spacing, y);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.quadraticCurveTo(
+          x + spacing / 2,
+          y + Math.sin(phase) * amp,
+          x + spacing,
+          y,
+        );
         ctx.stroke();
       }
       if (j < n - 1) {
-        const phase = seeded(i * n + j + 200) * Math.PI * 2 + time * 0.3 + energy * 2;
+        const phase =
+          seeded(i * n + j + 200) * Math.PI * 2 + time * 0.3 + energy * 2;
         const amp = energy * spacing * 0.15;
         ctx.strokeStyle = `rgba(245,245,245,${0.1 + energy * 0.3})`;
         ctx.lineWidth = 0.6 + energy;
-        ctx.beginPath(); ctx.moveTo(x, y);
-        ctx.quadraticCurveTo(x + Math.sin(phase) * amp, y + spacing / 2, x, y + spacing);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.quadraticCurveTo(
+          x + Math.sin(phase) * amp,
+          y + spacing / 2,
+          x,
+          y + spacing,
+        );
         ctx.stroke();
       }
-      ctx.beginPath(); ctx.arc(x, y, 1.5 + energy * 2, 0, Math.PI * 2);
+      ctx.beginPath();
+      ctx.arc(x, y, 1.5 + energy * 2, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(245,245,245,${0.15 + energy * 0.5})`;
       ctx.fill();
     }
   }
-  const glow = ctx.createRadialGradient(exciteX, exciteY, 0, exciteX, exciteY, spacing * 3);
+  const glow = ctx.createRadialGradient(
+    exciteX,
+    exciteY,
+    0,
+    exciteX,
+    exciteY,
+    spacing * 3,
+  );
   glow.addColorStop(0, "rgba(96,165,250,0.25)");
   glow.addColorStop(1, "rgba(96,165,250,0)");
   ctx.fillStyle = glow;
-  ctx.fillRect(exciteX - spacing * 3, exciteY - spacing * 3, spacing * 6, spacing * 6);
-  drawLabel(ctx, "gauge field energy \u2014 mass gap \u0394m > 0", 12, height - 14);
+  ctx.fillRect(
+    exciteX - spacing * 3,
+    exciteY - spacing * 3,
+    spacing * 6,
+    spacing * 6,
+  );
+  drawLabel(
+    ctx,
+    "gauge field energy \u2014 mass gap \u0394m > 0",
+    12,
+    height - 14,
+  );
 }
 
 function collatzNext(n: number) {
   return n % 2 === 0 ? n / 2 : 3 * n + 1;
 }
 
-function drawCollatz(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawCollatz(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const startN = pointer.active ? Math.floor(pointer.x * 120) + 3 : Math.floor(27 + Math.sin(time * 0.1) * 20);
+  const startN = pointer.active
+    ? Math.floor(pointer.x * 120) + 3
+    : Math.floor(27 + Math.sin(time * 0.1) * 20);
   const maxSteps = 120;
   const orbits = [startN, startN + 2, startN + 7, startN + 13, startN + 19];
-  const colors = ["rgba(96,165,250,", "rgba(34,197,94,", "rgba(249,115,22,", "rgba(168,85,247,", "rgba(245,158,11,"];
+  const colors = [
+    "rgba(96,165,250,",
+    "rgba(34,197,94,",
+    "rgba(249,115,22,",
+    "rgba(168,85,247,",
+    "rgba(245,158,11,",
+  ];
   const stepW = width / (maxSteps + 2);
   const maxVal = Math.max(...orbits) * 4;
   for (let oi = 0; oi < orbits.length; oi++) {
@@ -605,17 +727,26 @@ function drawCollatz(ctx: CanvasRenderingContext2D, width: number, height: numbe
     ctx.strokeStyle = colors[oi] + alpha + ")";
     ctx.lineWidth = oi === 0 ? 1.5 : 0.8;
     ctx.beginPath();
-    pts.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+    pts.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
     ctx.stroke();
   }
   const oneY = height - 20;
   ctx.strokeStyle = "rgba(96,165,250,0.3)";
-  ctx.setLineDash([4, 4]); ctx.lineWidth = 0.6;
-  ctx.beginPath(); ctx.moveTo(0, oneY); ctx.lineTo(width, oneY); ctx.stroke();
+  ctx.setLineDash([4, 4]);
+  ctx.lineWidth = 0.6;
+  ctx.beginPath();
+  ctx.moveTo(0, oneY);
+  ctx.lineTo(width, oneY);
+  ctx.stroke();
   ctx.setLineDash([]);
   drawMono(ctx, "n=1", width - 40, oneY - 6, 10, "rgba(96,165,250,0.6)");
   drawMono(ctx, `n\u2080=${orbits[0]}`, 12, 20, 12, "rgba(96,165,250,0.8)");
-  drawLabel(ctx, "T(n) = n/2 or 3n+1 \u2014 all orbits reach 1", 12, height - 14);
+  drawLabel(
+    ctx,
+    "T(n) = n/2 or 3n+1 \u2014 all orbits reach 1",
+    12,
+    height - 14,
+  );
 }
 
 function isPrime(n: number) {
@@ -700,15 +831,25 @@ function drawGoldbach(
   drawLabel(ctx, "every even N > 2 has N = p + q", 16, height - 18);
 }
 
-function drawTwinPrime(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawTwinPrime(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const maxN = pointer.active ? Math.floor(pointer.x * 400) + 50 : Math.floor(200 + Math.sin(time * 0.1) * 100);
+  const maxN = pointer.active
+    ? Math.floor(pointer.x * 400) + 50
+    : Math.floor(200 + Math.sin(time * 0.1) * 100);
   const isPrime = new Uint8Array(maxN + 3).fill(1);
   isPrime[0] = isPrime[1] = 0;
-  for (let i = 2; i * i <= maxN + 2; i++) if (isPrime[i]) for (let j = i * i; j <= maxN + 2; j += i) isPrime[j] = 0;
+  for (let i = 2; i * i <= maxN + 2; i++)
+    if (isPrime[i]) for (let j = i * i; j <= maxN + 2; j += i) isPrime[j] = 0;
   const twins: [number, number][] = [];
-  for (let i = 2; i <= maxN; i++) if (isPrime[i] && isPrime[i + 2]) twins.push([i, i + 2]);
+  for (let i = 2; i <= maxN; i++)
+    if (isPrime[i] && isPrime[i + 2]) twins.push([i, i + 2]);
   const cols = Math.ceil(Math.sqrt(maxN));
   const cellW = width / (cols + 1);
   const cellH = height / (Math.ceil(maxN / cols) + 1);
@@ -721,7 +862,8 @@ function drawTwinPrime(ctx: CanvasRenderingContext2D, width: number, height: num
     if (x > width || y > height) continue;
     const isTwin = twins.some(([a, b]) => n === a || n === b);
     if (isPrime[n]) {
-      ctx.beginPath(); ctx.arc(x, y, sz * 0.35, 0, Math.PI * 2);
+      ctx.beginPath();
+      ctx.arc(x, y, sz * 0.35, 0, Math.PI * 2);
       ctx.fillStyle = isTwin ? "rgba(96,165,250,0.7)" : "rgba(245,245,245,0.3)";
       ctx.fill();
     } else {
@@ -730,18 +872,30 @@ function drawTwinPrime(ctx: CanvasRenderingContext2D, width: number, height: num
     }
   }
   for (const [a, b] of twins.slice(0, 30)) {
-    const colA = (a - 1) % cols, rowA = Math.floor((a - 1) / cols);
-    const colB = (b - 1) % cols, rowB = Math.floor((b - 1) / cols);
-    const x1 = (colA + 0.5) * cellW, y1 = (rowA + 0.5) * cellH + 10;
-    const x2 = (colB + 0.5) * cellW, y2 = (rowB + 0.5) * cellH + 10;
+    const colA = (a - 1) % cols,
+      rowA = Math.floor((a - 1) / cols);
+    const colB = (b - 1) % cols,
+      rowB = Math.floor((b - 1) / cols);
+    const x1 = (colA + 0.5) * cellW,
+      y1 = (rowA + 0.5) * cellH + 10;
+    const x2 = (colB + 0.5) * cellW,
+      y2 = (rowB + 0.5) * cellH + 10;
     if (x1 > width || y1 > height || x2 > width || y2 > height) continue;
     ctx.strokeStyle = "rgba(96,165,250,0.15)";
     ctx.lineWidth = 0.5;
-    ctx.beginPath(); ctx.moveTo(x1, y1);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
     ctx.quadraticCurveTo((x1 + x2) / 2, Math.min(y1, y2) - cellH * 0.5, x2, y2);
     ctx.stroke();
   }
-  drawMono(ctx, `${twins.length} twin pairs \u2264 ${maxN}`, 12, 20, 12, "rgba(96,165,250,0.8)");
+  drawMono(
+    ctx,
+    `${twins.length} twin pairs \u2264 ${maxN}`,
+    12,
+    20,
+    12,
+    "rgba(96,165,250,0.8)",
+  );
   drawLabel(ctx, "p, p+2 both prime \u2014 infinitely many?", 12, height - 14);
 }
 
@@ -834,10 +988,18 @@ function drawAbc(
   drawLabel(ctx, "a + b = c, compare c with rad(abc)", 16, height - 18);
 }
 
-function drawContinuum(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawContinuum(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const depth = pointer.active ? Math.floor(pointer.x * 6) + 2 : Math.floor(4 + Math.sin(time * 0.15) * 2);
+  const depth = pointer.active
+    ? Math.floor(pointer.x * 6) + 2
+    : Math.floor(4 + Math.sin(time * 0.15) * 2);
   const margin = width * 0.08;
   const barH = (height - 60) / (depth + 3);
   function drawCantor(level: number, x0: number, x1: number, y: number) {
@@ -856,31 +1018,58 @@ function drawContinuum(ctx: CanvasRenderingContext2D, width: number, height: num
   }
   ctx.fillStyle = "rgba(245,245,245,0.2)";
   ctx.fillRect(margin, 20, width - 2 * margin, barH * 0.6);
-  drawMono(ctx, "\u2135\u2080", width - margin + 8, 20 + barH * 0.35, 11, "rgba(245,245,245,0.5)");
+  drawMono(
+    ctx,
+    "\u2135\u2080",
+    width - margin + 8,
+    20 + barH * 0.35,
+    11,
+    "rgba(245,245,245,0.5)",
+  );
   drawCantor(0, margin, width - margin, 20 + barH);
   const bottomY = height - 35;
   ctx.strokeStyle = "rgba(245,245,245,0.15)";
   ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(margin, bottomY); ctx.lineTo(width - margin, bottomY); ctx.stroke();
-  const qx = width / 2, qy = bottomY - 20;
+  ctx.beginPath();
+  ctx.moveTo(margin, bottomY);
+  ctx.lineTo(width - margin, bottomY);
+  ctx.stroke();
+  const qx = width / 2,
+    qy = bottomY - 20;
   const glow = ctx.createRadialGradient(qx, qy, 0, qx, qy, 18);
   glow.addColorStop(0, "rgba(96,165,250,0.35)");
   glow.addColorStop(1, "rgba(96,165,250,0)");
   ctx.fillStyle = glow;
   ctx.fillRect(qx - 18, qy - 18, 36, 36);
-  drawMono(ctx, "2^\u2135\u2080 = \u2135\u2081 ?", qx - 30, qy - 22, 12, "rgba(96,165,250,0.8)");
+  drawMono(
+    ctx,
+    "2^\u2135\u2080 = \u2135\u2081 ?",
+    qx - 30,
+    qy - 22,
+    12,
+    "rgba(96,165,250,0.8)",
+  );
   drawLabel(ctx, `Cantor set \u2014 depth ${depth}`, 12, height - 14);
 }
 
-function drawPoincare(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawPoincare(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.3;
   const tiltX = pointer.active ? (pointer.y - 0.5) * 0.6 : 0.35;
   const rotY = pointer.active ? (pointer.x - 0.5) * Math.PI * 1.5 : time * 0.18;
-  const cosX = Math.cos(tiltX), sinX = Math.sin(tiltX);
-  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+  const cosX = Math.cos(tiltX),
+    sinX = Math.sin(tiltX);
+  const cosY = Math.cos(rotY),
+    sinY = Math.sin(rotY);
   const deform = 0.15 * Math.sin(time * 0.4);
   const project = (theta: number, phi: number): [number, number, number] => {
     const r = R * (1 + deform * (Math.sin(3 * theta) * Math.cos(2 * phi)));
@@ -900,10 +1089,12 @@ function drawPoincare(ctx: CanvasRenderingContext2D, width: number, height: numb
     for (let j = 0; j <= 48; j++) {
       const phi = (j / 48) * Math.PI * 2;
       const [px, py] = project(theta, phi);
-      if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      if (j === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
     }
     ctx.strokeStyle = `rgba(245,245,245,${meshAlpha})`;
-    ctx.lineWidth = 0.75; ctx.stroke();
+    ctx.lineWidth = 0.75;
+    ctx.stroke();
   }
   for (let j = 0; j < 18; j++) {
     const phi = (j / 18) * Math.PI * 2;
@@ -911,10 +1102,12 @@ function drawPoincare(ctx: CanvasRenderingContext2D, width: number, height: numb
     for (let i = 0; i <= 36; i++) {
       const theta = (i / 36) * Math.PI;
       const [px, py] = project(theta, phi);
-      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
     }
     ctx.strokeStyle = `rgba(245,245,245,${meshAlpha})`;
-    ctx.lineWidth = 0.75; ctx.stroke();
+    ctx.lineWidth = 0.75;
+    ctx.stroke();
   }
   ctx.save();
   ctx.shadowColor = "rgba(96,165,250,0.28)";
@@ -923,7 +1116,8 @@ function drawPoincare(ctx: CanvasRenderingContext2D, width: number, height: numb
   for (let j = 0; j <= 72; j++) {
     const phi = (j / 72) * Math.PI * 2;
     const [px, py] = project(Math.PI / 2, phi);
-    if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    if (j === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
   }
   ctx.strokeStyle = "rgba(96,165,250,0.38)";
   ctx.lineWidth = 1.8;
@@ -937,16 +1131,28 @@ function drawPoincare(ctx: CanvasRenderingContext2D, width: number, height: numb
     const alpha = 0.42 + Math.max(0, pz / R) * 0.48;
     const inward = -deform * 3 * Math.sin(3 * theta) * Math.cos(2 * phi);
     const arrowLen = Math.abs(inward) * 10 + 4;
-    const nx = (px - cx) / R, ny = (py - cy) / R;
+    const nx = (px - cx) / R,
+      ny = (py - cy) / R;
     const dir = inward > 0 ? -1 : 1;
-    const ex = px + dir * nx * arrowLen, ey = py + dir * ny * arrowLen;
+    const ex = px + dir * nx * arrowLen,
+      ey = py + dir * ny * arrowLen;
     ctx.strokeStyle = `rgba(96,165,250,${alpha})`;
     ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
     ctx.fillStyle = `rgba(96,165,250,${Math.min(0.75, alpha + 0.12)})`;
-    ctx.beginPath(); ctx.arc(ex, ey, 1.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    ctx.arc(ex, ey, 1.4, 0, Math.PI * 2);
+    ctx.fill();
   }
-  drawLabel(ctx, "Ricci flow: \u2202g/\u2202t = -2R\u1d62\u2c7c \u2192 S\xb3", 12, height - 14);
+  drawLabel(
+    ctx,
+    "Ricci flow: \u2202g/\u2202t = -2R\u1d62\u2c7c \u2192 S\xb3",
+    12,
+    height - 14,
+  );
 }
 
 function drawKakeya2D(
@@ -1162,7 +1368,13 @@ function drawFourColor(
   });
 }
 
-function drawSpherePacking(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawSpherePacking(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
   const r = Math.min(width, height) * 0.045;
@@ -1172,14 +1384,23 @@ function drawSpherePacking(ctx: CanvasRenderingContext2D, width: number, height:
   const cols = 10;
   const rowStepY = dy * 0.58;
   const sphereRadius = r * 0.92;
-  const layers = pointer.active ? Math.floor(pointer.y * 3) + 1 : Math.min(2, Math.floor(2 + Math.sin(time * 0.15)));
-  const layerColors = ["rgba(96,165,250,", "rgba(34,197,94,", "rgba(249,115,22,"];
-  const offsetY = pointer.active ? (pointer.x - 0.5) * r * 2 : Math.sin(time * 0.2) * r * 0.5;
+  const layers = pointer.active
+    ? Math.floor(pointer.y * 3) + 1
+    : Math.min(2, Math.floor(2 + Math.sin(time * 0.15)));
+  const layerColors = [
+    "rgba(96,165,250,",
+    "rgba(34,197,94,",
+    "rgba(249,115,22,",
+  ];
+  const offsetY = pointer.active
+    ? (pointer.x - 0.5) * r * 2
+    : Math.sin(time * 0.2) * r * 0.5;
 
   const layoutLayerCount = 2;
-  const layoutLayerOffsets = Array.from({ length: layoutLayerCount + 1 }, (_, layer) => (
-    layer * dy * 0.6 + offsetY * layer
-  ));
+  const layoutLayerOffsets = Array.from(
+    { length: layoutLayerCount + 1 },
+    (_, layer) => layer * dy * 0.6 + offsetY * layer,
+  );
   const minLayerY = Math.min(0, ...layoutLayerOffsets);
   const maxLayerY = Math.max(0, ...layoutLayerOffsets);
   const minCenterX = 0;
@@ -1192,7 +1413,7 @@ function drawSpherePacking(ctx: CanvasRenderingContext2D, width: number, height:
   const originY = (height - visualHeight) * 0.5 + sphereRadius - minCenterY;
 
   for (let layer = 0; layer <= Math.min(layers, 2); layer++) {
-    const lox = (layer === 1 ? r : layer === 2 ? r * 0.5 : 0);
+    const lox = layer === 1 ? r : layer === 2 ? r * 0.5 : 0;
     const loy = layer * dy * 0.6 + offsetY * layer;
     const color = layerColors[layer];
     for (let row = 0; row < rows; row++) {
@@ -1202,109 +1423,188 @@ function drawSpherePacking(ctx: CanvasRenderingContext2D, width: number, height:
         const y = originY + row * rowStepY + loy;
         if (x < -r || x > width + r || y < -r || y > height + r) continue;
         const alpha = 0.1 + (1 - layer * 0.25) * 0.3;
-        const grad = ctx.createRadialGradient(x - r * 0.25, y - r * 0.25, r * 0.1, x, y, r);
+        const grad = ctx.createRadialGradient(
+          x - r * 0.25,
+          y - r * 0.25,
+          r * 0.1,
+          x,
+          y,
+          r,
+        );
         grad.addColorStop(0, color + (alpha + 0.2) + ")");
         grad.addColorStop(0.7, color + alpha + ")");
         grad.addColorStop(1, color + "0.02)");
         ctx.fillStyle = grad;
-        ctx.beginPath(); ctx.arc(x, y, sphereRadius, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = color + (alpha * 0.5) + ")";
+        ctx.beginPath();
+        ctx.arc(x, y, sphereRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = color + alpha * 0.5 + ")";
         ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.arc(x, y, sphereRadius, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y, sphereRadius, 0, Math.PI * 2);
+        ctx.stroke();
       }
     }
   }
-  drawMono(ctx, "\u03c0/\u221a18 \u2248 0.7405", width - 130, 20, 12, "rgba(96,165,250,0.8)");
+  drawMono(
+    ctx,
+    "\u03c0/\u221a18 \u2248 0.7405",
+    width - 130,
+    20,
+    12,
+    "rgba(96,165,250,0.8)",
+  );
   drawLabel(ctx, "FCC packing \u2014 densest in R\xb3", 12, height - 14);
 }
 
-function drawTSP(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawTSP(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
   const n = 25;
   const margin = 40;
   const cities: [number, number][] = [];
   for (let i = 0; i < n; i++) {
-    cities.push([margin + seeded(i) * (width - 2 * margin), margin + seeded(i + 100) * (height - 2 * margin)]);
+    cities.push([
+      margin + seeded(i) * (width - 2 * margin),
+      margin + seeded(i + 100) * (height - 2 * margin),
+    ]);
   }
   const visited = new Set<number>();
   const tour: number[] = [0];
   visited.add(0);
   while (tour.length < n) {
     const last = tour[tour.length - 1];
-    let bestD = Infinity, bestJ = 0;
+    let bestD = Infinity,
+      bestJ = 0;
     for (let j = 0; j < n; j++) {
       if (visited.has(j)) continue;
-      const ddx = cities[j][0] - cities[last][0], ddy = cities[j][1] - cities[last][1];
+      const ddx = cities[j][0] - cities[last][0],
+        ddy = cities[j][1] - cities[last][1];
       const d = ddx * ddx + ddy * ddy;
-      if (d < bestD) { bestD = d; bestJ = j; }
+      if (d < bestD) {
+        bestD = d;
+        bestJ = j;
+      }
     }
     tour.push(bestJ);
     visited.add(bestJ);
   }
   tour.push(0);
-  const progress = pointer.active ? pointer.x * tour.length : (time * 2) % (tour.length + 5);
+  const progress = pointer.active
+    ? pointer.x * tour.length
+    : (time * 2) % (tour.length + 5);
   const edgesShown = Math.min(tour.length - 1, Math.floor(progress));
   for (let e = 0; e < edgesShown; e++) {
     const [x1, y1] = cities[tour[e]];
     const [x2, y2] = cities[tour[e + 1]];
-    ctx.strokeStyle = `rgba(96,165,250,${0.15 + e / tour.length * 0.4})`;
+    ctx.strokeStyle = `rgba(96,165,250,${0.15 + (e / tour.length) * 0.4})`;
     ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
   }
   for (let i = 0; i < n; i++) {
     const [x, y] = cities[i];
     const inTour = tour.indexOf(i) < edgesShown + 1;
-    ctx.beginPath(); ctx.arc(x, y, inTour ? 4 : 2.5, 0, Math.PI * 2);
+    ctx.beginPath();
+    ctx.arc(x, y, inTour ? 4 : 2.5, 0, Math.PI * 2);
     ctx.fillStyle = inTour ? "rgba(96,165,250,0.9)" : "rgba(245,245,245,0.3)";
     ctx.fill();
   }
   drawLabel(ctx, `${n} cities \u2014 nearest-neighbor tour`, 12, height - 14);
 }
 
-function drawAperiodicTiling(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawAperiodicTiling(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
-  const scale = pointer.active ? 20 + pointer.x * 30 : 28 + Math.sin(time * 0.1) * 5;
+  const scale = pointer.active
+    ? 20 + pointer.x * 30
+    : 28 + Math.sin(time * 0.1) * 5;
   const rot = pointer.active ? pointer.y * 0.3 : time * 0.02;
-  const cosR = Math.cos(rot), sinR = Math.sin(rot);
-  const cx = width / 2, cy = height / 2;
+  const cosR = Math.cos(rot),
+    sinR = Math.sin(rot);
+  const cx = width / 2,
+    cy = height / 2;
   const pts: { x: number; y: number; type: number }[] = [];
   for (let i = -20; i < 20; i++) {
     for (let j = -20; j < 20; j++) {
-      const type = ((Math.abs(i) + Math.abs(j)) % 3);
+      const type = (Math.abs(i) + Math.abs(j)) % 3;
       const oox = i * scale * 0.87 + j * scale * 0.5 * Math.cos(Math.PI / 5);
       const ooy = j * scale * 0.87 + i * scale * 0.12 * Math.sin(Math.PI / 3);
       const rx = oox * cosR - ooy * sinR + cx;
       const ry = oox * sinR + ooy * cosR + cy;
-      if (rx < -scale * 2 || rx > width + scale * 2 || ry < -scale * 2 || ry > height + scale * 2) continue;
+      if (
+        rx < -scale * 2 ||
+        rx > width + scale * 2 ||
+        ry < -scale * 2 ||
+        ry > height + scale * 2
+      )
+        continue;
       pts.push({ x: rx, y: ry, type });
     }
   }
   for (const p of pts) {
     const s = scale * 0.42;
-    const angles = p.type === 0 ? [0, 1.2, 2.4, 3.6] : p.type === 1 ? [0.6, 1.8, 3.0, 4.2] : [0.3, 1.5, 2.7, 3.9];
+    const angles =
+      p.type === 0
+        ? [0, 1.2, 2.4, 3.6]
+        : p.type === 1
+          ? [0.6, 1.8, 3.0, 4.2]
+          : [0.3, 1.5, 2.7, 3.9];
     ctx.beginPath();
     for (let k = 0; k < 4; k++) {
       const a = angles[k] + rot;
       const kx = p.x + Math.cos(a) * s;
       const ky = p.y + Math.sin(a) * s;
-      if (k === 0) ctx.moveTo(kx, ky); else ctx.lineTo(kx, ky);
+      if (k === 0) ctx.moveTo(kx, ky);
+      else ctx.lineTo(kx, ky);
     }
     ctx.closePath();
-    const colors = ["rgba(96,165,250,0.08)", "rgba(34,197,94,0.06)", "rgba(249,115,22,0.05)"];
+    const colors = [
+      "rgba(96,165,250,0.08)",
+      "rgba(34,197,94,0.06)",
+      "rgba(249,115,22,0.05)",
+    ];
     ctx.fillStyle = colors[p.type];
     ctx.fill();
     ctx.strokeStyle = `rgba(245,245,245,${0.08 + p.type * 0.03})`;
     ctx.lineWidth = 0.5;
     ctx.stroke();
   }
-  drawLabel(ctx, "aperiodic tiling \u2014 no translational symmetry", 12, height - 14);
+  drawLabel(
+    ctx,
+    "aperiodic tiling \u2014 no translational symmetry",
+    12,
+    height - 14,
+  );
 }
 
-function drawMandelbrot(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawMandelbrot(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
-  const centerX = pointer.active ? -0.5 + (pointer.x - 0.5) * 2 : -0.5 + Math.sin(time * 0.05) * 0.3;
-  const centerY = pointer.active ? (pointer.y - 0.5) * 1.5 : Math.cos(time * 0.07) * 0.2;
+  const centerX = pointer.active
+    ? -0.5 + (pointer.x - 0.5) * 2
+    : -0.5 + Math.sin(time * 0.05) * 0.3;
+  const centerY = pointer.active
+    ? (pointer.y - 0.5) * 1.5
+    : Math.cos(time * 0.07) * 0.2;
   const zoom = 1.5;
   const maxIter = 80;
   const step = 3;
@@ -1312,7 +1612,9 @@ function drawMandelbrot(ctx: CanvasRenderingContext2D, width: number, height: nu
     for (let py = 0; py < height; py += step) {
       const x0 = centerX + (px / width - 0.5) * zoom * (width / height) * 2;
       const y0 = centerY + (py / height - 0.5) * zoom * 2;
-      let x = 0, y = 0, iter = 0;
+      let x = 0,
+        y = 0,
+        iter = 0;
       while (x * x + y * y <= 4 && iter < maxIter) {
         const xn = x * x - y * y + x0;
         y = 2 * x * y + y0;
@@ -1334,39 +1636,67 @@ function drawMandelbrot(ctx: CanvasRenderingContext2D, width: number, height: nu
   drawLabel(ctx, "M = {c : z\xb2 + c stays bounded}", 12, height - 14);
 }
 
-function drawSquarePeg(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawSquarePeg(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.32;
-  const deform = pointer.active ? pointer.x * 0.4 : 0.2 + Math.sin(time * 0.2) * 0.1;
+  const deform = pointer.active
+    ? pointer.x * 0.4
+    : 0.2 + Math.sin(time * 0.2) * 0.1;
   const N = 120;
   const curve: [number, number][] = [];
   for (let i = 0; i < N; i++) {
     const t = (i / N) * Math.PI * 2;
-    const r = R * (1 + deform * Math.sin(3 * t + time * 0.3) + deform * 0.5 * Math.cos(5 * t - time * 0.2));
+    const r =
+      R *
+      (1 +
+        deform * Math.sin(3 * t + time * 0.3) +
+        deform * 0.5 * Math.cos(5 * t - time * 0.2));
     curve.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]);
   }
   ctx.strokeStyle = "rgba(245,245,245,0.3)";
   ctx.lineWidth = 1.2;
   ctx.beginPath();
-  curve.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-  ctx.closePath(); ctx.stroke();
-  const idx = [0, Math.floor(N * 0.25), Math.floor(N * 0.5), Math.floor(N * 0.75)];
-  const sq = idx.map(i => curve[i]);
+  curve.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+  ctx.closePath();
+  ctx.stroke();
+  const idx = [
+    0,
+    Math.floor(N * 0.25),
+    Math.floor(N * 0.5),
+    Math.floor(N * 0.75),
+  ];
+  const sq = idx.map((i) => curve[i]);
   ctx.strokeStyle = "rgba(96,165,250,0.7)";
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  sq.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-  ctx.closePath(); ctx.stroke();
+  sq.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+  ctx.closePath();
+  ctx.stroke();
   for (const [x, y] of sq) {
-    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(96,165,250,0.9)"; ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(96,165,250,0.9)";
+    ctx.fill();
   }
   ctx.strokeStyle = "rgba(96,165,250,0.15)";
   ctx.lineWidth = 0.5;
-  ctx.beginPath(); ctx.moveTo(sq[0][0], sq[0][1]); ctx.lineTo(sq[2][0], sq[2][1]); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(sq[1][0], sq[1][1]); ctx.lineTo(sq[3][0], sq[3][1]); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(sq[0][0], sq[0][1]);
+  ctx.lineTo(sq[2][0], sq[2][1]);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(sq[1][0], sq[1][1]);
+  ctx.lineTo(sq[3][0], sq[3][1]);
+  ctx.stroke();
   drawLabel(ctx, "every Jordan curve inscribes a square?", 12, height - 14);
 }
 
@@ -1438,16 +1768,29 @@ function drawHadwigerNelson(
   });
 }
 
-function drawPlateau(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawPlateau(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.32;
   const tiltX = pointer.active ? (pointer.y - 0.5) * 0.6 : 0.3;
   const rotY = pointer.active ? (pointer.x - 0.5) * Math.PI * 1.5 : time * 0.15;
-  const cosX = Math.cos(tiltX), sinX = Math.sin(tiltX);
-  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-  const project = (x: number, y: number, z: number): [number, number, number] => {
+  const cosX = Math.cos(tiltX),
+    sinX = Math.sin(tiltX);
+  const cosY = Math.cos(rotY),
+    sinY = Math.sin(rotY);
+  const project = (
+    x: number,
+    y: number,
+    z: number,
+  ): [number, number, number] => {
     const x1 = x * cosY + z * sinY;
     const z1 = -x * sinY + z * cosY;
     const y1 = y * cosX - z1 * sinX;
@@ -1467,7 +1810,7 @@ function drawPlateau(ctx: CanvasRenderingContext2D, width: number, height: numbe
     const u = (i / gridN) * Math.PI * 2;
     ctx.beginPath();
     for (let j = 0; j <= gridN; j++) {
-      const v = (j / gridN);
+      const v = j / gridN;
       const r = R * 0.35 * (1 - 0.3 * v);
       const sx = r * (Math.sin(u) + 2 * v * Math.sin(2 * u));
       const sy = r * (Math.cos(u) - 2 * v * Math.cos(2 * u));
@@ -1475,39 +1818,80 @@ function drawPlateau(ctx: CanvasRenderingContext2D, width: number, height: numbe
       const [px, py, pz] = project(sx, sy, sz);
       const alpha = 0.03 + Math.max(0, pz / R) * 0.1;
       ctx.strokeStyle = `rgba(96,165,250,${alpha})`;
-      if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      if (j === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
     }
-    ctx.lineWidth = 0.4; ctx.stroke();
+    ctx.lineWidth = 0.4;
+    ctx.stroke();
   }
   ctx.strokeStyle = "rgba(245,245,245,0.5)";
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  boundary.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+  boundary.forEach(([x, y], i) =>
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y),
+  );
   ctx.stroke();
-  drawLabel(ctx, "H = 0 \u2014 minimal surface spanning boundary", 12, height - 14);
+  drawLabel(
+    ctx,
+    "H = 0 \u2014 minimal surface spanning boundary",
+    12,
+    height - 14,
+  );
 }
 
-function drawKissingNumber(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawKissingNumber(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.14;
   const rotY = pointer.active ? (pointer.x - 0.5) * Math.PI * 2 : time * 0.2;
   const tiltX = pointer.active ? (pointer.y - 0.5) * 0.5 : 0.3;
-  const cosX = Math.cos(tiltX), sinX = Math.sin(tiltX);
-  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-  const cGrad = ctx.createRadialGradient(cx - R * 0.2, cy - R * 0.2, R * 0.1, cx, cy, R);
+  const cosX = Math.cos(tiltX),
+    sinX = Math.sin(tiltX);
+  const cosY = Math.cos(rotY),
+    sinY = Math.sin(rotY);
+  const cGrad = ctx.createRadialGradient(
+    cx - R * 0.2,
+    cy - R * 0.2,
+    R * 0.1,
+    cx,
+    cy,
+    R,
+  );
   cGrad.addColorStop(0, "rgba(245,245,245,0.15)");
   cGrad.addColorStop(1, "rgba(245,245,245,0.03)");
   ctx.fillStyle = cGrad;
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = "rgba(245,245,245,0.2)"; ctx.lineWidth = 0.8;
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(245,245,245,0.2)";
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.stroke();
   const golden = (1 + Math.sqrt(5)) / 2;
   const positions: [number, number, number][] = [];
-  for (const [a, b, c] of [[0, 1, golden], [0, 1, -golden], [0, -1, golden], [0, -1, -golden],
-    [1, golden, 0], [1, -golden, 0], [-1, golden, 0], [-1, -golden, 0],
-    [golden, 0, 1], [golden, 0, -1], [-golden, 0, 1], [-golden, 0, -1]] as const) {
+  for (const [a, b, c] of [
+    [0, 1, golden],
+    [0, 1, -golden],
+    [0, -1, golden],
+    [0, -1, -golden],
+    [1, golden, 0],
+    [1, -golden, 0],
+    [-1, golden, 0],
+    [-1, -golden, 0],
+    [golden, 0, 1],
+    [golden, 0, -1],
+    [-golden, 0, 1],
+    [-golden, 0, -1],
+  ] as const) {
     const len = Math.sqrt(a * a + b * b + c * c);
     positions.push([a / len, b / len, c / len]);
   }
@@ -1522,14 +1906,25 @@ function drawKissingNumber(ctx: CanvasRenderingContext2D, width: number, height:
   spheres.sort((a, b) => a.depth - b.depth);
   for (const { sx, sy, depth } of spheres) {
     const alpha = 0.08 + Math.max(0, depth) * 0.25;
-    const grad = ctx.createRadialGradient(sx - R * 0.15, sy - R * 0.15, R * 0.05, sx, sy, R);
+    const grad = ctx.createRadialGradient(
+      sx - R * 0.15,
+      sy - R * 0.15,
+      R * 0.05,
+      sx,
+      sy,
+      R,
+    );
     grad.addColorStop(0, `rgba(96,165,250,${alpha + 0.1})`);
     grad.addColorStop(1, `rgba(96,165,250,${alpha * 0.3})`);
     ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(sx, sy, R * 0.85, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    ctx.arc(sx, sy, R * 0.85, 0, Math.PI * 2);
+    ctx.fill();
     ctx.strokeStyle = `rgba(96,165,250,${alpha * 0.6})`;
     ctx.lineWidth = 0.5;
-    ctx.beginPath(); ctx.arc(sx, sy, R * 0.85, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(sx, sy, R * 0.85, 0, Math.PI * 2);
+    ctx.stroke();
   }
   drawMono(ctx, "\u03c4(3) = 12", width - 100, 20, 12, "rgba(96,165,250,0.8)");
   drawLabel(ctx, "12 spheres touch the central sphere", 12, height - 14);
@@ -1594,10 +1989,17 @@ function drawSteinerTree(
   });
 }
 
-function drawIsoperimetric(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawIsoperimetric(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.28;
   const morph = pointer.active ? pointer.x : 0.5 + 0.5 * Math.sin(time * 0.25);
   const N = 80;
@@ -1606,7 +2008,13 @@ function drawIsoperimetric(ctx: CanvasRenderingContext2D, width: number, height:
   let area = 0;
   for (let i = 0; i < N; i++) {
     const t = (i / N) * Math.PI * 2;
-    const polyR = R * (1 + (1 - morph) * (0.3 * Math.sin(3 * t) + 0.2 * Math.cos(5 * t) + 0.15 * Math.sin(7 * t)));
+    const polyR =
+      R *
+      (1 +
+        (1 - morph) *
+          (0.3 * Math.sin(3 * t) +
+            0.2 * Math.cos(5 * t) +
+            0.15 * Math.sin(7 * t)));
     shape.push([cx + polyR * Math.cos(t), cy + polyR * Math.sin(t)]);
   }
   for (let i = 0; i < N; i++) {
@@ -1619,27 +2027,58 @@ function drawIsoperimetric(ctx: CanvasRenderingContext2D, width: number, height:
   const ratio = (4 * Math.PI * area) / (perimeter * perimeter);
   ctx.fillStyle = `rgba(96,165,250,${0.05 + ratio * 0.08})`;
   ctx.beginPath();
-  shape.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-  ctx.closePath(); ctx.fill();
+  shape.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+  ctx.closePath();
+  ctx.fill();
   ctx.strokeStyle = "rgba(245,245,245,0.35)";
   ctx.lineWidth = 1.2;
   ctx.beginPath();
-  shape.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-  ctx.closePath(); ctx.stroke();
+  shape.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+  ctx.closePath();
+  ctx.stroke();
   const idealR = perimeter / (2 * Math.PI);
   ctx.strokeStyle = "rgba(96,165,250,0.2)";
   ctx.lineWidth = 0.8;
   ctx.setLineDash([4, 4]);
-  ctx.beginPath(); ctx.arc(cx, cy, idealR, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, idealR, 0, Math.PI * 2);
+  ctx.stroke();
   ctx.setLineDash([]);
-  drawMono(ctx, `4\u03c0A/L\xb2 = ${ratio.toFixed(3)}`, 12, 22, 12, "rgba(96,165,250,0.8)");
-  drawMono(ctx, morph > 0.95 ? "= 1 (circle)" : "< 1", 180, 22, 12, "rgba(96,165,250,0.6)");
-  drawLabel(ctx, "L\xb2 \u2265 4\u03c0A \u2014 equality iff circle", 12, height - 14);
+  drawMono(
+    ctx,
+    `4\u03c0A/L\xb2 = ${ratio.toFixed(3)}`,
+    12,
+    22,
+    12,
+    "rgba(96,165,250,0.8)",
+  );
+  drawMono(
+    ctx,
+    morph > 0.95 ? "= 1 (circle)" : "< 1",
+    180,
+    22,
+    12,
+    "rgba(96,165,250,0.6)",
+  );
+  drawLabel(
+    ctx,
+    "L\xb2 \u2265 4\u03c0A \u2014 equality iff circle",
+    12,
+    height - 14,
+  );
 }
 
-function drawHoneycomb(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawHoneycomb(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
-  const s = pointer.active ? 15 + pointer.x * 30 : 22 + Math.sin(time * 0.15) * 4;
+  const s = pointer.active
+    ? 15 + pointer.x * 30
+    : 22 + Math.sin(time * 0.15) * 4;
   const h = s * Math.sqrt(3);
   const morph = pointer.active ? pointer.y : 0.5 + 0.5 * Math.sin(time * 0.2);
   for (let row = -1; row < height / (h * 0.75) + 1; row++) {
@@ -1654,11 +2093,14 @@ function drawHoneycomb(ctx: CanvasRenderingContext2D, width: number, height: num
         const angle = (k / n) * Math.PI * 2 + cellRot;
         const px = hcx + r * Math.cos(angle);
         const py = hcy + r * Math.sin(angle);
-        if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        if (k === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
       }
       ctx.closePath();
-      const ddx = hcx - width / 2, ddy = hcy - height / 2;
-      const dist = Math.sqrt(ddx * ddx + ddy * ddy) / (Math.max(width, height) * 0.5);
+      const ddx = hcx - width / 2,
+        ddy = hcy - height / 2;
+      const dist =
+        Math.sqrt(ddx * ddx + ddy * ddy) / (Math.max(width, height) * 0.5);
       ctx.fillStyle = `rgba(96,165,250,${Math.max(0.02, 0.06 - dist * 0.04)})`;
       ctx.fill();
       ctx.strokeStyle = `rgba(245,245,245,${Math.max(0.05, 0.15 - dist * 0.08)})`;
@@ -1666,9 +2108,20 @@ function drawHoneycomb(ctx: CanvasRenderingContext2D, width: number, height: num
       ctx.stroke();
     }
   }
-  drawMono(ctx, morph > 0.5 ? "hexagons \u2014 optimal" : "squares \u2014 suboptimal", 12, 22, 12,
-    morph > 0.5 ? "rgba(96,165,250,0.8)" : "rgba(249,115,22,0.8)");
-  drawLabel(ctx, "P\xb2/A \u2265 8\u221a3 \u2014 honeycomb minimizes perimeter", 12, height - 14);
+  drawMono(
+    ctx,
+    morph > 0.5 ? "hexagons \u2014 optimal" : "squares \u2014 suboptimal",
+    12,
+    22,
+    12,
+    morph > 0.5 ? "rgba(96,165,250,0.8)" : "rgba(249,115,22,0.8)",
+  );
+  drawLabel(
+    ctx,
+    "P\xb2/A \u2265 8\u221a3 \u2014 honeycomb minimizes perimeter",
+    12,
+    height - 14,
+  );
 }
 
 function drawBrouwer(
@@ -1816,16 +2269,29 @@ function drawBrouwer(
   drawMono(ctx, "f(x₀) = x₀", fpx + 12, fpy - 8, 10, "rgba(96,165,250,0.8)");
 }
 
-function drawBorsukUlam(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawBorsukUlam(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.3;
   const tiltX = pointer.active ? (pointer.y - 0.5) * 0.6 : 0.35;
   const rotY = pointer.active ? (pointer.x - 0.5) * Math.PI * 1.5 : time * 0.18;
-  const cosX = Math.cos(tiltX), sinX = Math.sin(tiltX);
-  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-  const project = (px: number, py: number, pz: number): [number, number, number] => {
+  const cosX = Math.cos(tiltX),
+    sinX = Math.sin(tiltX);
+  const cosY = Math.cos(rotY),
+    sinY = Math.sin(rotY);
+  const project = (
+    px: number,
+    py: number,
+    pz: number,
+  ): [number, number, number] => {
     const x1 = px * cosY + pz * sinY;
     const z1 = -px * sinY + pz * cosY;
     const y1 = py * cosX - z1 * sinX;
@@ -1837,47 +2303,81 @@ function drawBorsukUlam(ctx: CanvasRenderingContext2D, width: number, height: nu
     ctx.beginPath();
     for (let j = 0; j <= 40; j++) {
       const phi = (j / 40) * Math.PI * 2;
-      const [spx, spy, spz] = project(Math.sin(theta) * Math.cos(phi), Math.sin(theta) * Math.sin(phi), Math.cos(theta));
+      const [spx, spy, spz] = project(
+        Math.sin(theta) * Math.cos(phi),
+        Math.sin(theta) * Math.sin(phi),
+        Math.cos(theta),
+      );
       const alpha = 0.03 + Math.max(0, spz) * 0.1;
       ctx.strokeStyle = `rgba(245,245,245,${alpha})`;
-      if (j === 0) ctx.moveTo(spx, spy); else ctx.lineTo(spx, spy);
+      if (j === 0) ctx.moveTo(spx, spy);
+      else ctx.lineTo(spx, spy);
     }
-    ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
   }
   const pairs = 5;
-  const colors = ["96,165,250", "34,197,94", "249,115,22", "168,85,247", "245,158,11"];
+  const colors = [
+    "96,165,250",
+    "34,197,94",
+    "249,115,22",
+    "168,85,247",
+    "245,158,11",
+  ];
   for (let k = 0; k < pairs; k++) {
     const theta = seeded(k * 3) * Math.PI * 0.7 + 0.15 * Math.PI;
     const phi = seeded(k * 3 + 1) * Math.PI * 2;
-    const sx = Math.sin(theta) * Math.cos(phi), sy = Math.sin(theta) * Math.sin(phi), sz = Math.cos(theta);
+    const sx = Math.sin(theta) * Math.cos(phi),
+      sy = Math.sin(theta) * Math.sin(phi),
+      sz = Math.cos(theta);
     const [x1, y1, z1] = project(sx, sy, sz);
     const [x2, y2, z2] = project(-sx, -sy, -sz);
     const c = colors[k];
     ctx.strokeStyle = `rgba(${c},0.15)`;
     ctx.lineWidth = 0.5;
     ctx.setLineDash([3, 3]);
-    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
     ctx.setLineDash([]);
-    for (const [ptx, pty, ptz] of [[x1, y1, z1], [x2, y2, z2]]) {
+    for (const [ptx, pty, ptz] of [
+      [x1, y1, z1],
+      [x2, y2, z2],
+    ]) {
       const alpha = 0.3 + Math.max(0, ptz as number) * 0.6;
       const glow = ctx.createRadialGradient(ptx, pty, 0, ptx, pty, 10);
       glow.addColorStop(0, `rgba(${c},${alpha * 0.5})`);
       glow.addColorStop(1, `rgba(${c},0)`);
-      ctx.fillStyle = glow; ctx.fillRect(ptx - 10, pty - 10, 20, 20);
-      ctx.beginPath(); ctx.arc(ptx, pty, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${c},${alpha})`; ctx.fill();
+      ctx.fillStyle = glow;
+      ctx.fillRect(ptx - 10, pty - 10, 20, 20);
+      ctx.beginPath();
+      ctx.arc(ptx, pty, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${c},${alpha})`;
+      ctx.fill();
     }
   }
   drawMono(ctx, "f(x) = f(-x)", cx - 40, 20, 12, "rgba(96,165,250,0.8)");
   drawLabel(ctx, "antipodal points must map to same value", 12, height - 14);
 }
 
-function drawHamSandwich(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawHamSandwich(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.35;
-  const offsets: [number, number][] = [[-0.35, -0.2], [0.3, -0.25], [0.0, 0.35]];
+  const offsets: [number, number][] = [
+    [-0.35, -0.2],
+    [0.3, -0.25],
+    [0.0, 0.35],
+  ];
   const colors = ["96,165,250", "34,197,94", "249,115,22"];
   const clusters: { pts: [number, number][]; color: string }[] = [];
   for (let c = 0; c < 3; c++) {
@@ -1885,18 +2385,24 @@ function drawHamSandwich(ctx: CanvasRenderingContext2D, width: number, height: n
     for (let i = 0; i < 12; i++) {
       const angle = seeded(c * 20 + i) * Math.PI * 2;
       const dist = seeded(c * 20 + i + 100) * R * 0.25;
-      pts.push([cx + offsets[c][0] * R + Math.cos(angle) * dist, cy + offsets[c][1] * R + Math.sin(angle) * dist]);
+      pts.push([
+        cx + offsets[c][0] * R + Math.cos(angle) * dist,
+        cy + offsets[c][1] * R + Math.sin(angle) * dist,
+      ]);
     }
     clusters.push({ pts, color: colors[c] });
   }
   for (const cluster of clusters) {
     for (const [x, y] of cluster.pts) {
-      ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${cluster.color},0.6)`; ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${cluster.color},0.6)`;
+      ctx.fill();
     }
   }
   const angle = pointer.active ? (pointer.x - 0.5) * Math.PI : time * 0.15;
-  const nx = Math.cos(angle), ny = Math.sin(angle);
+  const nx = Math.cos(angle),
+    ny = Math.sin(angle);
   const lineLen = Math.max(width, height);
   ctx.strokeStyle = "rgba(245,245,245,0.4)";
   ctx.lineWidth = 1.2;
@@ -1905,7 +2411,12 @@ function drawHamSandwich(ctx: CanvasRenderingContext2D, width: number, height: n
   ctx.lineTo(cx + ny * lineLen, cy - nx * lineLen);
   ctx.stroke();
   drawMono(ctx, "ham sandwich cut", 12, 22, 12, "rgba(245,245,245,0.7)");
-  drawLabel(ctx, "one hyperplane bisects n measures in R\u207f", 12, height - 14);
+  drawLabel(
+    ctx,
+    "one hyperplane bisects n measures in R\u207f",
+    12,
+    height - 14,
+  );
 }
 
 function drawHairyBall(
@@ -2805,56 +3316,96 @@ function drawMoserWorm(
   );
 }
 
-function drawIllumination(ctx: CanvasRenderingContext2D, width: number, height: number, time: number, pointer: Pointer) {
+function drawIllumination(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
   clear(ctx, width, height);
   drawGrid(ctx, width, height, 24, 0.02);
-  const cx = width / 2, cy = height / 2;
+  const cx = width / 2,
+    cy = height / 2;
   const R = Math.min(width, height) * 0.25;
-  const squareness = pointer.active ? pointer.x : 0.5 + 0.3 * Math.sin(time * 0.2);
+  const squareness = pointer.active
+    ? pointer.x
+    : 0.5 + 0.3 * Math.sin(time * 0.2);
   const N = 60;
   const body: [number, number][] = [];
   for (let i = 0; i < N; i++) {
     const t = (i / N) * Math.PI * 2;
     const p = 2 + squareness * 6;
-    const r = R / Math.pow(Math.pow(Math.abs(Math.cos(t)), p) + Math.pow(Math.abs(Math.sin(t)), p), 1 / p);
+    const r =
+      R /
+      Math.pow(
+        Math.pow(Math.abs(Math.cos(t)), p) + Math.pow(Math.abs(Math.sin(t)), p),
+        1 / p,
+      );
     body.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]);
   }
   ctx.fillStyle = "rgba(245,245,245,0.04)";
   ctx.beginPath();
-  body.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-  ctx.closePath(); ctx.fill();
+  body.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+  ctx.closePath();
+  ctx.fill();
   ctx.strokeStyle = "rgba(245,245,245,0.25)";
   ctx.lineWidth = 1;
   ctx.beginPath();
-  body.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-  ctx.closePath(); ctx.stroke();
+  body.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+  ctx.closePath();
+  ctx.stroke();
   const nDirs = squareness > 0.7 ? 4 : squareness > 0.3 ? 3 : 2;
   const dirAngles: number[] = [];
-  for (let d = 0; d < nDirs; d++) dirAngles.push(d * Math.PI * 2 / nDirs + time * 0.1);
+  for (let d = 0; d < nDirs; d++)
+    dirAngles.push((d * Math.PI * 2) / nDirs + time * 0.1);
   for (const da of dirAngles) {
-    const ddx = Math.cos(da), ddy = Math.sin(da);
+    const ddx = Math.cos(da),
+      ddy = Math.sin(da);
     for (let rr = -6; rr <= 6; rr++) {
-      const oox = cx + (-ddy * rr * R * 0.12) - ddx * R * 2;
-      const ooy = cy + (ddx * rr * R * 0.12) - ddy * R * 2;
+      const oox = cx + -ddy * rr * R * 0.12 - ddx * R * 2;
+      const ooy = cy + ddx * rr * R * 0.12 - ddy * R * 2;
       ctx.strokeStyle = "rgba(96,165,250,0.08)";
       ctx.lineWidth = 0.5;
-      ctx.beginPath(); ctx.moveTo(oox, ooy); ctx.lineTo(oox + ddx * R * 4, ooy + ddy * R * 4); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(oox, ooy);
+      ctx.lineTo(oox + ddx * R * 4, ooy + ddy * R * 4);
+      ctx.stroke();
     }
-    const ax = cx - ddx * R * 1.6, ay = cy - ddy * R * 1.6;
-    const aex = cx - ddx * R * 1.2, aey = cy - ddy * R * 1.2;
+    const ax = cx - ddx * R * 1.6,
+      ay = cy - ddy * R * 1.6;
+    const aex = cx - ddx * R * 1.2,
+      aey = cy - ddy * R * 1.2;
     ctx.strokeStyle = "rgba(96,165,250,0.5)";
     ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(aex, aey); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(aex, aey);
+    ctx.stroke();
     const hs = 5;
     ctx.fillStyle = "rgba(96,165,250,0.5)";
     ctx.beginPath();
     ctx.moveTo(aex, aey);
-    ctx.lineTo(aex - ddx * hs + ddy * hs * 0.4, aey - ddy * hs - ddx * hs * 0.4);
-    ctx.lineTo(aex - ddx * hs - ddy * hs * 0.4, aey - ddy * hs + ddx * hs * 0.4);
-    ctx.closePath(); ctx.fill();
+    ctx.lineTo(
+      aex - ddx * hs + ddy * hs * 0.4,
+      aey - ddy * hs - ddx * hs * 0.4,
+    );
+    ctx.lineTo(
+      aex - ddx * hs - ddy * hs * 0.4,
+      aey - ddy * hs + ddx * hs * 0.4,
+    );
+    ctx.closePath();
+    ctx.fill();
   }
   drawMono(ctx, `I(K) = ${nDirs}`, 12, 22, 12, "rgba(96,165,250,0.8)");
-  drawLabel(ctx, squareness > 0.7 ? "parallelogram needs 4 \u2014 maximum!" : "smooth bodies need fewer", 12, height - 14);
+  drawLabel(
+    ctx,
+    squareness > 0.7
+      ? "parallelogram needs 4 \u2014 maximum!"
+      : "smooth bodies need fewer",
+    12,
+    height - 14,
+  );
 }
 
 function drawBox(
@@ -2924,9 +3475,9 @@ function drawErdos1196(
     n1155: { label: "1155", ...point(0.12, 0.29), kind: "primitive" },
     n770: { label: "770", ...point(0.28, 0.29), kind: "hit" },
     n462: { label: "462", ...point(0.44, 0.29), kind: "primitive" },
-    n330: { label: "330", ...point(0.60, 0.29), kind: "primitive" },
+    n330: { label: "330", ...point(0.6, 0.29), kind: "primitive" },
     n210: { label: "210", ...point(0.76, 0.29), kind: "primitive" },
-    n154: { label: "154", ...point(0.28, 0.50), kind: "chain" },
+    n154: { label: "154", ...point(0.28, 0.5), kind: "chain" },
     n22: { label: "22", ...point(0.28, 0.67), kind: "chain" },
     n2: { label: "2", ...point(0.28, 0.82), kind: "chain" },
   };
@@ -2956,7 +3507,9 @@ function drawErdos1196(
     const ex = to.x - ux * nodeR;
     const ey = to.y - uy * nodeR;
     const pulse = active ? 0.58 + 0.18 * Math.sin(time * 2.2) : 0.15;
-    ctx.strokeStyle = active ? `rgba(96,165,250,${pulse})` : "rgba(245,245,245,0.16)";
+    ctx.strokeStyle = active
+      ? `rgba(96,165,250,${pulse})`
+      : "rgba(245,245,245,0.16)";
     ctx.lineWidth = active ? 2 : 1;
     ctx.beginPath();
     ctx.moveTo(sx, sy);
@@ -2966,14 +3519,26 @@ function drawErdos1196(
     ctx.fillStyle = active ? "rgba(96,165,250,0.78)" : "rgba(245,245,245,0.22)";
     ctx.beginPath();
     ctx.moveTo(ex, ey);
-    ctx.lineTo(ex - ux * head - uy * head * 0.55, ey - uy * head + ux * head * 0.55);
-    ctx.lineTo(ex - ux * head + uy * head * 0.55, ey - uy * head - ux * head * 0.55);
+    ctx.lineTo(
+      ex - ux * head - uy * head * 0.55,
+      ey - uy * head + ux * head * 0.55,
+    );
+    ctx.lineTo(
+      ex - ux * head + uy * head * 0.55,
+      ey - uy * head - ux * head * 0.55,
+    );
     ctx.closePath();
     ctx.fill();
     if (active) {
       const mx = (sx + ex) * 0.5;
       const my = (sy + ey) * 0.5;
-      text(`Λ(${q})/log n`, mx, my - 10, active ? 11 : 10, active ? "rgba(147,197,253,0.82)" : "rgba(245,245,245,0.38)");
+      text(
+        `Λ(${q})/log n`,
+        mx,
+        my - 10,
+        active ? 11 : 10,
+        active ? "rgba(147,197,253,0.82)" : "rgba(245,245,245,0.38)",
+      );
     }
   };
 
@@ -2986,7 +3551,14 @@ function drawErdos1196(
   const bandH = nodeR * 3.4;
   ctx.fillRect(bandX, bandY, bandW, bandH);
   ctx.strokeRect(bandX, bandY, bandW, bandH);
-  text("primitive antichain A", bandX + 10, bandY - 12, 11, "rgba(134,239,172,0.66)", "left");
+  text(
+    "primitive antichain A",
+    bandX + 10,
+    bandY - 12,
+    11,
+    "rgba(134,239,172,0.66)",
+    "left",
+  );
 
   edges.forEach(([from, to, q, active]) =>
     drawArrow(nodes[from], nodes[to], q, active),
@@ -3019,7 +3591,14 @@ function drawErdos1196(
     text(node.label, node.x, node.y + 1, 12, "rgba(245,245,245,0.82)");
   });
 
-  text("sample downward chain: 2310 -> 770 -> 154 -> 22 -> 2", leftX + 18, height - 24, 12, "rgba(147,197,253,0.72)", "left");
+  text(
+    "sample downward chain: 2310 -> 770 -> 154 -> 22 -> 2",
+    leftX + 18,
+    height - 24,
+    12,
+    "rgba(147,197,253,0.72)",
+    "left",
+  );
 
   if (compact) return;
 
@@ -3046,7 +3625,14 @@ function drawErdos1196(
       i === 3,
     );
     text(label, rightX + 10, y - 10, 10, "rgba(245,245,245,0.42)", "left");
-    text(value, rightX + 12, y + boxH * 0.56, 11, "rgba(245,245,245,0.7)", "left");
+    text(
+      value,
+      rightX + 12,
+      y + boxH * 0.56,
+      11,
+      "rgba(245,245,245,0.7)",
+      "left",
+    );
   });
   drawLabel(
     ctx,
@@ -3393,4 +3979,311 @@ export function AbcVerificationViz({ className = "" }: { className?: string }) {
 
 export function FaltingsAbelViz({ className = "" }: { className?: string }) {
   return <CanvasViz draw={drawFaltingsAbel} className={className} />;
+}
+
+function drawLebesgueUniversalCover(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.022);
+
+  const s = Math.min(width, height);
+  const isCard = isCardPreviewCanvas(ctx);
+  const unit = s * (isCard ? 0.52 : 0.46); // larger in card preview to fill the canvas
+
+  // Pál hexagon parameters
+  // Flat-top orientation: vertices at 0°, 60°, 120°, 180°, 240°, 300°
+  // inradius = unit/2, circumradius = unit/√3
+  const hexInr = unit / 2;
+  const hexCirc = hexInr * (2 / Math.sqrt(3));
+
+  // Main hexagon center: shifted left on wide canvases to make room for annotations
+  const cx = isCard
+    ? width / 2
+    : Math.min(width * 0.44, width / 2 + hexCirc * 0.1);
+  const cy = height / 2;
+
+  // Hexagon vertices
+  const hex: Vec2[] = [];
+  for (let k = 0; k < 6; k++) {
+    const a = k * (Math.PI / 3);
+    hex.push({ x: cx + hexCirc * Math.cos(a), y: cy + hexCirc * Math.sin(a) });
+  }
+
+  // Outer glow
+  if (!isCard) {
+    const grad = ctx.createRadialGradient(
+      cx,
+      cy,
+      hexInr * 0.5,
+      cx,
+      cy,
+      hexCirc * 1.5,
+    );
+    grad.addColorStop(0, "rgba(96,165,250,0.06)");
+    grad.addColorStop(1, "rgba(96,165,250,0)");
+    ctx.beginPath();
+    ctx.arc(cx, cy, hexCirc * 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+
+  // Hexagon fill + stroke
+  ctx.beginPath();
+  ctx.moveTo(hex[0].x, hex[0].y);
+  for (let k = 1; k < 6; k++) ctx.lineTo(hex[k].x, hex[k].y);
+  ctx.closePath();
+  ctx.fillStyle = "rgba(96,165,250,0.07)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(96,165,250,0.58)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Width annotation: vertical dimension line (flat-top → top/bottom at ±hexInr)
+  if (!isCard) {
+    const annX = cx + hexCirc + s * 0.055;
+    const yTop = cy - hexInr;
+    const yBot = cy + hexInr;
+    // Dashed extension lines
+    ctx.setLineDash([3, 4]);
+    ctx.strokeStyle = "rgba(96,165,250,0.28)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx, yTop);
+    ctx.lineTo(annX + 6, yTop);
+    ctx.moveTo(cx, yBot);
+    ctx.lineTo(annX + 6, yBot);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Arrow shaft
+    ctx.strokeStyle = "rgba(96,165,250,0.55)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(annX + 6, yTop + 5);
+    ctx.lineTo(annX + 6, yBot - 5);
+    ctx.stroke();
+    // Arrowheads
+    ctx.fillStyle = "rgba(96,165,250,0.6)";
+    for (const [y, d] of [
+      [yTop, 1],
+      [yBot, -1],
+    ] as const) {
+      ctx.beginPath();
+      ctx.moveTo(annX + 6, y + d * 2);
+      ctx.lineTo(annX + 2, y + d * 8);
+      ctx.lineTo(annX + 10, y + d * 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+    drawLabel(ctx, "width = 1", annX + 14, (yTop + yBot) / 2 + 4);
+  }
+
+  // ── Cycling unit-diameter shapes inside the hexagon ──
+  const shapeNames = [
+    "Unit disk  (d = 1)",
+    "Equilateral triangle  (side = 1)",
+    "Reuleaux triangle  (width = 1)",
+    "Square  (diagonal = 1)",
+    "Unit segment  (length = 1)",
+  ];
+  const shapeDur = 3.4;
+  const cycleT = (time % (shapeNames.length * shapeDur)) / shapeDur;
+  const si = Math.floor(cycleT) % shapeNames.length;
+  const lt = cycleT - Math.floor(cycleT);
+  const alpha = lt < 0.1 ? lt / 0.1 : lt > 0.9 ? (1 - lt) / 0.1 : 1.0;
+
+  // Mouse x controls rotation; otherwise slowly rotates
+  const rot = pointer.active ? (pointer.x - 0.5) * Math.PI * 2 : time * 0.1;
+
+  // Circumradius of equilateral triangle with side = unit
+  const eqR = unit / Math.sqrt(3);
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(rot);
+  ctx.globalAlpha = alpha;
+
+  if (si === 0) {
+    // Unit disk
+    ctx.beginPath();
+    ctx.arc(0, 0, unit / 2, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.05)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.78)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // Diameter tick
+    ctx.setLineDash([3, 4]);
+    ctx.strokeStyle = "rgba(255,255,255,0.22)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-unit / 2, 0);
+    ctx.lineTo(unit / 2, 0);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  } else if (si === 1) {
+    // Equilateral triangle, side = unit (diameter = unit)
+    ctx.beginPath();
+    for (let k = 0; k < 3; k++) {
+      const a = -Math.PI / 2 + k * ((2 * Math.PI) / 3);
+      k === 0
+        ? ctx.moveTo(eqR * Math.cos(a), eqR * Math.sin(a))
+        : ctx.lineTo(eqR * Math.cos(a), eqR * Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255,255,255,0.05)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.78)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  } else if (si === 2) {
+    // Reuleaux triangle: 3 circular arcs of radius = unit centered at opposite vertices
+    // Vertices of the underlying equilateral triangle (same circumradius eqR, side = unit)
+    const verts: Vec2[] = Array.from({ length: 3 }, (_, k) => ({
+      x: eqR * Math.cos(-Math.PI / 2 + k * ((2 * Math.PI) / 3)),
+      y: eqR * Math.sin(-Math.PI / 2 + k * ((2 * Math.PI) / 3)),
+    }));
+    ctx.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const center = verts[i];
+      const p1 = verts[(i + 1) % 3];
+      const p2 = verts[(i + 2) % 3];
+      const a1 = Math.atan2(p1.y - center.y, p1.x - center.x);
+      let a2 = Math.atan2(p2.y - center.y, p2.x - center.x);
+      // Ensure we sweep the short clockwise arc (anticlockwise=false)
+      if (a2 < a1) a2 += 2 * Math.PI;
+      if (i === 0) ctx.moveTo(p1.x, p1.y);
+      ctx.arc(center.x, center.y, unit, a1, a2, false);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(251,146,60,0.05)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(251,146,60,0.85)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  } else if (si === 3) {
+    // Square with diagonal = unit (rotated 45°, vertices at ±unit/2 on axes)
+    ctx.beginPath();
+    ctx.moveTo(0, -unit / 2);
+    ctx.lineTo(unit / 2, 0);
+    ctx.lineTo(0, unit / 2);
+    ctx.lineTo(-unit / 2, 0);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255,255,255,0.05)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.78)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  } else {
+    // Unit segment
+    const hw = unit / 2;
+    const ht = unit * 0.017;
+    ctx.beginPath();
+    ctx.moveTo(-hw, -ht);
+    ctx.lineTo(hw, -ht);
+    ctx.lineTo(hw, ht);
+    ctx.lineTo(-hw, ht);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255,255,255,0.04)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.75)";
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+    for (const ex of [-hw, hw]) {
+      ctx.beginPath();
+      ctx.arc(ex, 0, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(96,165,250,0.9)";
+      ctx.fill();
+    }
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  // Labels
+  if (!isCard) {
+    drawLabel(ctx, shapeNames[si], cx - 70, cy + hexInr + 24);
+    drawLabel(
+      ctx,
+      "Pál hexagon  (A = √3/2 ≈ 0.866)",
+      cx - 75,
+      cy - hexInr - 18,
+    );
+  }
+
+  // ── Right panel: area bounds bar ──
+  if (!isCard) {
+    const px = Math.min(cx + hexCirc + s * 0.34, width - s * 0.08);
+    const py = cy;
+    const bH = s * 0.4;
+    const bW = 13;
+    const bX = px - bW / 2;
+    const bY = py - bH / 2;
+
+    // Display range
+    const rMin = 0.826,
+      rMax = 0.872;
+    const toY = (v: number) => bY + bH * (1 - (v - rMin) / (rMax - rMin));
+
+    // Background
+    ctx.fillStyle = "rgba(255,255,255,0.04)";
+    ctx.fillRect(bX, bY, bW, bH);
+
+    const lo = 0.832,
+      hi = 0.8441153,
+      palArea = Math.sqrt(3) / 2;
+    const yLo = toY(lo),
+      yHi = toY(hi),
+      yPal = toY(palArea);
+
+    // Uncertainty region
+    ctx.fillStyle = "rgba(96,165,250,0.18)";
+    ctx.fillRect(bX, yHi, bW, yLo - yHi);
+
+    // Pál level (dashed)
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = "rgba(96,165,250,0.3)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(bX - 4, yPal);
+    ctx.lineTo(bX + bW + 4, yPal);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Bound ticks
+    for (const y of [yLo, yHi]) {
+      ctx.strokeStyle = "rgba(96,165,250,0.7)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(bX - 5, y);
+      ctx.lineTo(bX + bW + 5, y);
+      ctx.stroke();
+    }
+
+    // Pulsing highlight on bound lines
+    const pulse = 0.5 + 0.5 * Math.sin(time * 1.7);
+    ctx.fillStyle = `rgba(96,165,250,${0.45 + 0.35 * pulse})`;
+    ctx.fillRect(bX, yHi - 1, bW, 2);
+    ctx.fillRect(bX, yLo - 1, bW, 2);
+
+    // Text labels to the right of the bar
+    const lx = bX + bW + 8;
+    drawLabel(ctx, "upper 0.8441", lx, yHi + 4);
+    drawLabel(ctx, "lower 0.832", lx, yLo + 4);
+    drawLabel(ctx, "Pal  0.866", lx, yPal + 4);
+    drawLabel(ctx, "A*", bX + bW / 2 - 4, (yHi + yLo) / 2 + 4);
+    drawLabel(ctx, "Area", bX - 2, bY - 12);
+  }
+}
+
+export function LebesgueUniversalCoverViz({
+  className = "",
+}: {
+  className?: string;
+}) {
+  return <CanvasViz draw={drawLebesgueUniversalCover} className={className} />;
 }
