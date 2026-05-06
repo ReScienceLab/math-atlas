@@ -41,6 +41,7 @@ import { twinPrimeConjecture } from "./twin-prime-conjecture";
 import { abcConjecture } from "./abc-conjecture";
 import { continuumHypothesis } from "./continuum-hypothesis";
 import { poincareConjecture } from "./poincare-conjecture";
+import { lebesgueUniversalCover } from "./lebesgue-universal-cover";
 
 export const configuredProblems: Problem[] = [
   erdosProblem1196,
@@ -67,6 +68,7 @@ export const configuredProblems: Problem[] = [
   gaussCircleProblem,
   movingSofaProblem,
   moserWormProblem,
+  lebesgueUniversalCover,
   illuminationProblem,
   geometricLanglands,
   hilbertSixth,
