@@ -1,92 +1,140 @@
 # Problem Data Schema
 
-Field-by-field guide for editing entries in `src/lib/problems.ts`.
+Field-by-field guide for a problem file: `src/content/problems/<slug>.ts`.
 
-## Problem object (in `rawProblems` array)
+## File skeleton
+
+```ts
+import { defineProblem, scholarSearch } from "@/lib/problem-template";
+
+export const mySlug = defineProblem({
+  slug: "my-slug",
+  title: "My Problem",
+  status: "open",
+  field: "geometry",
+  year: 2026,
+  shortDescription: "...",
+  longDescription: "...",
+  vizComponent: "MyProblemViz",
+  collections: ["frontier", "recent"],
+  coordinates: { difficulty: 8, beauty: 9, visual: 8, importance: 9, activity: 10, accessibility: 7 },
+  consensusStatus: "settled",
+  lastReviewed: "2026-05",
+  connections: ["Related Theorem", "..."],
+  authors: [ /* ... */ ],
+  papers: [ /* ... */ ],
+  videos: [ /* ... */ ],
+  timeline: [ /* ... */ ],
+  formulas: [ /* ... */ ],
+});
+
+export default mySlug;
+```
+
+Then **register** it in `src/content/problems/index.ts`: add `import { mySlug } from "./my-slug";`
+and add `mySlug,` to the `configuredProblems` array (newest/AI work goes near the top).
+
+Types are defined in `src/lib/problem-types.ts` — keep field names/enum values in sync with it.
+
+## Top-level fields
+
+```ts
+slug: string            // URL path segment, kebab-case; must equal the filename
+title: string           // Display title, title case
+status: ProblemStatus   // "open" | "proved" | "disproved" | "resolved" | "partial" | "watch" | "award"
+field: MathField        // "analysis" | "algebra" | "geometry" | "number-theory" | "topology"
+                        //   | "combinatorics" | "mathematical-physics" | "computer-science" | "ai-math" | "logic"
+year: number            // Year of the definitive result (proof/disproof); for open problems, the origin year
+shortDescription: string // 1 sentence shown on cards (~110 chars)
+longDescription?: string // 2-5 sentences for the detail page; state the mechanism, not just intuition
+vizComponent: string     // PascalCase component name, e.g. "UnitDistanceViz"
+collections?: ProblemCollection[]  // "canonical" | "beautiful" | "frontier" | "unification" | "recent"
+coordinates?: ProblemCoordinates   // { difficulty, beauty, visual, importance, activity, accessibility } each 1-10
+consensusStatus?: ConsensusStatus  // "settled" | "active" | "emerging" | "watch"
+lastReviewed?: string    // "YYYY-MM"
+connections?: string[]   // Related theorem/concept names for discovery
+```
+
+- Use `status: "disproved"` when a conjecture is refuted; `"resolved"` for settled either-way;
+  `"proved"` when the conjecture is confirmed.
+- Use `field: "ai-math"` for AI-driven results (sits next to `alphaevolve-strassen`, `erdos-problem-1196`).
+
+## longDescription
+
+**Do**: name the mechanism. For recent AI/math results, **state the exact result and guard against
+media conflation** (e.g. "disproves the conjectured bound" ≠ "solves the famous open problem").
+
+Pattern: intuitive hook → precise statement → key mechanism → what is *still* open / generalization scope.
+
+## authors: Author[]
 
 ```ts
 {
-  slug: string           // URL path segment, kebab-case
-  title: string          // Display title, title case
-  status: ProblemStatus  // "open" | "proved" | "disproved" | "resolved" | "partial" | "watch" | "award"
-  field: MathField       // "topology" | "analysis" | "algebra" | "geometry" | "number-theory" | ...
-  year: number           // Year of definitive proof or original statement (for open problems)
-  shortDescription: string    // 1 sentence, ≤100 chars, shown in cards
-  longDescription?: string    // 2-4 sentences for detail page sidebar
-  vizComponent: string        // PascalCase component name, e.g. "HairyBallViz"
-  collections?: ProblemCollection[]  // "canonical" | "beautiful" | "frontier" | "unification" | "recent"
-  coordinates?: ProblemCoordinates   // { difficulty, beauty, visual, importance, activity, accessibility } each 1-10
-  consensusStatus?: ConsensusStatus  // "settled" | "active" | "emerging" | "watch"
-  lastReviewed?: string   // "YYYY-MM" format
-  connections?: string[]  // Related theorem/concept names for discovery
-  authors: Author[]
-  papers: Paper[]
-  timeline: TimelineEvent[]
+  name: string;
+  institution: string;     // where they were when they did the work
+  avatarUrl?: string;      // "/people/<name>.<ext>" (person photo) or "/orgs/<name>.<ext>" (org logo)
+  scholarUrl?: string;     // Google Scholar profile, or scholarSearch("Name terms")
+  homepageUrl?: string;    // personal site (incl. github.io)
+  twitterUrl?: string;     // https://x.com/handle
+  linkedinUrl?: string;    // https://www.linkedin.com/in/...
+  wikipediaUrl?: string;   // last-resort only; prefer the four above
 }
 ```
 
-## Writing the longDescription
+- **Order: main contributors first**, historical figures (originator, prior-bound provers) last.
+- **Avatars**: people → personal photo; a company/model entity author (e.g. "OpenAI reasoning model")
+  → org logo. Download into `public/people/` or `public/orgs/` and reference a local path. Do NOT
+  hotlink LinkedIn/Twitter CDN URLs (signed, expire ~weeks) — download them. Wikimedia
+  (`upload.wikimedia.org`) is allowlisted in `next.config.ts` and stable.
+- **Links** are rendered as brand logos (`author-card.tsx` + `brand-icons.tsx`). Populate what each
+  person actually has; prefer Google Scholar, then the **Homepage** slot falls back
+  personal-site → Scholar → Twitter/LinkedIn. Deceased/older mathematicians often only have a
+  homepage at their institute (e.g. `renyi.hu/~p_erdos/`) — use it instead of Wikipedia.
+- Correct diacritics always: "Erdős", "Szemerédi", "Poincaré".
+- Verify social handles map to the right person (use the twitter/linkedin skills; check bio/affiliation).
 
-**Do**: mention the mathematical mechanism, not just the intuition.
-
-Bad: "The theorem says a sphere cannot be combed flat."
-Good: "Every continuous tangent vector field on S² must have a zero — a consequence of χ(S²) = 2 ≠ 0. Via the Poincaré–Hopf index theorem, the indices at all zeros must sum to χ."
-
-Pattern: intuitive hook → precise statement → key mechanism → generalization scope.
-
-## Authors array
-
-```ts
-{ name: string, institution: string, scholarUrl?: string }
-```
-
-- Use correct diacritics: "Poincaré", "Zürich", "Erdős"
-- Institution = where they were when they did the work
-- `scholarUrl: scholarSearch("Name key theorem terms")`
-- Order: chronological by contribution (original prover first)
-- Include 2-3 authors: prover + generaliser + key alternative proof
-
-## Papers array
+## papers: Paper[]
 
 ```ts
-{ title: string, arxivId?: string, url: string, year: number }
+{ title: string; arxivId?: string; url: string; year: number }
 ```
 
-- 3 references is the sweet spot
-- Use descriptive titles: "Über Abbildung von Mannigfaltigkeiten — Brouwer's proof for all even-dimensional spheres"
-- Prefer DOI URLs: `https://doi.org/10.1007/BF01456931`
-- For arXiv: set both `arxivId: "2003.09266"` and `url: "https://arxiv.org/abs/2003.09266"`
-- Year = publication year, not submission year
+- 3-4 well-chosen references. Prefer primary sources: the proof PDF, arXiv preprint, DOI, and the
+  problem's own catalogue (e.g. `erdosproblems.com/<n>`).
+- For arXiv set both `arxivId: "2605.20695"` and `url: "https://arxiv.org/abs/2605.20695"`.
+- `year` = publication year. Recent-year papers (2025/2026) are expected for frontier results.
 
-## Timeline array
+## videos: Video[]
 
 ```ts
-{ year: number, title: string, type: "origin" | "progress" | "breakthrough" | "recognition" }
+{ title: string; videoId: string; channel: string }
 ```
 
-- 4-6 events covering the full arc
-- `origin`: early related work, conjectures
-- `breakthrough`: key proofs, major generalizations
-- `progress`: alternative proofs, partial results
-- `recognition`: prizes, major applications, cultural impact
-- Be specific: "Brouwer extends the proof to all S²ⁿ" not "Brouwer proves it"
+- 2-3 videos. `videoId` is the 11-char YouTube id. **Verify every id exists** via the oEmbed endpoint
+  (`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=<id>&format=json`) — it also
+  returns the canonical title + channel. Never invent ids.
+- Prefer an official/primary video first, then accessible explainers from known math channels.
 
-## Formula entries (in `coreFormulas` record)
+## timeline: TimelineEvent[]
 
-Single formula (simple):
 ```ts
-"slug": coreFormula(String.raw`LaTeX`, "description")
+{ year: number; month?: string; title: string; description?: string;
+  type: "origin" | "progress" | "breakthrough" | "recognition" }
 ```
 
-Multi-formula (preferred for optimized pages):
+- 4-6 events covering origin → prior bounds → breakthrough → verification/recognition.
+- `origin`: the problem is posed. `progress`: partial results / standing bounds.
+  `breakthrough`: the proof/disproof. `recognition`: verification, prizes, explicit improvements.
+- Be specific ("Spencer, Szemerédi & Trotter prove u(n)=O(n^4/3)" not "upper bound proved").
+
+## formulas: ProblemFormula[]
+
 ```ts
-"slug": [
-  { label: "Theorem", latex: String.raw`...`, description: "..." },
-  { label: "Key mechanism name", latex: String.raw`...`, description: "..." },
-  { label: "Structural quantity", latex: String.raw`...`, description: "..." },
-],
+{ label: string; latex: string; description?: string }
 ```
 
-- Use `String.raw` to avoid double-escaping backslashes
-- Labels: short, title case, describe what the formula represents
-- Descriptions: ≤120 chars, plain English, explain why this formula matters
+- 2-4 entries, inline in the problem object (there is **no** separate `coreFormulas` record).
+- Use `String.raw` backticks: `latex: String.raw\`u(n)=\\max_{|P|=n}\\dots\``.
+- Labels short + title case; descriptions ≤120 chars, plain English.
+- For a disproof page, include both the **conjectured** bound and the **disproving** bound, plus the
+  still-open bound — this is what keeps the framing honest.

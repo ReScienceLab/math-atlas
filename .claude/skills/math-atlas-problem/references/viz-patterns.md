@@ -16,7 +16,22 @@ export function MyProblemViz({ className = "" }: { className?: string }) {
 }
 ```
 
-Register in `viz-loader.tsx` and `problem-card.tsx` dynamic import maps.
+Register the PascalCase name in **both** `viz-loader.tsx` and `problem-card.tsx` dynamic import maps
+(missing either one shows a "Visualization coming soon" placeholder). New `draw*`/`*Viz` pairs are
+appended at the end of `classic-viz.tsx`.
+
+## Card-preview degradation
+
+The same component renders both the large detail-page canvas and tiny card thumbnails. Guard
+text/heavy detail so previews stay clean:
+
+```ts
+const compact = isCardPreviewCanvas(ctx) || width < 560 || height < 300;
+if (!compact) drawLabel(ctx, "caption", 16, 24);   // labels only on the full canvas
+```
+
+`clear()` and `drawGrid()` already no-op their background/grid on card previews; `drawLabel()` hides
+itself below ~720px. Keep the core geometry visible at all sizes.
 
 ## Style constants
 
@@ -121,9 +136,23 @@ ctx.closePath();
 ctx.fill();
 ```
 
+## Point-set / graph patterns (combinatorial geometry)
+
+For problems about point configurations, distances, colourings, or incidences:
+
+1. Lay out the points (a lattice, circle, or seeded cloud). A triangular lattice gives each interior
+   point exactly six unit-distance neighbours — a faithful "grid construction".
+2. Build the edge set by the defining relation (e.g. pairs at unit distance: `|d - U| < U*0.06`).
+3. Draw all edges faintly (`rgba(245,245,245,0.12)`); points as small dots.
+4. Pick an **active** element: nearest point to the pointer when `pointer.active`, else a slow scan
+   `Math.floor(time * 0.5) % pts.length`.
+5. Highlight the active point + its neighbours in blue/green, and overlay the defining locus
+   (e.g. a unit circle around the active point) so the relation is visible.
+6. Caption with the count (`n` points, `E` pairs) via `drawLabel`, gated on `!compact`.
+
 ## Performance
 
-- Keep point counts reasonable: ~100-200 arrows, ~50 grid lines
+- Keep point counts reasonable: ~100-200 arrows, ~50 grid lines; ~50 points keeps O(n²) edge scans cheap
 - Use `seeded(i)` for deterministic randomness, not `Math.random()`
 - Animation speed: `time * 0.15` to `time * 0.5` for gentle movement
 - Skip drawing off-screen or fully transparent elements
