@@ -191,6 +191,10 @@ const vizMap: Record<string, React.ComponentType<{ className?: string }>> = {
       ),
     { ssr: false },
   ),
+  UnitDistanceViz: dynamic(
+    () => import("@/components/viz/classic-viz").then((m) => m.UnitDistanceViz),
+    { ssr: false },
+  ),
 };
 
 const cardVizClassName =

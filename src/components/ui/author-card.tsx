@@ -1,9 +1,55 @@
 import { Author } from "@/lib/problems";
 import Image from "next/image";
-import { ExternalLink, GraduationCap } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import type { ComponentType } from "react";
+import {
+  GoogleScholarIcon,
+  LinkedInIcon,
+  WikipediaIcon,
+  XIcon,
+} from "./brand-icons";
+
+type ProfileLink = {
+  href: string;
+  label: string;
+  Icon: ComponentType<{ className?: string }>;
+};
 
 export function AuthorCard({ author }: { author: Author }) {
-  const initials = author.name.split(" ").map(w => w[0]).join("").slice(0, 2);
+  const initials = author.name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2);
+
+  // Prefer Google Scholar, then social, then a generic homepage / Wikipedia.
+  const links: ProfileLink[] = [
+    author.scholarUrl && {
+      href: author.scholarUrl,
+      label: "Google Scholar",
+      Icon: GoogleScholarIcon,
+    },
+    author.twitterUrl && {
+      href: author.twitterUrl,
+      label: "X (Twitter)",
+      Icon: XIcon,
+    },
+    author.linkedinUrl && {
+      href: author.linkedinUrl,
+      label: "LinkedIn",
+      Icon: LinkedInIcon,
+    },
+    author.homepageUrl && {
+      href: author.homepageUrl,
+      label: "Homepage",
+      Icon: ExternalLink,
+    },
+    author.wikipediaUrl && {
+      href: author.wikipediaUrl,
+      label: "Wikipedia",
+      Icon: WikipediaIcon,
+    },
+  ].filter(Boolean) as ProfileLink[];
 
   return (
     <div className="grid grid-cols-[40px_minmax(0,1fr)] items-center gap-4 py-4">
@@ -28,29 +74,20 @@ export function AuthorCard({ author }: { author: Author }) {
           <span className="text-[15px] font-medium text-[var(--fg)] truncate">
             {author.name}
           </span>
-          <span className="flex items-center gap-2">
-            {author.scholarUrl && (
+          <span className="flex items-center gap-2.5">
+            {links.map(({ href, label, Icon }) => (
               <a
-                href={author.scholarUrl}
+                key={label}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[var(--gray-500)] transition-colors hover:text-[var(--blue)]"
-                title="Google Scholar"
+                title={label}
+                aria-label={`${author.name} on ${label}`}
               >
-                <GraduationCap aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
+                <Icon className="h-3.5 w-3.5" />
               </a>
-            )}
-            {author.homepageUrl && (
-              <a
-                href={author.homepageUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--gray-600)] transition-colors hover:text-[var(--gray-300)]"
-                title="Homepage"
-              >
-                <ExternalLink aria-hidden="true" className="h-[13px] w-[13px]" strokeWidth={2} />
-              </a>
-            )}
+            ))}
           </span>
         </div>
         <p className="text-[13px] text-[var(--gray-500)] font-[var(--font-mono)] truncate">

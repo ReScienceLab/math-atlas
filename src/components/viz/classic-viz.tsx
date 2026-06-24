@@ -4287,3 +4287,122 @@ export function LebesgueUniversalCoverViz({
 }) {
   return <CanvasViz draw={drawLebesgueUniversalCover} className={className} />;
 }
+
+function drawUnitDistance(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  pointer: Pointer,
+) {
+  clear(ctx, width, height);
+  drawGrid(ctx, width, height, 24, 0.028);
+
+  const compact = isCardPreviewCanvas(ctx) || width < 560 || height < 300;
+  const scale = Math.min(width, height);
+  // Triangular lattice — Erdős's grid construction: every interior point has
+  // exactly six neighbours at unit distance.
+  const cols = 7;
+  const rows = 7;
+  const unit = scale * 0.142;
+  const rowH = unit * 0.8660254;
+  const latticeW = (cols - 1) * unit + unit / 2;
+  const latticeH = (rows - 1) * rowH;
+  const startX = (width - latticeW) / 2;
+  const startY = (height - latticeH) / 2;
+
+  const pts: Vec2[] = [];
+  for (let r = 0; r < rows; r++) {
+    const offset = (r % 2) * (unit / 2);
+    for (let c = 0; c < cols; c++) {
+      pts.push({ x: startX + offset + c * unit, y: startY + r * rowH });
+    }
+  }
+
+  const edges: [number, number][] = [];
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i + 1; j < pts.length; j++) {
+      const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+      if (Math.abs(d - unit) < unit * 0.06) edges.push([i, j]);
+    }
+  }
+
+  // Active point: nearest to the pointer, or a slow scan when idle.
+  let active = 0;
+  if (pointer.active) {
+    let best = Infinity;
+    for (let i = 0; i < pts.length; i++) {
+      const d = Math.hypot(
+        pointer.x * width - pts[i].x,
+        pointer.y * height - pts[i].y,
+      );
+      if (d < best) {
+        best = d;
+        active = i;
+      }
+    }
+  } else {
+    active = Math.floor(time * 0.5) % pts.length;
+  }
+
+  const neighbours = new Set<number>();
+  edges.forEach(([a, b]) => {
+    if (a === active) neighbours.add(b);
+    if (b === active) neighbours.add(a);
+  });
+
+  // All unit-distance pairs, with the active star highlighted in blue.
+  edges.forEach(([a, b]) => {
+    const hot = a === active || b === active;
+    ctx.strokeStyle = hot ? "rgba(96,165,250,0.55)" : "rgba(245,245,245,0.12)";
+    ctx.lineWidth = hot ? 2 : 1;
+    ctx.beginPath();
+    ctx.moveTo(pts[a].x, pts[a].y);
+    ctx.lineTo(pts[b].x, pts[b].y);
+    ctx.stroke();
+  });
+
+  // The unit circle around the active point — every point it lands on is a pair.
+  const p = pts[active];
+  const pulse = 0.4 + 0.12 * Math.sin(time * 2.4);
+  ctx.strokeStyle = `rgba(96,165,250,${pulse})`;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, unit, 0, Math.PI * 2);
+  ctx.stroke();
+
+  pts.forEach((pt, i) => {
+    const isActive = i === active;
+    const isNeighbour = neighbours.has(i);
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, isActive ? 5.5 : isNeighbour ? 4.5 : 3, 0, Math.PI * 2);
+    ctx.fillStyle = isActive
+      ? "rgba(96,165,250,0.95)"
+      : isNeighbour
+        ? "rgba(134,239,172,0.85)"
+        : "rgba(245,245,245,0.6)";
+    ctx.fill();
+    if (isActive) {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 9, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(96,165,250,0.4)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  });
+
+  if (!compact) {
+    drawLabel(ctx, `n = ${pts.length} points`, 16, 24);
+    drawLabel(ctx, `${edges.length} unit-distance pairs`, 16, 40);
+    drawLabel(
+      ctx,
+      "Erdős #90 — the grid is beaten by a factor of n^δ (OpenAI, 2026)",
+      16,
+      height - 18,
+    );
+  }
+}
+
+export function UnitDistanceViz({ className = "" }: { className?: string }) {
+  return <CanvasViz draw={drawUnitDistance} className={className} />;
+}

@@ -150,6 +150,9 @@ const vizMap: Record<string, VizComponent> = {
       (m) => m.LebesgueUniversalCoverViz,
     ),
   ),
+  UnitDistanceViz: dynamicViz(() =>
+    import("@/components/viz/classic-viz").then((m) => m.UnitDistanceViz),
+  ),
 };
 
 export function VizLoader({

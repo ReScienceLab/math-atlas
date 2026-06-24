@@ -26,6 +26,8 @@ export interface Author {
   avatarUrl?: string;
   homepageUrl?: string;
   wikipediaUrl?: string;
+  twitterUrl?: string;
+  linkedinUrl?: string;
 }
 
 export interface Paper {
