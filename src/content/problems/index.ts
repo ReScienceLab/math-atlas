@@ -1,4 +1,5 @@
 import type { Problem } from "@/lib/problem-types";
+import { unitDistanceProblem } from "./unit-distance-problem";
 import { erdosProblem1196 } from "./erdos-problem-1196";
 import { abcSecretVerification } from "./abc-secret-verification";
 import { faltingsAbelPrize2026 } from "./faltings-abel-prize-2026";
@@ -44,6 +45,7 @@ import { poincareConjecture } from "./poincare-conjecture";
 import { lebesgueUniversalCover } from "./lebesgue-universal-cover";
 
 export const configuredProblems: Problem[] = [
+  unitDistanceProblem,
   erdosProblem1196,
   abcSecretVerification,
   faltingsAbelPrize2026,
